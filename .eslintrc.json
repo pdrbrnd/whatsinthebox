@@ -2,5 +2,8 @@
   "extends": "@significa/eslint-config",
   "settings": {
     "import/internal-regex": "^common|^lib/|^modules/|^pages/"
+  },
+  "rules": {
+    "@typescript-eslint/explicit-module-boundary-types": "off"
   }
 }
