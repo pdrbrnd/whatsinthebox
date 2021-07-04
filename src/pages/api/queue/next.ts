@@ -34,7 +34,7 @@ interface OmdbResponse {
   Country: string
   Awards: string
   Poster: string
-  Ratings: {
+  Ratings?: {
     Source: string
     Value: string
   }[]
@@ -87,15 +87,15 @@ async function insertDetails(imdbId: string) {
   )
   const details: OmdbResponse = await res.json()
 
-  const imdb = details.Ratings.find(
+  const imdb = details.Ratings?.find(
     (r) => r.Source === 'Internet Movie Database'
   )
   const imdbRating = imdb ? imdb.Value.split('/')[0] : 'n/a'
 
-  const rotten = details.Ratings.find((r) => r.Source === 'Rotten Tomatoes')
+  const rotten = details.Ratings?.find((r) => r.Source === 'Rotten Tomatoes')
   const rottenRating = rotten ? rotten.Value : 'N/A'
 
-  const meta = details.Ratings.find((r) => r.Source === 'Metacritic')
+  const meta = details.Ratings?.find((r) => r.Source === 'Metacritic')
   const metaRating = meta ? meta.Value.split('/')[0] : 'N/A'
 
   const { data, errors } = await fetchGraphql<{
