@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { fetchGraphql } from 'lib/graphql'
+import { codeMiddleware, runMiddleware } from 'lib/middleware'
 
 interface Channel {
   id: string
@@ -18,8 +19,18 @@ async function getChannels(): Promise<Channel[]> {
   const { data }: { data: (Channel & Record<string, unknown>)[] } =
     await res.json()
 
-  // We only care for channels with a certain category
-  return data.filter((channel) => channel.category === CHANNEL_TARGET_CATEGORY)
+  return (
+    data
+      // We only care for channels with a certain category
+      .filter((channel) => channel.category === CHANNEL_TARGET_CATEGORY)
+      // Filter HD channels: the programming is the same
+      .filter((channel) => !/HD$/g.test(channel.id))
+      // Remove HD and SD from the channel name
+      .map((channel) => ({
+        ...channel,
+        name: channel.name.replace(/\s(?:SD|HD)$/g, ''),
+      }))
+  )
 }
 
 async function insertChannels(channels: Channel[]) {
@@ -63,7 +74,9 @@ async function insertChannels(channels: Channel[]) {
   return data.insert_channels.returning.map((item) => item.id)
 }
 
-export default async (_req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  await runMiddleware(req, res, codeMiddleware)
+
   try {
     const channels = await getChannels()
     await insertChannels(channels)

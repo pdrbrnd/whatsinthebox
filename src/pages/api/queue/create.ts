@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { fetchGraphql } from 'lib/graphql'
+import { codeMiddleware, runMiddleware } from 'lib/middleware'
 
 async function getChannelIds() {
   const { data, errors } = await fetchGraphql<{ channels: { id: number }[] }>({
@@ -54,7 +55,9 @@ async function queueChannels(ids: number[]) {
   return data.insert_queued_channels.returning
 }
 
-export default async (_req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  await runMiddleware(req, res, codeMiddleware)
+
   try {
     const ids = await getChannelIds()
     await queueChannels(ids)

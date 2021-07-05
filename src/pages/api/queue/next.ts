@@ -1,9 +1,8 @@
 import dayjs from 'dayjs'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import Cors from 'cors'
 
 import { fetchGraphql } from 'lib/graphql'
-import { runMiddleware } from 'lib/middleware'
+import { codeMiddleware, runMiddleware } from 'lib/middleware'
 
 interface Program {
   title: string
@@ -81,22 +80,35 @@ async function getImdbId(movieTitle: string): Promise<string | null> {
   return movieId || null
 }
 
+function getRating(
+  ratings: OmdbResponse['Ratings'],
+  source: string,
+  transform: (value: string) => string = (v) => v
+) {
+  const target = ratings?.find((rating) => rating.Source === source)
+  const rating: string | null =
+    target && target.Value !== 'N/A' ? transform(target.Value) : null
+
+  return rating
+}
+
 async function insertDetails(imdbId: string) {
   const res = await fetch(
     `https://omdbapi.com/?i=${imdbId}&apikey=${OMDB_API_KEY}`
   )
   const details: OmdbResponse = await res.json()
 
-  const imdb = details.Ratings?.find(
-    (r) => r.Source === 'Internet Movie Database'
+  const imdbRating = getRating(
+    details.Ratings,
+    'Internet Movie Database',
+    (value) => value.split('/')[0]
   )
-  const imdbRating = imdb ? imdb.Value.split('/')[0] : 'n/a'
-
-  const rotten = details.Ratings?.find((r) => r.Source === 'Rotten Tomatoes')
-  const rottenRating = rotten ? rotten.Value : 'N/A'
-
-  const meta = details.Ratings?.find((r) => r.Source === 'Metacritic')
-  const metaRating = meta ? meta.Value.split('/')[0] : 'N/A'
+  const rottenRating = getRating(details.Ratings, 'Rotten Tomatoes')
+  const metaRating = getRating(
+    details.Ratings,
+    'Metacritic',
+    (value) => value.split('/')[0]
+  )
 
   const { data, errors } = await fetchGraphql<{
     insert_movie_details_one: { id: number }
@@ -112,9 +124,9 @@ async function insertDetails(imdbId: string) {
       $language: String!,
       $plot: String!,
       $poster: String!,
-      $rating_imdb: String!,
-      $rating_metascore: String!,
-      $rating_rotten_tomatoes: String!,
+      $rating_imdb: String,
+      $rating_metascore: String,
+      $rating_rotten_tomatoes: String,
       $runtime: String!,
       $title: String!,
       $writer: String!,
@@ -158,8 +170,14 @@ async function insertDetails(imdbId: string) {
       language: details.Language,
       plot: details.Plot,
       poster: details.Poster,
-      rating_imdb: details.imdbRating || imdbRating,
-      rating_metascore: details.Metascore || metaRating,
+      rating_imdb:
+        details.imdbRating && details.imdbRating !== 'N/A'
+          ? details.imdbRating
+          : imdbRating,
+      rating_metascore:
+        details.Metascore && details.Metascore !== 'N/A'
+          ? details.Metascore
+          : metaRating,
       rating_rotten_tomatoes: rottenRating,
       runtime: details.Runtime,
       title: details.Title,
@@ -209,16 +227,6 @@ async function getMovieDetailsId(imdbId: string) {
 
   return data.movie_details_by_pk.id
 }
-
-// const detailsCache = new Map()
-// async function cachedGetMovieDetailsId(imdbId: string) {
-//   if (detailsCache.has(imdbId)) return detailsCache.get(imdbId)
-
-//   const detailsId = await getMovieDetailsId(imdbId)
-//   detailsCache.set(imdbId, detailsId)
-
-//   return detailsCache.get(imdbId)
-// }
 
 async function insertMovies(movies: Movie[], channelId: number) {
   const { data, errors } = await fetchGraphql<
@@ -363,12 +371,8 @@ async function setQueuedChannelAsComplete(queueId: number) {
   })
 }
 
-const cors = Cors({
-  methods: ['GET', 'HEAD', 'POST'],
-})
-
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  await runMiddleware(req, res, cors)
+  await runMiddleware(req, res, codeMiddleware)
 
   try {
     const next = await getNextQueuedChannel()
