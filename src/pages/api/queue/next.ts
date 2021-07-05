@@ -46,7 +46,7 @@ interface OmdbResponse {
   BoxOffice: string
   Production: string
   Website: string
-  Response: string
+  Response: 'True'
 }
 
 const GRID_ENDPOINT =
@@ -98,7 +98,11 @@ async function insertMovieDetails(imdbId: string) {
   const res = await fetch(
     `https://omdbapi.com/?i=${imdbId}&apikey=${OMDB_API_KEY}`
   )
-  const details: OmdbResponse = await res.json()
+  const details: OmdbResponse | { Response: 'False' } = await res.json()
+
+  if (details.Response === 'False') {
+    throw `No details available for ${imdbId}`
+  }
 
   const imdbRating = getRating(
     details.Ratings,
@@ -197,37 +201,46 @@ async function insertMovieDetails(imdbId: string) {
 }
 
 async function getMovieId(imdbId: string) {
-  const { data, errors } = await fetchGraphql<{
-    movie_details_by_pk: null | { id: number; updated_at: string }
-  }>({
-    query: `
-        query getMoviesId($imdbId: String!) {
-          movies_by_pk(imdb_id: $imdbId) {
-            id
-            updated_at
+  try {
+    const { data, errors } = await fetchGraphql<{
+      movie_details_by_pk: null | { id: number; updated_at: string }
+    }>({
+      query: `
+          query getMoviesId($imdbId: String!) {
+            movies_by_pk(imdb_id: $imdbId) {
+              id
+              updated_at
+            }
           }
-        }
-      `,
-    variables: {
-      imdbId: imdbId,
-    },
-    includeAdminSecret: true,
-  })
+        `,
+      variables: {
+        imdbId: imdbId,
+      },
+      includeAdminSecret: true,
+    })
 
-  if (!data || errors) {
-    throw { message: 'Could not fetch movie details id', errors: errors || [] }
+    if (!data || errors) {
+      throw {
+        message: 'Could not fetch movie details id',
+        errors: errors || [],
+      }
+    }
+
+    if (!data.movie_details_by_pk?.id) return await insertMovieDetails(imdbId)
+
+    // details are more than 30 days old
+    if (
+      dayjs().isAfter(
+        dayjs(data.movie_details_by_pk.updated_at).add(30, 'days')
+      )
+    ) {
+      return await insertMovieDetails(imdbId)
+    }
+
+    return data.movie_details_by_pk.id
+  } catch (error) {
+    return null
   }
-
-  if (!data.movie_details_by_pk?.id) return await insertMovieDetails(imdbId)
-
-  // details are more than 30 days old
-  if (
-    dayjs().isAfter(dayjs(data.movie_details_by_pk.updated_at).add(30, 'days'))
-  ) {
-    return await insertMovieDetails(imdbId)
-  }
-
-  return data.movie_details_by_pk.id
 }
 
 async function insertSchedules(schedules: MovieSchedule[], channelId: number) {
@@ -412,7 +425,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
      * Having movies with no imdbID doesn't make much sense.
      * Filter out movies where we didn't find the imdbID.
      * */
-    scheduledMovies = scheduledMovies.filter((movie) => !!movie.imdbId)
+    scheduledMovies = scheduledMovies.filter(
+      (movie) => !!movie.imdbId && !!movie.movieId
+    )
 
     await insertSchedules(scheduledMovies, channelId)
     await setQueuedChannelAsComplete(queueId)
