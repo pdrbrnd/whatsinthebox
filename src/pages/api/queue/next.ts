@@ -111,10 +111,10 @@ async function insertMovieDetails(imdbId: string) {
   )
 
   const { data, errors } = await fetchGraphql<{
-    insert_movie_details_one: { id: number }
+    insert_movies_one: { id: number }
   }>({
     query: `
-    mutation insertMovieDetails(
+    mutation insertMovies(
       $original: json!,
       $actors: String!,
       $country: String!,
@@ -191,7 +191,7 @@ async function insertMovieDetails(imdbId: string) {
     throw { message: 'Could not insert movie details', errors: errors || [] }
   }
 
-  return data.insert_movie_details_one.id
+  return data.insert_movies_one.id
 }
 
 async function getMovieId(imdbId: string) {
@@ -251,8 +251,8 @@ async function insertSchedules(schedules: MovieSchedule[], channelId: number) {
         insert_schedules(
           objects: $schedules,
           on_conflict: {
-            constraint: schedules_pkey,
-            update_columns: [id]
+            constraint: schedules_start_time_channel_id_key
+            update_columns: [channel_id, start_time]
           }
         ) {
           returning {
