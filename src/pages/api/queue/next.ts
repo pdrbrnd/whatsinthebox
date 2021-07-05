@@ -71,11 +71,13 @@ async function getImdbId(movieTitle: string): Promise<string | null> {
       .replace(' ', '_') +
     '.json'
   const res = await fetch(url)
-  const data: { d?: { id: string }[] } = await res.json()
+  const data: { d?: { id: string; q: string }[] } = await res.json()
 
   if (!data.d) return null
 
-  const movieId = data.d.find((item) => item.id.startsWith('tt'))?.id
+  const movieId = data.d.find(
+    (item) => item.id.startsWith('tt') && item.q === 'feature'
+  )?.id
 
   return movieId || null
 }
