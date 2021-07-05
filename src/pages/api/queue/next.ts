@@ -405,8 +405,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           }
         })
     )
+    /**
+     * Having movies with no imdbID doesn't make much sense.
+     * Filter out movies where we didn't find the imdbID.
+     * */
+    const imdbMovies = movies.filter((movie) => !!movie.imdbId)
 
-    await insertMovies(movies, channelId)
+    await insertMovies(imdbMovies, channelId)
     await setQueuedChannelAsComplete(queueId)
 
     res.status(200).json({ message: 'ok' })

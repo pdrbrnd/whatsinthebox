@@ -12,7 +12,20 @@ interface Channel {
 
 const CHANNELS_ENDPOINT =
   'https://web.ott-red.vodafone.pt/ott3_webapp/v1.5/channels'
-const CHANNEL_TARGET_CATEGORY = 'Filmes e Séries'
+
+/**
+  Nacional
+  Desporto
+  Generalistas
+  Entretenimento
+  Infantil
+  Filmes e Séries
+  Música
+  Documentários
+  Notícias
+ */
+const CHANNEL_TARGET_CATEGORIES = ['Filmes e Séries']
+const CHANNEL_ID_WHITELIST = ['RTP 1', 'RTP 2', 'SIC', 'TVI']
 
 async function getChannels(): Promise<Channel[]> {
   const res = await fetch(CHANNELS_ENDPOINT)
@@ -22,7 +35,11 @@ async function getChannels(): Promise<Channel[]> {
   return (
     data
       // We only care for channels with a certain category
-      .filter((channel) => channel.category === CHANNEL_TARGET_CATEGORY)
+      .filter(
+        (channel) =>
+          CHANNEL_TARGET_CATEGORIES.includes(channel.category) ||
+          CHANNEL_ID_WHITELIST.includes(channel.id)
+      )
       // Filter HD channels: the programming is the same
       .filter((channel) => !/HD$/g.test(channel.id))
       // Remove HD and SD from the channel name
