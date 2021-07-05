@@ -254,7 +254,7 @@ async function insertSchedules(schedules: MovieSchedule[], channelId: number) {
           objects: $schedules,
           on_conflict: {
             constraint: schedules_start_time_channel_id_key
-            update_columns: [channel_id, start_time]
+            update_columns: [channel_id, start_time, imdb_id, movie_id]
           }
         ) {
           returning {
