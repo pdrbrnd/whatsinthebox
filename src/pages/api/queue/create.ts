@@ -22,10 +22,10 @@ async function getChannelIds() {
   return data.channels.map((channel) => channel.id)
 }
 
-async function queueChannels(ids: number[]) {
+async function queueChannels(ids: number[], offset?: number | null) {
   const { data, errors } = await fetchGraphql<
     { insert_queued_channels: { returning: { id: number }[] } },
-    { channels: { channel_id: number }[] }
+    { channels: { channel_id: number; day_offset?: number }[] }
   >({
     query: `
       mutation insertQueuedChannels($channels: [queued_channels_insert_input!]!) {
@@ -43,7 +43,9 @@ async function queueChannels(ids: number[]) {
       }
     `,
     variables: {
-      channels: ids.map((channel_id) => ({ channel_id })),
+      channels: ids.map((channel_id) =>
+        offset ? { channel_id, day_offset: offset } : { channel_id }
+      ),
     },
     includeAdminSecret: true,
   })
@@ -60,7 +62,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const ids = await getChannelIds()
-    await queueChannels(ids)
+    const offset = req.body?.payload?.offset
+      ? Number(req.body?.payload?.offset)
+      : null
+    await queueChannels(ids, offset)
 
     res.status(200).json({ message: 'ok' })
   } catch (error) {

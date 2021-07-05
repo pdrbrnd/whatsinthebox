@@ -56,7 +56,7 @@ const OMDB_API_KEY = process.env.OMDB_API_KEY
 // e.g.: https://v2.sg.media-imdb.com/suggestion/o/o_padrinho.json
 const IMDB_SUGGESTIONS_ENDPOINT = 'https://v2.sg.media-imdb.com/suggestion'
 
-function getChannelGridEndpoint(channelId: string, dayOffset = 0) {
+function getChannelGridEndpoint(channelId: string, dayOffset = -1) {
   return `${GRID_ENDPOINT}/${encodeURI(channelId)}/${dayOffset.toString()}`
 }
 
@@ -315,7 +315,7 @@ async function getChannelExternalId(id: number) {
 
 async function getNextQueuedChannel() {
   const { data, errors } = await fetchGraphql<{
-    queued_channels: { id: number; channel_id: number }[]
+    queued_channels: { id: number; channel_id: number; day_offset: number }[]
   }>({
     query: `
       query getNextQueuedChannel {
@@ -327,6 +327,7 @@ async function getNextQueuedChannel() {
         ) {
           id
           channel_id
+          day_offset
         }
       }
     `,
@@ -381,10 +382,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(200).json({ message: 'No incomplete items in queue' })
     }
 
-    const { channel_id: channelId, id: queueId } = next
+    const { channel_id: channelId, id: queueId, day_offset: dayOffset } = next
 
     const externalId = await getChannelExternalId(channelId)
-    const grid = await fetch(getChannelGridEndpoint(externalId))
+    const grid = await fetch(getChannelGridEndpoint(externalId, dayOffset))
     const { data }: { data: Program[] } = await grid.json()
 
     let scheduledMovies = await Promise.all(
