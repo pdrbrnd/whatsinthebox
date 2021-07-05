@@ -41,8 +41,8 @@ async function queueChannels(ids: number[], offset?: number | null) {
         insert_queued_channels(
           objects: $channels, 
           on_conflict: {
-            constraint: queued_channels_day_channel_id_key
-            update_columns: [channel_id, day]
+            constraint: queued_channels_day_channel_id_day_offset_key
+            update_columns: [channel_id, day, day_offset]
           }
         ) {
           returning {
