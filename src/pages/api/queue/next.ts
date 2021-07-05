@@ -13,9 +13,9 @@ interface Program {
   series?: Record<string, unknown>
 }
 
-interface Movie extends Omit<Program, 'series'> {
+interface MovieSchedule extends Omit<Program, 'series'> {
   imdbId: string | null
-  detailsId: number | null
+  movieId: number | null
 }
 
 interface OmdbResponse {
@@ -92,7 +92,7 @@ function getRating(
   return rating
 }
 
-async function insertDetails(imdbId: string) {
+async function insertMovieDetails(imdbId: string) {
   const res = await fetch(
     `https://omdbapi.com/?i=${imdbId}&apikey=${OMDB_API_KEY}`
   )
@@ -132,7 +132,7 @@ async function insertDetails(imdbId: string) {
       $writer: String!,
       $year: String!,
     ) {
-      insert_movie_details_one(
+      insert_movies_one(
         object: {
           original_response: $original,
           actors: $actors,
@@ -152,7 +152,7 @@ async function insertDetails(imdbId: string) {
           year: $year,
         },
         on_conflict: {
-          constraint: movie_details_imdbId_key,
+          constraint: movies_imdb_id_key,
           update_columns: [imdb_id]
         }
       ) {
@@ -194,13 +194,13 @@ async function insertDetails(imdbId: string) {
   return data.insert_movie_details_one.id
 }
 
-async function getMovieDetailsId(imdbId: string) {
+async function getMovieId(imdbId: string) {
   const { data, errors } = await fetchGraphql<{
     movie_details_by_pk: null | { id: number; updated_at: string }
   }>({
     query: `
-        query getMovieDetailsId($imdbId: String!) {
-          movie_details_by_pk(imdb_id: $imdbId) {
+        query getMoviesId($imdbId: String!) {
+          movies_by_pk(imdb_id: $imdbId) {
             id
             updated_at
           }
@@ -216,25 +216,25 @@ async function getMovieDetailsId(imdbId: string) {
     throw { message: 'Could not fetch movie details id', errors: errors || [] }
   }
 
-  if (!data.movie_details_by_pk?.id) return await insertDetails(imdbId)
+  if (!data.movie_details_by_pk?.id) return await insertMovieDetails(imdbId)
 
   // details are more than 30 days old
   if (
     dayjs().isAfter(dayjs(data.movie_details_by_pk.updated_at).add(30, 'days'))
   ) {
-    return await insertDetails(imdbId)
+    return await insertMovieDetails(imdbId)
   }
 
   return data.movie_details_by_pk.id
 }
 
-async function insertMovies(movies: Movie[], channelId: number) {
+async function insertSchedules(schedules: MovieSchedule[], channelId: number) {
   const { data, errors } = await fetchGraphql<
     {
-      insert_movies: { returning: { id: number }[] }
+      insert_schedules: { returning: { id: number }[] }
     },
     {
-      movies: {
+      schedules: {
         title: string
         plot: string
         start_time: string
@@ -242,16 +242,16 @@ async function insertMovies(movies: Movie[], channelId: number) {
         duration: number
         channel_id: number
         imdb_id: string | null
-        details_id: number | null
+        movie_id: number | null
       }[]
     }
   >({
     query: `
-      mutation insertMovies($movies: [movies_insert_input!]!) {
-        insert_movies(
-          objects: $movies,
+      mutation insertSchedules($schedules: [schedules_insert_input!]!) {
+        insert_schedules(
+          objects: $schedules,
           on_conflict: {
-            constraint: movies_pkey,
+            constraint: schedules_pkey,
             update_columns: [id]
           }
         ) {
@@ -262,15 +262,15 @@ async function insertMovies(movies: Movie[], channelId: number) {
       }
     `,
     variables: {
-      movies: movies.map((channel) => ({
+      schedules: schedules.map((schedule) => ({
         channel_id: channelId,
-        title: channel.title,
-        plot: channel.description,
-        start_time: channel.startTime,
-        end_time: channel.endTime,
-        duration: channel.duration,
-        imdb_id: channel.imdbId,
-        details_id: channel.detailsId,
+        title: schedule.title,
+        plot: schedule.description,
+        start_time: schedule.startTime,
+        end_time: schedule.endTime,
+        duration: schedule.duration,
+        imdb_id: schedule.imdbId,
+        movie_id: schedule.movieId,
       })),
     },
     includeAdminSecret: true,
@@ -278,12 +278,12 @@ async function insertMovies(movies: Movie[], channelId: number) {
 
   if (!data || errors) {
     throw {
-      message: `Could not insert movies for channel ${channelId}`,
+      message: `Could not insert scheduled movies for channel ${channelId}`,
       errors: errors || [],
     }
   }
 
-  return data.insert_movies.returning.map((item) => item.id)
+  return data.insert_schedules.returning.map((item) => item.id)
 }
 
 async function getChannelExternalId(id: number) {
@@ -387,12 +387,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const grid = await fetch(getChannelGridEndpoint(externalId))
     const { data }: { data: Program[] } = await grid.json()
 
-    const movies = await Promise.all(
+    let scheduledMovies = await Promise.all(
       data
         .filter((program) => !('series' in program))
         .map(async (movie) => {
           const imdbId = await getImdbId(movie.title)
-          const detailsId = imdbId ? await getMovieDetailsId(imdbId) : null
+          const movieId = imdbId ? await getMovieId(imdbId) : null
 
           return {
             title: movie.title,
@@ -401,7 +401,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             endTime: movie.endTime,
             duration: movie.duration,
             imdbId,
-            detailsId,
+            movieId,
           }
         })
     )
@@ -409,9 +409,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
      * Having movies with no imdbID doesn't make much sense.
      * Filter out movies where we didn't find the imdbID.
      * */
-    const imdbMovies = movies.filter((movie) => !!movie.imdbId)
+    scheduledMovies = scheduledMovies.filter((movie) => !!movie.imdbId)
 
-    await insertMovies(imdbMovies, channelId)
+    await insertSchedules(scheduledMovies, channelId)
     await setQueuedChannelAsComplete(queueId)
 
     res.status(200).json({ message: 'ok' })
