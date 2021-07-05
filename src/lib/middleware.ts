@@ -22,7 +22,10 @@ export function codeMiddleware(
   res: NextApiResponse,
   next: () => void
 ) {
-  if (req.method !== 'POST' || req.body.code !== process.env.API_CODE) {
+  if (
+    req.method !== 'POST' ||
+    req.body?.payload?.code !== process.env.API_CODE
+  ) {
     res.status(401).json({ message: 'Not authorized' })
   } else {
     next()
