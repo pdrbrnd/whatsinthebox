@@ -53,7 +53,7 @@ async function getChannels(): Promise<Channel[]> {
 async function insertChannels(channels: Channel[]) {
   const { data, errors } = await fetchGraphql<
     {
-      insert_channels: { returning: { id: number }[] }
+      insert_channels: { returning: { id: number; name: string }[] }
     },
     {
       channels: { name: string; external_id: string; is_premium: boolean }[]
@@ -70,6 +70,7 @@ async function insertChannels(channels: Channel[]) {
         ) {
           returning {
             id
+            name
           }
         }
       }
@@ -88,7 +89,7 @@ async function insertChannels(channels: Channel[]) {
     throw { message: 'Could not insert channels', errors: errors || [] }
   }
 
-  return data.insert_channels.returning.map((item) => item.id)
+  return data.insert_channels.returning
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -96,9 +97,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const channels = await getChannels()
-    await insertChannels(channels)
+    const inserted = await insertChannels(channels)
 
-    res.status(200).json({ message: 'ok' })
+    res.status(200).json({ status: 'ok', data: inserted })
   } catch (error) {
     res.status(422).json({ error })
   }

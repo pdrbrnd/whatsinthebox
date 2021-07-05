@@ -246,7 +246,16 @@ async function getMovieId(imdbId: string) {
 async function insertSchedules(schedules: MovieSchedule[], channelId: number) {
   const { data, errors } = await fetchGraphql<
     {
-      insert_schedules: { returning: { id: number }[] }
+      insert_schedules: {
+        returning: {
+          id: number
+          title: string
+          start_time: string
+          channel_id: number
+          imdb_id: string
+          movie_id: number
+        }[]
+      }
     },
     {
       schedules: {
@@ -272,6 +281,11 @@ async function insertSchedules(schedules: MovieSchedule[], channelId: number) {
         ) {
           returning {
             id
+            title
+            start_time
+            channel_id
+            imdb_id
+            movie_id
           }
         }
       }
@@ -298,7 +312,7 @@ async function insertSchedules(schedules: MovieSchedule[], channelId: number) {
     }
   }
 
-  return data.insert_schedules.returning.map((item) => item.id)
+  return data.insert_schedules.returning
 }
 
 async function getChannelExternalId(id: number) {
@@ -429,10 +443,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       (movie) => !!movie.imdbId && !!movie.movieId
     )
 
-    await insertSchedules(scheduledMovies, channelId)
+    const inserted = await insertSchedules(scheduledMovies, channelId)
     await setQueuedChannelAsComplete(queueId)
 
-    res.status(200).json({ message: 'ok' })
+    res.status(200).json({ status: 'ok', data: inserted })
   } catch (error) {
     res.status(422).json({ error })
   }

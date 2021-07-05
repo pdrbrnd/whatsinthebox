@@ -24,7 +24,16 @@ async function getChannelIds() {
 
 async function queueChannels(ids: number[], offset?: number | null) {
   const { data, errors } = await fetchGraphql<
-    { insert_queued_channels: { returning: { id: number }[] } },
+    {
+      insert_queued_channels: {
+        returning: {
+          id: number
+          channel_id: number
+          day: string
+          day_offset: number
+        }[]
+      }
+    },
     { channels: { channel_id: number; day_offset?: number }[] }
   >({
     query: `
@@ -38,6 +47,9 @@ async function queueChannels(ids: number[], offset?: number | null) {
         ) {
           returning {
             id
+            channel_id
+            day
+            day_offset
           }
         }
       }
@@ -65,9 +77,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const offset = req.body?.payload?.offset
       ? Number(req.body?.payload?.offset)
       : null
-    await queueChannels(ids, offset)
+    const queued = await queueChannels(ids, offset)
 
-    res.status(200).json({ message: 'ok' })
+    res.status(200).json({ status: 'ok', data: queued })
   } catch (error) {
     res.status(422).json({ error })
   }
