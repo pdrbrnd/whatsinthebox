@@ -2,7 +2,7 @@ import { createCss } from '@stitches/react'
 
 const toRem = (px: number) => px / 16 + 'rem'
 
-const space = {
+export const space = {
   px: '1px',
   0: '0',
   2: toRem(2),
@@ -89,11 +89,13 @@ export const { styled, css, global, keyframes, getCssString, theme } =
       lineHeights: {
         none: 1,
         tight: 1.075,
+        small: 1.2,
         normal: 1.375,
       },
       letterSpacings: {
         wide: '0.04em',
       },
+      space,
       radii: {
         none: 0,
         sm: toRem(2),
