@@ -79,3 +79,41 @@ export const Search = () => {
     </svg>
   )
 }
+
+export const Sun = () => {
+  return (
+    <svg
+      width={14}
+      height={14}
+      viewBox="0 0 14 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M6.5 0h1v2h-1V0zm0 14v-2h1v2h-1zM2 7.5v-1H0v1h2zm10-1h2v1h-2v-1zm-8.182 4.39l-.707-.708-1.414 1.414.707.707 1.414-1.414zm7.778-9.193l.707.707-1.414 1.414-.707-.707 1.414-1.414zM3.111 3.818l.707-.707-1.414-1.414-.707.707L3.11 3.818zm9.192 7.778l-.707.707-1.414-1.414.707-.707 1.414 1.414zM10 7a3 3 0 11-6 0 3 3 0 016 0zm1 0a4 4 0 11-8 0 4 4 0 018 0z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}
+
+export const Moon = () => {
+  return (
+    <svg
+      width={12}
+      height={13}
+      viewBox="0 0 12 13"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M10.151 8.975a6.048 6.048 0 01-7.03-7.03 5.04 5.04 0 107.03 7.03zm.638-1.212A5.04 5.04 0 014.969.095 6.05 6.05 0 1012 7.125c-.369.265-.776.48-1.21.638z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}

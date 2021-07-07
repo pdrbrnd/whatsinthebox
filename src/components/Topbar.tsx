@@ -1,7 +1,18 @@
+import { useTheme } from 'next-themes'
+import { useEffect, useState } from 'react'
+
 import { styled } from 'lib/style'
 
-import { Info, Logo, Sort, Search } from './Icons'
-import { Box, Stack, Text, IconButton, Select, VanillaInput } from './UI'
+import { Info, Logo, Sort, Search, Sun, Moon } from './Icons'
+import {
+  Box,
+  Stack,
+  Text,
+  IconButton,
+  Select,
+  VanillaInput,
+  Button,
+} from './UI'
 
 const Wrapper = styled('header', {
   backgroundColor: '$panel',
@@ -22,6 +33,7 @@ const Left = styled('div', {
 
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'space-between',
 })
 
 const Main = styled('div', {
@@ -36,19 +48,44 @@ const Main = styled('div', {
 })
 
 export const Topbar = () => {
+  const [init, setInit] = useState(false)
+  const { resolvedTheme, setTheme } = useTheme()
+
+  useEffect(() => {
+    setInit(true)
+  }, [])
+
   return (
     <Wrapper>
       <Left>
-        <Logo />
-        <IconButton
-          css={{ ml: '$8' }}
-          icon={<Info />}
-          onClick={() => {
-            // noop
-          }}
-        >
-          About
-        </IconButton>
+        <Stack>
+          <Logo />
+          <IconButton
+            icon={<Info />}
+            onClick={() => {
+              // noop
+            }}
+          >
+            About
+          </IconButton>
+        </Stack>
+        {resolvedTheme && init && (
+          <Button
+            onClick={() =>
+              setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+            }
+          >
+            <Box
+              css={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {resolvedTheme === 'dark' ? <Sun /> : <Moon />}
+            </Box>
+          </Button>
+        )}
       </Left>
       <Main>
         <Box css={{ flex: 1 }}>
