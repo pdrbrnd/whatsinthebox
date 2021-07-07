@@ -3,14 +3,14 @@ import { useEffect, useState } from 'react'
 
 import { styled } from 'lib/style'
 
-import { Info, Logo, Sort, Search, Sun, Moon } from './Icons'
+import { Sort, Search, Info, Logo, Sun, Moon } from './Icons'
 import {
   Box,
   Stack,
   Text,
-  IconButton,
   Select,
   VanillaInput,
+  IconButton,
   Button,
 } from './UI'
 
@@ -48,11 +48,11 @@ const Main = styled('div', {
 })
 
 export const Topbar = () => {
-  const [init, setInit] = useState(false)
   const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setInit(true)
+    setMounted(true)
   }, [])
 
   return (
@@ -69,7 +69,7 @@ export const Topbar = () => {
             About
           </IconButton>
         </Stack>
-        {resolvedTheme && init && (
+        {resolvedTheme && mounted && (
           <Button
             onClick={() =>
               setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')

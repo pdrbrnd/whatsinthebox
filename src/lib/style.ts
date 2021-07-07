@@ -108,6 +108,7 @@ const stitchesConfig = createCss({
       checkbox: '12px',
       topbar: '40px',
       sidebar: '250px',
+      scroll: 'calc(100vh - $topbar)',
     },
     radii: {
       none: 0,

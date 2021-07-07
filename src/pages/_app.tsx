@@ -4,10 +4,6 @@ import type { AppProps } from 'next/app'
 import { global, darkTheme, lightTheme } from 'lib/style'
 
 const globalStyles = global({
-  'html, body, #__next': {
-    height: '100vh',
-    overflow: 'hidden',
-  },
   html: {
     boxSizing: 'border-box',
   },

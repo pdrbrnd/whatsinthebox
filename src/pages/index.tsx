@@ -1,21 +1,7 @@
 import React from 'react'
 
-import { Box } from 'components/UI'
-import { Topbar } from 'components/Topbar'
-import { Sidebar } from 'components/Sidebar'
+import { App } from 'components/App'
 
-const IndexPage: React.FC = () => (
-  <Box>
-    <Topbar />
-    <Box
-      css={{
-        display: 'flex',
-      }}
-    >
-      <Sidebar />
-      <main />
-    </Box>
-  </Box>
-)
+const IndexPage: React.FC = () => <App />
 
 export default IndexPage
