@@ -1,10 +1,10 @@
-import { createCss } from '@stitches/react'
+import { createCss, StitchesCss } from '@stitches/react'
 
 const toRem = (px: number) => px / 16 + 'rem'
 
 export const space = {
-  px: '1px',
   0: '0',
+  1: toRem(1),
   2: toRem(2),
   4: toRem(4),
   6: toRem(6),
@@ -33,6 +33,9 @@ const palette = {
   gray800: 'hsla(220, 7%, 10%, 1)',
   gray900: 'hsla(220, 7%, 8%, 1)',
   yellow: 'hsla(50, 100%, 60%, 1)',
+  yellowAlpha: 'hsla(50, 100%, 60%, 0.6)',
+  blue: 'hsla(210, 100%, 50%, 1)',
+  blueAlpha: 'hsla(210, 100%, 50%, 0.6)',
   red: 'hsla(0, 100%, 66%, 1)',
   imdb: '$yellow',
   rotten: '$red',
@@ -48,6 +51,7 @@ const dark = {
   secondary: '$gray400', // checkbox borders, secondary text
   foreground: '$gray50',
   accent: '$yellow',
+  focus: '$yellowAlpha',
 }
 
 const light = {
@@ -59,113 +63,126 @@ const light = {
   tertiary: '$gray300',
   secondary: '$gray300',
   foreground: '$gray900',
-  accent: '$yellow',
+  accent: '$blue',
+  focus: '$blueAlpha',
 }
 
 type SpaceValue = `$${keyof typeof space}` | (string & Record<never, never>)
 
+const stitchesConfig = createCss({
+  theme: {
+    colors: {
+      ...palette,
+      ...dark,
+    },
+    fonts: {
+      sans: 'Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji',
+    },
+    fontWeights: {
+      normal: '400',
+      bold: '600',
+    },
+    fontSizes: {
+      xs: toRem(12),
+      sm: toRem(14),
+      md: toRem(16),
+      lg: toRem(20),
+      xl: toRem(32),
+      xxl: toRem(36),
+    },
+    lineHeights: {
+      none: 1,
+      tight: 1.075,
+      small: 1.2,
+      normal: 1.375,
+      double: 2,
+    },
+    letterSpacings: {
+      wide: '0.04em',
+    },
+    space,
+    radii: {
+      none: 0,
+      xs: toRem(1),
+      sm: toRem(2),
+      md: toRem(4),
+      full: '100%',
+    },
+    zIndices: {
+      1: 100,
+      2: 200,
+      3: 300,
+      4: 400,
+      max: 999,
+    },
+    transitions: {
+      appearance: '0.2s ease',
+      motion: '0.3s cubic-bezier(0.2, 1, 0.2, 1)',
+    },
+    shadows: {
+      focus: '0 0 0 3px $colors$focus',
+    },
+  },
+  media: {
+    sm: '(min-width: 30em)',
+    md: '(min-width: 48em)',
+    lg: '(min-width: 62em)',
+    xl: '(min-width: 80em)',
+    xxl: '(min-width: 96em)',
+    hover: '(hover: hover)',
+  },
+  utils: {
+    m: () => (value: SpaceValue) => ({
+      margin: value,
+    }),
+    mt: () => (value: SpaceValue) => ({
+      marginTop: value,
+    }),
+    mr: () => (value: SpaceValue) => ({
+      marginRight: value,
+    }),
+    mb: () => (value: SpaceValue) => ({
+      marginBottom: value,
+    }),
+    ml: () => (value: SpaceValue) => ({
+      marginLeft: value,
+    }),
+    mx: () => (value: SpaceValue) => ({
+      marginLeft: value,
+      marginRight: value,
+    }),
+    my: () => (value: SpaceValue) => ({
+      marginTop: value,
+      marginBottom: value,
+    }),
+    p: () => (value: SpaceValue) => ({
+      padding: value,
+    }),
+    pt: () => (value: SpaceValue) => ({
+      paddingTop: value,
+    }),
+    pr: () => (value: SpaceValue) => ({
+      paddingRight: value,
+    }),
+    pb: () => (value: SpaceValue) => ({
+      paddingBottom: value,
+    }),
+    pl: () => (value: SpaceValue) => ({
+      paddingLeft: value,
+    }),
+    px: () => (value: SpaceValue) => ({
+      paddingLeft: value,
+      paddingRight: value,
+    }),
+    py: () => (value: SpaceValue) => ({
+      paddingTop: value,
+      paddingBottom: value,
+    }),
+  },
+})
+
 export const { styled, css, global, keyframes, getCssString, theme } =
-  createCss({
-    theme: {
-      colors: {
-        ...palette,
-        ...dark,
-      },
-      fonts: {
-        sans: 'Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji',
-      },
-      fontWeights: {
-        normal: '400',
-        bold: '600',
-      },
-      fontSizes: {
-        xs: toRem(12),
-        sm: toRem(14),
-        md: toRem(16),
-        lg: toRem(20),
-        xl: toRem(32),
-        xxl: toRem(36),
-      },
-      lineHeights: {
-        none: 1,
-        tight: 1.075,
-        small: 1.2,
-        normal: 1.375,
-      },
-      letterSpacings: {
-        wide: '0.04em',
-      },
-      space,
-      radii: {
-        none: 0,
-        sm: toRem(2),
-        md: toRem(4),
-      },
-      zIndices: {
-        1: 100,
-        2: 200,
-        3: 300,
-        4: 400,
-        max: 999,
-      },
-    },
-    media: {
-      sm: '(min-width: 30em)',
-      md: '(min-width: 48em)',
-      lg: '(min-width: 62em)',
-      xl: '(min-width: 80em)',
-      xxl: '(min-width: 96em)',
-      hover: '(hover: hover)',
-    },
-    utils: {
-      m: () => (value: SpaceValue) => ({
-        margin: value,
-      }),
-      mt: () => (value: SpaceValue) => ({
-        marginTop: value,
-      }),
-      mr: () => (value: SpaceValue) => ({
-        marginRight: value,
-      }),
-      mb: () => (value: SpaceValue) => ({
-        marginBottom: value,
-      }),
-      ml: () => (value: SpaceValue) => ({
-        marginLeft: value,
-      }),
-      mx: () => (value: SpaceValue) => ({
-        marginLeft: value,
-        marginRight: value,
-      }),
-      my: () => (value: SpaceValue) => ({
-        marginTop: value,
-        marginBottom: value,
-      }),
-      p: () => (value: SpaceValue) => ({
-        padding: value,
-      }),
-      pt: () => (value: SpaceValue) => ({
-        paddingTop: value,
-      }),
-      pr: () => (value: SpaceValue) => ({
-        paddingRight: value,
-      }),
-      pb: () => (value: SpaceValue) => ({
-        paddingBottom: value,
-      }),
-      pl: () => (value: SpaceValue) => ({
-        paddingLeft: value,
-      }),
-      px: () => (value: SpaceValue) => ({
-        paddingLeft: value,
-        paddingRight: value,
-      }),
-      py: () => (value: SpaceValue) => ({
-        paddingTop: value,
-        paddingBottom: value,
-      }),
-    },
-  })
+  stitchesConfig
 
 export const darkTheme = theme('witb-dark', {
   colors: dark,
@@ -174,3 +191,5 @@ export const darkTheme = theme('witb-dark', {
 export const lightTheme = theme('witb-light', {
   colors: light,
 })
+
+export type CSS = StitchesCss<typeof stitchesConfig>

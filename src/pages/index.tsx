@@ -1,43 +1,33 @@
 import React from 'react'
 
-import { Box, Text } from 'components/UI'
+import { Box, Stack, CheckboxFilter, RadioFilter, Select } from 'components/UI'
 
 const IndexPage: React.FC = () => (
-  <Box css={{ maxWidth: '600px' }}>
-    <Box css={{ mb: '$8' }}>
-      <Text variant="tiny">1984</Text>
-    </Box>
-    <Box css={{ mb: '$8' }}>
-      <Text variant="caps">Genre</Text>
-    </Box>
-    <Box css={{ mb: '$8' }}>
-      <Text variant="small">
-        Stanley Kubrick (screenplay by), Michael Herr (screenplay by), Gustav
-        Hasford (screenplay by), Gustav Hasford (based on the novel The Short
-        Timers by)
-      </Text>
-    </Box>
-    <Box css={{ mb: '$8' }}>
-      <Text variant="body">
-        A pragmatic U.S. Marine observes the dehumanizing effects the Vietnam
-        War has on his fellow recruits from their brutal boot camp training to
-        the bloody street fighting in Hue.
-      </Text>
-    </Box>
-    <Box css={{ mb: '$8' }}>
-      <Text variant="big">
-        Sort by IMDb or Rotten Tomatoes rating, filter by genre, or go crazy and
-        search for movies, directors or actors.
-      </Text>
-    </Box>
-    <Box css={{ mb: '$8' }}>
-      <Text variant="title">Full Metal Jacket</Text>
-    </Box>
-    <Box css={{ mb: '$8' }}>
-      <Text variant="huge">
-        Find good movies from the last se7en days of Portuguese television.{' '}
-      </Text>
-    </Box>
+  <Box css={{ maxWidth: '600px', p: '$16', backgroundColor: '$panel' }}>
+    <Stack direction="vertical" css={{ alignItems: 'stretch' }}>
+      <CheckboxFilter label="Testing" />
+      <RadioFilter name="sex" value="male" label="Male" />
+      <RadioFilter name="sex" value="female" label="Female" />
+
+      <Select>
+        <option>Any year</option>
+        <option>2020s</option>
+        <option>2010s</option>
+        <option>2000s</option>
+        <option>1990s</option>
+        <option>1980s</option>
+        <option>1970s</option>
+        <option>1960s</option>
+        <option>1950s</option>
+        <option>1940s</option>
+        <option>1930s</option>
+        <option>1920s</option>
+      </Select>
+      <Select variant="caps">
+        <option>IMDB</option>
+        <option>Rotten Tomatoes</option>
+      </Select>
+    </Stack>
   </Box>
 )
 
