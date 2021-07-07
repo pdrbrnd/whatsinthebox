@@ -2,6 +2,7 @@ import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 
 import { styled } from 'lib/style'
+import { useFilters } from 'lib/filters'
 
 import { Sort, Search, Info, Logo, Sun, Moon } from './Icons'
 import {
@@ -24,7 +25,16 @@ const Wrapper = styled('header', {
   height: '$topbar',
 })
 
-const Left = styled('div', {
+export const Topbar = () => {
+  return (
+    <Wrapper>
+      <Left />
+      <Main />
+    </Wrapper>
+  )
+}
+
+const LeftHolder = styled('div', {
   height: '100%',
   width: '$sidebar',
   borderRight: '1px solid $muted',
@@ -36,7 +46,47 @@ const Left = styled('div', {
   justifyContent: 'space-between',
 })
 
-const Main = styled('div', {
+const Left = () => {
+  const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  return (
+    <LeftHolder>
+      <Stack>
+        <Logo />
+        <IconButton
+          icon={<Info />}
+          onClick={() => {
+            // noop
+          }}
+        >
+          About
+        </IconButton>
+      </Stack>
+      {resolvedTheme && mounted && (
+        <Button
+          onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+        >
+          <Box
+            css={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {resolvedTheme === 'dark' ? <Sun /> : <Moon />}
+          </Box>
+        </Button>
+      )}
+    </LeftHolder>
+  )
+}
+
+const MainHolder = styled('div', {
   height: '100%',
   display: 'flex',
   alignItems: 'center',
@@ -47,64 +97,43 @@ const Main = styled('div', {
   flex: 1,
 })
 
-export const Topbar = () => {
-  const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+const Main = () => {
+  const { state, dispatch } = useFilters()
 
   return (
-    <Wrapper>
-      <Left>
-        <Stack>
-          <Logo />
-          <IconButton
-            icon={<Info />}
-            onClick={() => {
-              // noop
-            }}
-          >
-            About
-          </IconButton>
-        </Stack>
-        {resolvedTheme && mounted && (
-          <Button
-            onClick={() =>
-              setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
-            }
-          >
-            <Box
-              css={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+    <MainHolder>
+      <Box css={{ flex: 1 }}>
+        <Box as="label" css={{ color: '$secondary' }}>
+          <Stack>
+            <Search />
+            <VanillaInput
+              placeholder="Search title, director, actors, writer..."
+              value={state.search}
+              onChange={(e) => {
+                dispatch({ type: 'SET_SEARCH', payload: e.currentTarget.value })
               }}
-            >
-              {resolvedTheme === 'dark' ? <Sun /> : <Moon />}
-            </Box>
-          </Button>
-        )}
-      </Left>
-      <Main>
-        <Box css={{ flex: 1 }}>
-          <Box as="label" css={{ color: '$secondary' }}>
-            <Stack>
-              <Search />
-              <VanillaInput placeholder="Search title, director, actors, writer..." />
-            </Stack>
-          </Box>
+            />
+          </Stack>
         </Box>
-        <Stack css={{ color: '$secondary', ml: '$8' }}>
-          <Text variant="caps">Sort</Text>
-          <Sort />
-          <Select variant="small" css={{ color: '$foreground' }}>
-            <option value="imdb">IMDB</option>
-            <option value="rotten">Rotten Tomatoes</option>
-          </Select>
-        </Stack>
-      </Main>
-    </Wrapper>
+      </Box>
+      <Stack css={{ color: '$secondary', ml: '$8' }}>
+        <Text variant="caps">Sort</Text>
+        <Sort />
+        <Select
+          variant="small"
+          css={{ color: '$foreground' }}
+          value={state.sort}
+          onChange={(e) => {
+            dispatch({
+              type: 'SET_SORT',
+              payload: e.currentTarget.value as 'imdb' | 'rotten',
+            })
+          }}
+        >
+          <option value="imdb">IMDB</option>
+          <option value="rotten">Rotten Tomatoes</option>
+        </Select>
+      </Stack>
+    </MainHolder>
   )
 }

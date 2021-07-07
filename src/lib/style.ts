@@ -37,9 +37,6 @@ const palette = {
   yellowAlpha: 'hsla(50, 100%, 60%, 0.6)',
   blue: 'hsla(210, 100%, 50%, 1)',
   blueAlpha: 'hsla(210, 100%, 50%, 0.6)',
-  red: 'hsla(0, 100%, 66%, 1)',
-  imdb: '$yellow',
-  rotten: '$red',
 }
 
 const dark = {

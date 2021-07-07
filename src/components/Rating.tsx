@@ -1,12 +1,12 @@
 import { CSS } from 'lib/style'
 
 import { Imdb, RottenTomatoes } from './Icons'
-import { Box, Stack, Text } from './UI'
+import { Stack, Text } from './UI'
 
 type Props = {
   css?: CSS
-  imdb?: string
-  rotten?: string
+  imdb?: string | null
+  rotten?: string | null
 }
 
 export const Rating = ({ css, imdb, rotten }: Props): JSX.Element | null => {
@@ -16,17 +16,13 @@ export const Rating = ({ css, imdb, rotten }: Props): JSX.Element | null => {
     <Stack spacing="md" css={css}>
       {imdb && (
         <Stack spacing="sm">
-          <Box css={{ display: 'flex', color: '$imdb' }}>
-            <Imdb />
-          </Box>
+          <Imdb />
           <Text variant="tiny">{imdb}</Text>
         </Stack>
       )}
       {rotten && (
         <Stack spacing="sm">
-          <Box css={{ display: 'flex', color: '$rotten' }}>
-            <RottenTomatoes />
-          </Box>
+          <RottenTomatoes />
           <Text variant="tiny">{imdb}</Text>
         </Stack>
       )}

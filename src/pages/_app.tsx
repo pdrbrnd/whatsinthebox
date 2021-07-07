@@ -1,7 +1,9 @@
 import { ThemeProvider } from 'next-themes'
 import type { AppProps } from 'next/app'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 import { global, darkTheme, lightTheme } from 'lib/style'
+import { FiltersProvider } from 'lib/filters'
 
 const globalStyles = global({
   html: {
@@ -27,9 +29,12 @@ const globalStyles = global({
     backgroundColor: '$background',
   },
   '::selection': {
-    backgroundColor: '$muted',
+    color: '$background',
+    backgroundColor: '$foreground',
   },
 })
+
+const queryClient = new QueryClient()
 
 const App = ({ Component, pageProps }: AppProps): JSX.Element => {
   globalStyles()
@@ -41,7 +46,11 @@ const App = ({ Component, pageProps }: AppProps): JSX.Element => {
       attribute="class"
       disableTransitionOnChange
     >
-      <Component {...pageProps} />
+      <QueryClientProvider client={queryClient}>
+        <FiltersProvider>
+          <Component {...pageProps} />
+        </FiltersProvider>
+      </QueryClientProvider>
     </ThemeProvider>
   )
 }

@@ -1,4 +1,8 @@
+import { useMemo } from 'react'
+import { useQuery } from 'react-query'
+
 import { styled } from 'lib/style'
+import { useFilters } from 'lib/filters'
 
 import { Box, Text, Button, RadioFilter, Select, CheckboxFilter } from './UI'
 
@@ -28,75 +32,186 @@ export const Sidebar = () => {
   return (
     <Holder>
       <Inner>
-        <FilterSection title="When">
-          <RadioFilter disabled checked label="Last 7 days" />
-        </FilterSection>
-        <FilterSection title="Genre">
-          <RadioFilter name="genre" value="any" label="Any Genre" />
-          <RadioFilter name="genre" value="drama" label="Drama" />
-          <RadioFilter name="genre" value="thriller" label="Thriller" />
-          <RadioFilter name="genre" value="romance" label="Romance" />
-          <RadioFilter name="genre" value="comedy" label="Comedy" />
-        </FilterSection>
-        <FilterSection title="Year">
-          <Select>
-            <option>Any year</option>
-            <option>2020s</option>
-            <option>2010s</option>
-            <option>2000s</option>
-            <option>1990s</option>
-            <option>1980s</option>
-            <option>1970s</option>
-            <option>1960s</option>
-            <option>1950s</option>
-            <option>1940s</option>
-            <option>1930s</option>
-            <option>1920s</option>
-          </Select>
-        </FilterSection>
+        <Genre />
+        <Year />
+        <Channels />
+      </Inner>
+    </Holder>
+  )
+}
+
+/**
+ * Genres
+ */
+
+const genres = [
+  { label: 'Action', value: 'Action' },
+  { label: 'Adventure', value: 'Adventure' },
+  { label: 'Comedy', value: 'Comedy' },
+  { label: 'Crime', value: 'Crime' },
+  { label: 'Documentary', value: 'Documentary' },
+  { label: 'Drama', value: 'Drama' },
+  { label: 'History', value: 'History' },
+  { label: 'Horror', value: 'Horror' },
+  { label: 'Musical', value: 'Musical' },
+  { label: 'Romance', value: 'Romance' },
+  { label: 'Sci-Fi', value: 'Sci-Fi' },
+  { label: 'Sport', value: 'Sport' },
+  { label: 'Thriller', value: 'Thriller' },
+  { label: 'War', value: 'War' },
+  { label: 'Western', value: 'Western' },
+]
+
+const Genre = () => {
+  const { dispatch, state } = useFilters()
+
+  return (
+    <FilterSection title="Genre">
+      <RadioFilter
+        name="genre"
+        value="any"
+        label="Any genre"
+        checked={!state.genre}
+        onChange={() => dispatch({ type: 'SET_GENRE', payload: null })}
+      />
+      {genres.map((genre) => (
+        <RadioFilter
+          key={genre.value}
+          name="genre"
+          value={genre.value}
+          label={genre.label}
+          checked={state.genre === genre.value}
+          onChange={() => dispatch({ type: 'SET_GENRE', payload: genre.value })}
+        />
+      ))}
+    </FilterSection>
+  )
+}
+
+/**
+ * Years
+ */
+const years = [
+  { label: '2020s', value: '2020' },
+  { label: '2010s', value: '2010' },
+  { label: '2000s', value: '2000' },
+  { label: '1990s', value: '1990' },
+  { label: '1980s', value: '1980' },
+  { label: '1970s', value: '1970' },
+  { label: '1960s', value: '1960' },
+  { label: '1950s', value: '1950' },
+  { label: '1940s', value: '1940' },
+  { label: '1930s', value: '1930' },
+  { label: '1920s', value: '1920' },
+]
+
+const Year = () => {
+  const { dispatch, state } = useFilters()
+
+  return (
+    <FilterSection title="Year">
+      <Select
+        value={!state.year ? 'any' : state.year}
+        onChange={(e) => {
+          dispatch({ type: 'SET_YEAR', payload: e.currentTarget.value })
+        }}
+      >
+        <option value="any">Any year</option>
+        {years.map((year) => (
+          <option key={year.value} value={year.value}>
+            {year.label}
+          </option>
+        ))}
+      </Select>
+    </FilterSection>
+  )
+}
+
+/**
+ * Channels
+ */
+const Channels = () => {
+  const { state, dispatch } = useFilters()
+  const { data } = useQuery<{
+    channels: {
+      id: number
+      is_premium: boolean
+      name: string
+    }[]
+  }>('channels', async () => {
+    const res = await fetch('/api/channels')
+
+    if (!res.ok) throw new Error('Could not fetch channels')
+
+    return res.json()
+  })
+
+  const premium = useMemo(() => {
+    return data?.channels.filter((c) => c.is_premium) || []
+  }, [data])
+  const channels = useMemo(() => {
+    return data?.channels.filter((c) => !c.is_premium) || []
+  }, [data])
+
+  return (
+    <>
+      {premium.length > 0 && (
         <FilterSection
           title="Premium Channels"
           button={{
-            label: 'None',
+            label: state.premium.length < premium.length ? 'None' : 'All',
             onClick: () => {
-              //
+              dispatch({
+                type: 'SET_PREMIUM',
+                payload:
+                  state.premium.length < premium.length
+                    ? premium.map((c) => c.id)
+                    : [],
+              })
             },
           }}
         >
-          <CheckboxFilter label="TVCine Top" />
-          <CheckboxFilter label="TVCine Edition" />
-          <CheckboxFilter label="TVCine Emotion" />
-          <CheckboxFilter label="TVCine Action" />
-          <CheckboxFilter label="TV Series" />
+          {premium.map((channel) => (
+            <CheckboxFilter
+              key={channel.id}
+              checked={!state.premium.includes(channel.id)}
+              onChange={() => {
+                dispatch({ type: 'TOGGLE_PREMIUM', payload: channel.id })
+              }}
+              label={channel.name}
+            />
+          ))}
         </FilterSection>
+      )}
+      {channels.length > 0 && (
         <FilterSection
           title="Channels"
           button={{
-            label: 'None',
+            label: state.channels.length < channels.length ? 'None' : 'All',
             onClick: () => {
-              //
+              dispatch({
+                type: 'SET_CHANNELS',
+                payload:
+                  state.channels.length < channels.length
+                    ? channels.map((c) => c.id)
+                    : [],
+              })
             },
           }}
         >
-          <CheckboxFilter label="RTP 1" />
-          <CheckboxFilter label="RTP 2" />
-          <CheckboxFilter label="SIC" />
-          <CheckboxFilter label="TVI" />
-          <CheckboxFilter label="Hollywood" />
-          <CheckboxFilter label="AXN" />
-          <CheckboxFilter label="AXN Movies" />
-          <CheckboxFilter label="AXN White" />
-          <CheckboxFilter label="SyFy" />
-          <CheckboxFilter label="Cinemundo" />
-          <CheckboxFilter label="Fox" />
-          <CheckboxFilter label="Fox Movies" />
-          <CheckboxFilter label="Fox Comedy" />
-          <CheckboxFilter label="Fox Life" />
-          <CheckboxFilter label="Fox Crime" />
-          <CheckboxFilter label="AMC" />
+          {channels.map((channel) => (
+            <CheckboxFilter
+              key={channel.id}
+              label={channel.name}
+              checked={!state.channels.includes(channel.id)}
+              onChange={() => {
+                dispatch({ type: 'TOGGLE_CHANNEL', payload: channel.id })
+              }}
+            />
+          ))}
         </FilterSection>
-      </Inner>
-    </Holder>
+      )}
+    </>
   )
 }
 

@@ -1,3 +1,5 @@
+import { useQuery } from 'react-query'
+
 import { styled } from 'lib/style'
 
 import { Box } from './UI'
@@ -13,106 +15,56 @@ const Wrapper = styled('main', {
 })
 
 export const MovieList = () => {
+  const { data } = useQuery<{
+    movies: {
+      id: number
+      poster: string
+      year: string
+      title: string
+      rating_imdb: string | null
+      rating_rotten_tomatoes: string | null
+    }[]
+  }>('movies', async () => {
+    const res = await fetch('/api/movies', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        offset: 0,
+      }),
+    })
+
+    if (!res.ok) throw new Error('Could not fetch movies')
+
+    return res.json()
+  })
+
   return (
     <Wrapper>
       <Box
         css={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
           gap: '$16',
+
+          '@xl': {
+            gridTemplateColumns: 'repeat(6, minmax(150px, 1fr))',
+          },
         }}
       >
-        <MovieThumb
-          image="https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
-          title="La vita è bella"
-          year="1997"
-          imdbRating="8.6"
-          rottenRating="80%"
-        />
-        <MovieThumb
-          image="https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
-          title="La vita è bella"
-          year="1997"
-          imdbRating="8.6"
-          rottenRating="80%"
-        />
-        <MovieThumb
-          image="https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
-          title="La vita è bella"
-          year="1997"
-          imdbRating="8.6"
-          rottenRating="80%"
-        />
-        <MovieThumb
-          image="https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
-          title="La vita è bella"
-          year="1997"
-          imdbRating="8.6"
-          rottenRating="80%"
-        />
-        <MovieThumb
-          image="https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
-          title="La vita è bella"
-          year="1997"
-          imdbRating="8.6"
-          rottenRating="80%"
-        />
-        <MovieThumb
-          image="https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
-          title="La vita è bella"
-          year="1997"
-          imdbRating="8.6"
-          rottenRating="80%"
-        />
-        <MovieThumb
-          image="https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
-          title="La vita è bella"
-          year="1997"
-          imdbRating="8.6"
-          rottenRating="80%"
-        />
-        <MovieThumb
-          image="https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
-          title="La vita è bella"
-          year="1997"
-          imdbRating="8.6"
-          rottenRating="80%"
-        />
-        <MovieThumb
-          image="https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
-          title="La vita è bella"
-          year="1997"
-          imdbRating="8.6"
-          rottenRating="80%"
-        />
-        <MovieThumb
-          image="https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
-          title="La vita è bella"
-          year="1997"
-          imdbRating="8.6"
-          rottenRating="80%"
-        />
-        <MovieThumb
-          image="https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
-          title="La vita è bella"
-          year="1997"
-          imdbRating="8.6"
-          rottenRating="80%"
-        />
-        <MovieThumb
-          image="https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
-          title="La vita è bella"
-          year="1997"
-          imdbRating="8.6"
-          rottenRating="80%"
-        />
-        <MovieThumb
-          image="https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
-          title="La vita è bella"
-          year="1997"
-          imdbRating="8.6"
-          rottenRating="80%"
-        />
+        {data?.movies.map((movie) => {
+          return (
+            <MovieThumb
+              key={movie.id}
+              image={movie.poster}
+              title={movie.title}
+              year={movie.year}
+              imdbRating={movie.rating_imdb}
+              rottenRating={movie.rating_rotten_tomatoes}
+            />
+          )
+        })}
       </Box>
     </Wrapper>
   )
