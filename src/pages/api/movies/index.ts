@@ -29,7 +29,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (
     channelsBlacklist &&
     Array.isArray(channelsBlacklist) &&
-    channelsBlacklist.every((c) => typeof c === 'string')
+    channelsBlacklist.every((c) => typeof c === 'number')
   ) {
     filters.push({
       schedules: {

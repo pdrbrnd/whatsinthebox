@@ -112,7 +112,7 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
             size="lg"
             onClick={() => fetchNextPage()}
           >
-            Load more
+            {isFetchingNextPage ? 'Loading...' : 'Load more'}
           </Button>
         </Box>
       )}
