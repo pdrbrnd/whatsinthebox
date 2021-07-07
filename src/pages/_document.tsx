@@ -28,6 +28,20 @@ export default class Document extends NextDocument {
           />
           <link
             rel="preload"
+            href="/fonts/Inter-Medium.woff"
+            as="font"
+            type="font/woff"
+            crossOrigin="anonymous"
+          />
+          <link
+            rel="preload"
+            href="/fonts/Inter-Medium.woff2"
+            as="font"
+            type="font/woff2"
+            crossOrigin="anonymous"
+          />
+          <link
+            rel="preload"
             href="/fonts/Inter-SemiBold.woff"
             as="font"
             type="font/woff"
@@ -48,6 +62,12 @@ export default class Document extends NextDocument {
   font-weight: 400;
   font-display: swap;
   src: url(/fonts/Inter-Regular.woff2) format('woff2'), url(/fonts/Inter-Regular.woff) format('woff');
+}
+@font-face {
+  font-family: 'Inter';
+  font-weight: 500;
+  font-display: swap;
+  src: url(/fonts/Inter-Medium.woff2) format('woff2'), url(/fonts/Inter-Medium.woff) format('woff');
 }
 @font-face {
   font-family: 'Inter';

@@ -10,9 +10,9 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
 }
 
 const Holder = styled('label', {
+  boxSizing: 'content-box',
   display: 'flex',
   alignItems: 'center',
-  cursor: 'pointer',
   minWidth: 'min-content',
 
   transition: 'background-color $appearance',
@@ -20,8 +20,12 @@ const Holder = styled('label', {
   p: '$6 $8',
   borderRadius: '$sm',
 
-  '&:hover': {
-    backgroundColor: '$subtle',
+  '@hover': {
+    cursor: 'pointer',
+
+    '&:hover': {
+      backgroundColor: '$subtle',
+    },
   },
 })
 
@@ -36,8 +40,8 @@ const Input = styled('input', {
 
 const FakeElement = styled('div', {
   position: 'relative',
-  width: '12px',
-  height: '12px',
+  width: '$checkbox',
+  height: '$checkbox',
 
   border: '1px solid $secondary',
 
@@ -47,11 +51,11 @@ const FakeElement = styled('div', {
     content: '""',
     position: 'absolute',
 
-    width: '6px',
-    height: '6px',
+    width: 'calc($checkbox / 2)',
+    height: 'calc($checkbox / 2)',
 
-    left: '3px',
-    top: '3px',
+    left: 'calc($sizes$checkbox / 4)',
+    top: 'calc($sizes$checkbox / 4)',
 
     backgroundColor: '$accent',
     transform: 'scale(0)',

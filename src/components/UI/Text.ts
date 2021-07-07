@@ -5,14 +5,14 @@ export const Text = styled('p', {
     variant: {
       caps: {
         fontSize: '$xs',
-        fontWeight: '$bold',
+        fontWeight: '$medium',
         lineHeight: '$none',
         textTransform: 'uppercase',
         letterSpacing: '$wide',
       },
       tiny: {
         fontSize: '$xs',
-        fontWeight: '$bold',
+        fontWeight: '$medium',
         lineHeight: '$none',
       },
       small: {
@@ -26,17 +26,17 @@ export const Text = styled('p', {
       big: {
         fontSize: '$lg',
         lineHeight: '$normal',
-        fontWeight: '$bold',
+        fontWeight: '$medium',
       },
       title: {
         fontSize: '$xl',
         lineHeight: '$small',
-        fontWeight: '$bold',
+        fontWeight: '$medium',
       },
       huge: {
         fontSize: '$xxl',
         lineHeight: '$tight',
-        fontWeight: '$bold',
+        fontWeight: '$medium',
       },
     },
   },

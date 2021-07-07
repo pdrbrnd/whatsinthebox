@@ -3,7 +3,7 @@ import { forwardRef, SelectHTMLAttributes } from 'react'
 import { styled, CSS } from 'lib/style'
 
 type Props = SelectHTMLAttributes<HTMLSelectElement> & {
-  variant?: 'normal' | 'caps'
+  variant?: 'normal' | 'small'
   css?: CSS
 }
 
@@ -16,12 +16,10 @@ const StyledSelect = styled('select', {
   appearance: 'none',
   position: 'relative',
 
-  cursor: 'pointer',
-
   display: 'flex',
   width: '100%',
 
-  p: '$6 $8',
+  p: '$4 $8',
   pr: '$32',
 
   border: '1px solid $muted',
@@ -32,8 +30,12 @@ const StyledSelect = styled('select', {
 
   transition: 'background-color $appearance, box-shadow $appearance',
 
-  '&:hover': {
-    backgroundColor: '$subtle',
+  '@hover': {
+    cursor: 'pointer',
+
+    '&:hover': {
+      backgroundColor: '$subtle',
+    },
   },
 
   '&:focus': {
@@ -50,9 +52,9 @@ const StyledSelect = styled('select', {
         lineHeight: '$double',
         fontSize: '$sm',
       },
-      caps: {
+      small: {
         fontSize: '$xs',
-        fontWeight: '$bold',
+        fontWeight: '$medium',
         lineHeight: '$normal',
       },
     },

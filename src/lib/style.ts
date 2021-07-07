@@ -24,13 +24,14 @@ export const space = {
 const palette = {
   gray50: 'hsla(0, 0%, 100%, 1)',
   gray100: 'hsla(220, 10%, 98%, 1)',
-  gray200: 'hsla(220, 10%, 90%, 1)',
+  gray200: 'hsla(220, 10%, 95%, 1)',
+  gray250: 'hsla(220, 10%, 88%, 1)',
   gray300: 'hsla(210, 8%, 72%, 1)',
-  gray400: 'hsla(210, 3%, 40%, 1)',
+  gray400: 'hsla(210, 5%, 48%, 1)',
   gray500: 'hsla(220, 2%, 26%, 1)',
-  gray600: 'hsla(223, 8%, 17%, 1)',
-  gray700: 'hsla(220, 6%, 13%, 1)',
-  gray800: 'hsla(220, 7%, 10%, 1)',
+  gray600: 'hsla(223, 8%, 19%, 1)',
+  gray700: 'hsla(220, 6%, 15%, 1)',
+  gray800: 'hsla(220, 7%, 11%, 1)',
   gray900: 'hsla(220, 7%, 8%, 1)',
   yellow: 'hsla(50, 100%, 60%, 1)',
   yellowAlpha: 'hsla(50, 100%, 60%, 0.6)',
@@ -60,9 +61,9 @@ const light = {
 
   subtle: '$gray100',
   muted: '$gray200',
-  tertiary: '$gray300',
+  tertiary: '$gray250',
   secondary: '$gray300',
-  foreground: '$gray900',
+  foreground: '$gray800',
   accent: '$blue',
   focus: '$blueAlpha',
 }
@@ -80,9 +81,11 @@ const stitchesConfig = createCss({
     },
     fontWeights: {
       normal: '400',
+      medium: '500',
       bold: '600',
     },
     fontSizes: {
+      xxs: toRem(10),
       xs: toRem(12),
       sm: toRem(14),
       md: toRem(16),
@@ -101,6 +104,11 @@ const stitchesConfig = createCss({
       wide: '0.04em',
     },
     space,
+    sizes: {
+      checkbox: '12px',
+      topbar: '40px',
+      sidebar: '250px',
+    },
     radii: {
       none: 0,
       xs: toRem(1),
