@@ -24,7 +24,7 @@ export const space = {
 const palette = {
   gray50: 'hsla(0, 0%, 100%, 1)',
   gray100: 'hsla(220, 10%, 98%, 1)',
-  gray200: 'hsla(220, 10%, 95%, 1)',
+  gray200: 'hsla(220, 10%, 93%, 1)',
   gray250: 'hsla(220, 10%, 88%, 1)',
   gray300: 'hsla(210, 8%, 72%, 1)',
   gray400: 'hsla(210, 5%, 48%, 1)',
@@ -106,6 +106,7 @@ const stitchesConfig = createCss({
       topbar: '40px',
       sidebar: '250px',
       scroll: 'calc(100vh - $topbar)',
+      details: '550px',
     },
     radii: {
       none: 0,

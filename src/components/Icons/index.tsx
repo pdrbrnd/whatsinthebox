@@ -158,3 +158,18 @@ export const RottenTomatoes = () => {
     </svg>
   )
 }
+
+export const Close = () => {
+  return (
+    <svg
+      width={12}
+      height={12}
+      viewBox="0 0 12 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path fill="currentColor" d="M11.294 0L12 .706.706 11.999 0 11.294z" />
+      <path fill="currentColor" d="M12 11.294l-.706.706L.001.706.706 0z" />
+    </svg>
+  )
+}

@@ -53,9 +53,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    const { data } = await fetchGraphql<{
+    const { data, errors } = await fetchGraphql<{
       movies: {
         id: number
+        imdb_id: string
         poster: string
         year: string
         title: string
@@ -72,6 +73,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             order_by: $order,
           ) {
             id
+            imdb_id
             poster
             year
             title
@@ -93,6 +95,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         },
       },
     })
+
+    if (!data || errors) {
+      throw {
+        message: `Could not fetch movies`,
+        errors: errors || [],
+      }
+    }
 
     res.status(200).json({ movies: data ? data.movies : [] })
   } catch (error) {

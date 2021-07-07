@@ -16,7 +16,12 @@ const Wrapper = styled('main', {
   p: '$24',
 })
 
-export const MovieList = () => {
+type Props = {
+  selectedMovie: string | null
+  onSelect: (imdbId: string) => void
+}
+
+export const MovieList = ({ onSelect, selectedMovie }: Props) => {
   const { state } = useFilters()
   const { premium, channels, genre, search, sort, year } = state
 
@@ -45,20 +50,22 @@ export const MovieList = () => {
     return res.json()
   }
 
-  const { data, fetchNextPage } = useInfiniteQuery<{
-    movies: {
-      id: number
-      poster: string
-      year: string
-      title: string
-      rating_imdb: string | null
-      rating_rotten_tomatoes: string | null
-    }[]
-  }>(`movies-${JSON.stringify(state)}`, fetchMovies, {
-    getNextPageParam: (_, pages) => {
-      return pages.reduce((acc, p) => (acc += p.movies.length), 0)
-    },
-  })
+  const { data, isLoading, fetchNextPage, isFetchingNextPage } =
+    useInfiniteQuery<{
+      movies: {
+        id: number
+        imdb_id: string
+        poster: string
+        year: string
+        title: string
+        rating_imdb: string | null
+        rating_rotten_tomatoes: string | null
+      }[]
+    }>(`movies-${JSON.stringify(state)}`, fetchMovies, {
+      getNextPageParam: (_, pages) => {
+        return pages.reduce((acc, p) => (acc += p.movies.length), 0)
+      },
+    })
 
   return (
     <Wrapper>
@@ -67,10 +74,6 @@ export const MovieList = () => {
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
           gap: '$16',
-
-          '@xl': {
-            gridTemplateColumns: 'repeat(6, minmax(150px, 1fr))',
-          },
         }}
       >
         {data?.pages.map((page, i) => (
@@ -79,29 +82,40 @@ export const MovieList = () => {
               return (
                 <MovieThumb
                   key={movie.id}
+                  imdbId={movie.imdb_id}
                   image={movie.poster}
                   title={movie.title}
                   year={movie.year}
                   imdbRating={movie.rating_imdb}
                   rottenRating={movie.rating_rotten_tomatoes}
+                  onSelect={() => onSelect(movie.imdb_id)}
+                  selectedMovie={selectedMovie}
                 />
               )
             })}
           </React.Fragment>
         ))}
       </Box>
-      <Box
-        css={{
-          mt: '$40',
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-        }}
-      >
-        <Button size="lg" onClick={() => fetchNextPage()}>
-          Load more
-        </Button>
-      </Box>
+      {!isLoading && (
+        <Box
+          css={{
+            pointerEvents: isFetchingNextPage ? 'none' : undefined,
+            opacity: isFetchingNextPage ? '0.5' : undefined,
+            mt: '$40',
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <Button
+            disabled={isFetchingNextPage}
+            size="lg"
+            onClick={() => fetchNextPage()}
+          >
+            Load more
+          </Button>
+        </Box>
+      )}
     </Wrapper>
   )
 }

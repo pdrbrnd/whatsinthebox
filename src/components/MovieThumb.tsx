@@ -6,7 +6,23 @@ import { Rating } from './Rating'
 const Holder = styled('div', {
   p: '$8',
   borderRadius: '$md',
-  transition: 'background-color $appearance',
+  transition: 'background-color $appearance, opacity $appearance',
+
+  '&:focus': {
+    outline: 'none',
+  },
+  '&:focus-visible': {
+    boxShadow: '$focus',
+  },
+
+  '@hover': {
+    cursor: 'pointer',
+
+    '&:hover': {
+      opacity: 1,
+      backgroundColor: '$muted',
+    },
+  },
 })
 
 const Poster = styled('div', {
@@ -31,24 +47,45 @@ const Poster = styled('div', {
 })
 
 type Props = {
+  imdbId: string
   image: string
   title: string
   year: string
   imdbRating?: string | null
   rottenRating?: string | null
-  isActive?: boolean
+  onSelect: () => void
+  selectedMovie?: string | null
 }
 
 export const MovieThumb = ({
+  imdbId,
   image,
   title,
   year,
   imdbRating,
   rottenRating,
-  isActive,
+  onSelect,
+  selectedMovie,
 }: Props) => {
+  const isActive = selectedMovie === imdbId
+  const otherIsActive = selectedMovie && !isActive
+
   return (
-    <Holder css={isActive ? { backgroundColor: '$muted' } : {}}>
+    <Holder
+      role="button"
+      tabIndex={0}
+      onKeyPress={(e) => {
+        if ([' ', 'Enter'].includes(e.key)) {
+          e.preventDefault()
+          onSelect()
+        }
+      }}
+      onClick={() => onSelect()}
+      css={{
+        backgroundColor: isActive ? '$muted' : undefined,
+        opacity: otherIsActive ? '0.5' : undefined,
+      }}
+    >
       <Poster style={{ backgroundImage: `url(${image})` }} />
       <Box css={{ mt: '$8' }}>
         <Text variant="tiny" css={{ mb: '$2' }}>

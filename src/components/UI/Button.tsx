@@ -20,6 +20,8 @@ export const Button = styled('button', {
   letterSpacing: '$wide',
   fontWeight: '$medium',
 
+  textDecoration: 'none',
+
   transition: 'background-color $appearance, opacity $appearance',
 
   '@hover': {
