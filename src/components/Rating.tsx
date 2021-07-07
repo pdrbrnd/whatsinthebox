@@ -23,7 +23,7 @@ export const Rating = ({ css, imdb, rotten }: Props): JSX.Element | null => {
       {rotten && (
         <Stack spacing="sm">
           <RottenTomatoes />
-          <Text variant="tiny">{imdb}</Text>
+          <Text variant="tiny">{rotten}</Text>
         </Stack>
       )}
     </Stack>

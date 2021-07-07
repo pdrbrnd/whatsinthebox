@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { styled } from 'lib/style'
 import { useFilters } from 'lib/filters'
+import useDebounce from 'common/hooks/useDebounce'
 
 import { Sort, Search, Info, Logo, Sun, Moon } from './Icons'
 import {
@@ -99,6 +100,15 @@ const MainHolder = styled('div', {
 
 const Main = () => {
   const { state, dispatch } = useFilters()
+  const [search, setSearch] = useState(state.search)
+  const debouncedSearch = useDebounce(search)
+
+  useEffect(
+    function commitSearch() {
+      dispatch({ type: 'SET_SEARCH', payload: debouncedSearch })
+    },
+    [dispatch, debouncedSearch]
+  )
 
   return (
     <MainHolder>
@@ -108,9 +118,9 @@ const Main = () => {
             <Search />
             <VanillaInput
               placeholder="Search title, director, actors, writer..."
-              value={state.search}
+              value={search}
               onChange={(e) => {
-                dispatch({ type: 'SET_SEARCH', payload: e.currentTarget.value })
+                setSearch(e.currentTarget.value)
               }}
             />
           </Stack>

@@ -51,6 +51,10 @@ export const Button = styled('button', {
         p: '$4 $8',
         fontSize: '$xs',
       },
+      lg: {
+        p: '$8 $12',
+        fontSize: '$xs',
+      },
     },
   },
   defaultVariants: {

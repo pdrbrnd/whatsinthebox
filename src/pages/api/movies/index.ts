@@ -44,10 +44,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (search && typeof search === 'string') {
     filters.push({
       _or: [
-        { title: { _ilike: search } },
-        { actors: { _ilike: search } },
-        { director: { _ilike: search } },
-        { writer: { _ilike: search } },
+        { title: { _ilike: `%${search}%` } },
+        { actors: { _ilike: `%${search}%` } },
+        { director: { _ilike: `%${search}%` } },
+        { writer: { _ilike: `%${search}%` } },
       ],
     })
   }
