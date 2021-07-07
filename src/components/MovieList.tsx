@@ -50,7 +50,7 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
     return res.json()
   }
 
-  const { data, isLoading, fetchNextPage, isFetchingNextPage } =
+  const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage } =
     useInfiniteQuery<{
       movies: {
         id: number
@@ -61,9 +61,12 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
         rating_imdb: string | null
         rating_rotten_tomatoes: string | null
       }[]
+      count: number
     }>(`movies-${JSON.stringify(state)}`, fetchMovies, {
-      getNextPageParam: (_, pages) => {
-        return pages.reduce((acc, p) => (acc += p.movies.length), 0)
+      getNextPageParam: (lastPage, pages) => {
+        const soFar = pages.reduce((acc, p) => (acc += p.movies.length), 0)
+
+        return soFar < lastPage.count ? soFar : undefined
       },
     })
 
@@ -96,7 +99,7 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
           </React.Fragment>
         ))}
       </Box>
-      {!isLoading && (
+      {!isLoading && hasNextPage && (
         <Box
           css={{
             pointerEvents: isFetchingNextPage ? 'none' : undefined,

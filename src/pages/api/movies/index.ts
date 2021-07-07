@@ -63,6 +63,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         rating_imdb: string | null
         rating_rotten_tomatoes: string | null
       }[]
+      movies_aggregate: {
+        aggregate: { count: number }
+      }
     }>({
       query: `
         query getMovies($where: movies_bool_exp!, $order: [movies_order_by!]!, $offset: Int = 0) {
@@ -79,6 +82,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             title
             rating_imdb
             rating_rotten_tomatoes
+          }
+
+          movies_aggregate(where: $where) {
+            aggregate {
+              count
+            }
           }
         }
       `,
@@ -103,7 +112,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    res.status(200).json({ movies: data ? data.movies : [] })
+    res.status(200).json({
+      movies: data ? data.movies : [],
+      count: data ? data.movies_aggregate.aggregate.count : 0,
+    })
   } catch (error) {
     res.status(401).json({ error })
   }
