@@ -1,9 +1,21 @@
+import dayjs from 'dayjs'
 import { useQuery } from 'react-query'
 import { useRouter } from 'next/dist/client/router'
 
 import { styled } from 'lib/style'
-import { Box, Stack, Button, Text } from 'components/UI'
-import { Close } from 'components/Icons'
+import {
+  Box,
+  Stack,
+  Button,
+  Text,
+  CloseButton,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+} from 'components/UI'
 import { Rating } from 'components/Rating'
 
 type Props = {
@@ -20,11 +32,21 @@ const Wrapper = styled('article', {
 
 const Header = styled('header', {
   borderBottom: '1px solid $muted',
-  p: '$16 $24',
+  p: '$12',
+  pl: '$24',
+  height: '50px',
 
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+})
+
+const Inner = styled('div', {
+  overflowY: 'auto',
+  scrollbarWidth: 'thin',
+  height: 'calc(100vh - $topbar - 50px)',
+
+  pb: '$40',
 })
 
 const Top = styled('div', {
@@ -57,6 +79,13 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
       rating_rotten_tomatoes: string | null
       runtime: string | null
       writer: string | null
+      schedules: {
+        title: string
+        start_time: string
+        channel: {
+          name: string
+        }
+      }[]
     }
   }>(`movie-${imdbId}`, async () => {
     const res = await fetch(`/api/movies/${imdbId}`)
@@ -83,6 +112,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
       rating_rotten_tomatoes,
       runtime,
       writer,
+      schedules,
     },
   } = data
 
@@ -92,122 +122,111 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
         {(rating_imdb || rating_rotten_tomatoes) && (
           <Rating imdb={rating_imdb} rotten={rating_rotten_tomatoes} />
         )}
-        <Box
-          role="button"
-          tabIndex={0}
-          onClick={() => onClose()}
-          onKeyPress={(e) => {
-            if ([' ', 'Enter'].includes(e.key)) {
-              e.preventDefault()
-              onClose()
-            }
-          }}
-          css={{
-            border: '1px solid $muted',
-            borderRadius: '$sm',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'opacity $appearance',
-            p: '$6',
-            '&:focus': {
-              outline: 'none',
-            },
-            '&:focus-visible': {
-              boxShadow: '$focus',
-            },
-            '@hover': {
-              cursor: 'pointer',
-              '&:hover': {
-                opacity: 0.75,
-              },
-            },
-          }}
-        >
-          <Close />
-        </Box>
+        <CloseButton onClick={() => onClose()} />
       </Header>
-      <Top>
-        {year && <Text variant="tiny">{year}</Text>}
-        {title && (
-          <Text variant="title" css={{ mt: '$4', mb: '$8' }}>
-            {title}
-          </Text>
-        )}
-        {plot && <Text>{plot}</Text>}
-      </Top>
-      <Bottom>
-        <Stack
-          direction="vertical"
-          spacing="xl"
-          css={{ alignItems: 'flex-start' }}
-        >
-          {genre && (
-            <Detail label="Genre">
-              <Stack css={{ mt: '$8' }} spacing="sm">
-                {genre.split(',').map((gen, i) => (
-                  <Text
-                    key={i}
-                    variant="caps"
-                    css={{
-                      display: 'inline-flex',
-                      p: '$2 $4',
-                      borderRadius: '$md',
-                      backgroundColor: '$muted',
-                    }}
-                  >
-                    {gen}
-                  </Text>
-                ))}
-              </Stack>
-            </Detail>
+      <Inner>
+        <Top>
+          {year && <Text variant="tiny">{year}</Text>}
+          {title && (
+            <Text variant="title" css={{ mt: '$4', mb: '$8' }}>
+              {title}
+            </Text>
           )}
-          {[
-            { label: 'Runtime', data: runtime },
-            { label: 'Director', data: director },
-            { label: 'Actors', data: actors },
-            { label: 'Writer', data: writer },
-            { label: 'Country', data: country },
-            { label: 'Language', data: language },
-          ].map((item, i) =>
-            item.data ? (
-              <Detail label={item.label} key={i}>
-                <Text variant="small">{item.data}</Text>
-              </Detail>
-            ) : null
-          )}
-        </Stack>
-        <Stack css={{ mt: '$40' }}>
-          <Button
-            css={{ display: 'inline-flex' }}
-            as="a"
-            href={`https://imdb.com/title/${imdb_id}`}
-            target="_blank"
-            rel="noopener noreferrer"
+          {plot && <Text>{plot}</Text>}
+        </Top>
+        <Table css={{ mt: '$24', mb: '$40' }}>
+          <Thead>
+            <Tr>
+              <Th css={{ width: '60%' }}>Title</Th>
+              <Th css={{ width: '20%' }}>Channel</Th>
+              <Th css={{ width: '10%' }}>Date</Th>
+              <Th css={{ width: '10%' }}>Time</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {schedules.map((schedule) => (
+              <Tr key={schedule.start_time}>
+                <Td>{schedule.title}</Td>
+                <Td>{schedule.channel.name}</Td>
+                <Td>{dayjs(schedule.start_time).format('DD/MM/YYYY')}</Td>
+                <Td>{dayjs(schedule.start_time).format('HH:MM')}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+        <Bottom>
+          <Stack
+            direction="vertical"
+            spacing="xl"
+            css={{ alignItems: 'flex-start' }}
           >
-            Open in IMDB
-          </Button>
-          {mode === 'aaargh' && (
+            {genre && (
+              <Detail label="Genre">
+                <Stack css={{ mt: '$8' }} spacing="sm">
+                  {genre.split(',').map((gen, i) => (
+                    <Text
+                      key={i}
+                      variant="caps"
+                      css={{
+                        display: 'inline-flex',
+                        p: '$2 $4',
+                        borderRadius: '$md',
+                        backgroundColor: '$muted',
+                      }}
+                    >
+                      {gen}
+                    </Text>
+                  ))}
+                </Stack>
+              </Detail>
+            )}
+            {[
+              { label: 'Runtime', data: runtime },
+              { label: 'Director', data: director },
+              { label: 'Actors', data: actors },
+              { label: 'Writer', data: writer },
+              { label: 'Country', data: country },
+              { label: 'Language', data: language },
+            ].map((item, i) =>
+              item.data ? (
+                <Detail label={item.label} key={i}>
+                  <Text variant="small">{item.data}</Text>
+                </Detail>
+              ) : null
+            )}
+          </Stack>
+          <Stack css={{ mt: '$40' }}>
             <Button
-              css={{
-                display: 'inline-flex',
-                backgroundColor: 'blueviolet',
-                color: 'white',
-                '&:hover': {
-                  opacity: 0.8,
-                  backgroundColor: 'blueviolet',
-                },
-              }}
+              css={{ display: 'inline-flex' }}
               as="a"
-              href={`stremio://detail/movie/${imdb_id}`}
+              href={`https://imdb.com/title/${imdb_id}`}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Open in Stremio
+              Open in IMDB
             </Button>
-          )}
-        </Stack>
-      </Bottom>
+            {mode === 'aaargh' && (
+              <Button
+                css={{
+                  display: 'inline-flex',
+                  backgroundColor: 'blueviolet',
+                  color: 'white',
+                  '&:hover': {
+                    opacity: 0.8,
+                    backgroundColor: 'blueviolet',
+                  },
+                }}
+                as="a"
+                href={`stremio://detail/movie/${imdb_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open in Stremio
+              </Button>
+            )}
+          </Stack>
+        </Bottom>
+      </Inner>
     </Wrapper>
   )
 }
