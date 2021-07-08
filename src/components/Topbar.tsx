@@ -1,5 +1,6 @@
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
+import { usePlausible } from 'next-plausible'
 
 import { styled } from 'lib/style'
 import { useFilters } from 'lib/filters'
@@ -48,6 +49,7 @@ const LeftHolder = styled('div', {
 })
 
 const Left = ({ onClick }: { onClick: () => void }) => {
+  const plausible = usePlausible()
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -59,7 +61,13 @@ const Left = ({ onClick }: { onClick: () => void }) => {
     <LeftHolder>
       <Stack>
         <Logo />
-        <IconButton icon={<Info />} onClick={onClick}>
+        <IconButton
+          icon={<Info />}
+          onClick={() => {
+            plausible('about')
+            onClick()
+          }}
+        >
           About
         </IconButton>
       </Stack>
@@ -94,6 +102,7 @@ const MainHolder = styled('div', {
 })
 
 const Main = () => {
+  const plausible = usePlausible()
   const { state, dispatch } = useFilters()
   const [search, setSearch] = useState(state.search)
   const debouncedSearch = useDebounce(search)
@@ -129,6 +138,11 @@ const Main = () => {
           css={{ color: '$foreground' }}
           value={state.sort}
           onChange={(e) => {
+            plausible('sort', {
+              props: {
+                value: e.currentTarget.value,
+              },
+            })
             dispatch({
               type: 'SET_SORT',
               payload: e.currentTarget.value as 'imdb' | 'rotten',

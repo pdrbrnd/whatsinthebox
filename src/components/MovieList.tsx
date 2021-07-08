@@ -1,6 +1,7 @@
 import ContentLoader from 'react-content-loader'
 import { useInfiniteQuery } from 'react-query'
 import React from 'react'
+import { usePlausible } from 'next-plausible'
 
 import { styled } from 'lib/style'
 import { useFilters } from 'lib/filters'
@@ -23,6 +24,7 @@ type Props = {
 }
 
 export const MovieList = ({ onSelect, selectedMovie }: Props) => {
+  const plausible = usePlausible()
   const { state } = useFilters()
   const { premium, channels, genre, search, sort, year, nationalOnly } = state
 
@@ -171,7 +173,10 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
           <Button
             disabled={isFetchingNextPage}
             size="lg"
-            onClick={() => fetchNextPage()}
+            onClick={() => {
+              fetchNextPage()
+              plausible('load more')
+            }}
           >
             {isFetchingNextPage ? 'Loading...' : 'Load more'}
           </Button>

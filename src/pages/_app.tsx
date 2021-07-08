@@ -1,6 +1,7 @@
 import { ThemeProvider } from 'next-themes'
 import type { AppProps } from 'next/app'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import PlausibleProvider from 'next-plausible'
 
 import { global, darkTheme, lightTheme } from 'lib/style'
 import { FiltersProvider } from 'lib/filters'
@@ -40,18 +41,20 @@ const App = ({ Component, pageProps }: AppProps): JSX.Element => {
   globalStyles()
 
   return (
-    <ThemeProvider
-      storageKey="witb-theme"
-      value={{ light: lightTheme.toString(), dark: darkTheme.toString() }}
-      attribute="class"
-      disableTransitionOnChange
-    >
-      <QueryClientProvider client={queryClient}>
-        <FiltersProvider>
-          <Component {...pageProps} />
-        </FiltersProvider>
-      </QueryClientProvider>
-    </ThemeProvider>
+    <PlausibleProvider domain="whatsinthebox.tv">
+      <ThemeProvider
+        storageKey="witb-theme"
+        value={{ light: lightTheme.toString(), dark: darkTheme.toString() }}
+        attribute="class"
+        disableTransitionOnChange
+      >
+        <QueryClientProvider client={queryClient}>
+          <FiltersProvider>
+            <Component {...pageProps} />
+          </FiltersProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </PlausibleProvider>
   )
 }
 

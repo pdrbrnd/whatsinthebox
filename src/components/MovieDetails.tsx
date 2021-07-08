@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import { useQuery } from 'react-query'
 import { useRouter } from 'next/dist/client/router'
 import ContentLoader from 'react-content-loader'
+import { usePlausible } from 'next-plausible'
 
 import { styled } from 'lib/style'
 import {
@@ -60,6 +61,7 @@ const Bottom = styled('div', {
 })
 
 export const MovieDetails = ({ imdbId, onClose }: Props) => {
+  const plausible = usePlausible()
   const {
     query: { mode },
   } = useRouter()
@@ -236,6 +238,13 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
               href={`https://imdb.com/title/${imdb_id}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                plausible('open imdb', {
+                  props: {
+                    imdbId: imdb_id,
+                  },
+                })
+              }}
             >
               <Stack spacing="lg">
                 <span>Open in IMDB</span>

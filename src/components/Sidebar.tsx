@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useQuery } from 'react-query'
 import ContentLoader from 'react-content-loader'
+import { usePlausible } from 'next-plausible'
 
 import { styled } from 'lib/style'
 import { useFilters } from 'lib/filters'
@@ -65,6 +66,7 @@ const genres = [
 ]
 
 const Genre = () => {
+  const plausible = usePlausible()
   const { dispatch, state } = useFilters()
 
   return (
@@ -74,7 +76,10 @@ const Genre = () => {
         value="any"
         label="Any genre"
         checked={!state.genre}
-        onChange={() => dispatch({ type: 'SET_GENRE', payload: null })}
+        onChange={() => {
+          plausible('genre', { props: { genre: null } })
+          dispatch({ type: 'SET_GENRE', payload: null })
+        }}
       />
       {genres.map((genre) => (
         <RadioFilter
@@ -83,7 +88,10 @@ const Genre = () => {
           value={genre.value}
           label={genre.label}
           checked={state.genre === genre.value}
-          onChange={() => dispatch({ type: 'SET_GENRE', payload: genre.value })}
+          onChange={() => {
+            plausible('genre', { props: { genre: genre.value } })
+            dispatch({ type: 'SET_GENRE', payload: genre.value })
+          }}
         />
       ))}
     </FilterSection>
@@ -94,13 +102,17 @@ const Genre = () => {
  * National
  */
 const National = () => {
+  const plausible = usePlausible()
   const { dispatch, state } = useFilters()
 
   return (
     <FilterSection title="Country">
       <CheckboxFilter
         checked={state.nationalOnly}
-        onChange={() => {
+        onChange={(e) => {
+          plausible('national', {
+            props: { onlyNational: e.currentTarget.checked },
+          })
           dispatch({ type: 'TOGGLE_NATIONAL' })
         }}
         label="Portuguese movies"
@@ -126,6 +138,7 @@ const years = [
 ]
 
 const Year = () => {
+  const plausible = usePlausible()
   const { dispatch, state } = useFilters()
 
   return (
@@ -133,6 +146,7 @@ const Year = () => {
       <Select
         value={!state.year ? 'any' : state.year}
         onChange={(e) => {
+          plausible('year', { props: { year: e.currentTarget.value } })
           dispatch({ type: 'SET_YEAR', payload: e.currentTarget.value })
         }}
       >
@@ -151,6 +165,7 @@ const Year = () => {
  * Channels
  */
 const Channels = () => {
+  const plausible = usePlausible()
   const { state, dispatch } = useFilters()
   const { data, isLoading } = useQuery<{
     channels: {
@@ -198,6 +213,11 @@ const Channels = () => {
           button={{
             label: state.premium.length < premium.length ? 'None' : 'All',
             onClick: () => {
+              plausible('all premium', {
+                props: {
+                  value: state.premium.length < premium.length ? 'None' : 'All',
+                },
+              })
               dispatch({
                 type: 'SET_PREMIUM',
                 payload:
@@ -212,7 +232,13 @@ const Channels = () => {
             <CheckboxFilter
               key={channel.id}
               checked={!state.premium.includes(channel.id)}
-              onChange={() => {
+              onChange={(e) => {
+                plausible('premium channel', {
+                  props: {
+                    channel: channel.id,
+                    checked: e.currentTarget.checked,
+                  },
+                })
                 dispatch({ type: 'TOGGLE_PREMIUM', payload: channel.id })
               }}
               label={channel.name}
@@ -226,6 +252,12 @@ const Channels = () => {
           button={{
             label: state.channels.length < channels.length ? 'None' : 'All',
             onClick: () => {
+              plausible('all channels', {
+                props: {
+                  value:
+                    state.channels.length < channels.length ? 'None' : 'All',
+                },
+              })
               dispatch({
                 type: 'SET_CHANNELS',
                 payload:
@@ -241,7 +273,13 @@ const Channels = () => {
               key={channel.id}
               label={channel.name}
               checked={!state.channels.includes(channel.id)}
-              onChange={() => {
+              onChange={(e) => {
+                plausible('channel', {
+                  props: {
+                    channel: channel.id,
+                    checked: e.currentTarget.checked,
+                  },
+                })
                 dispatch({ type: 'TOGGLE_CHANNEL', payload: channel.id })
               }}
             />

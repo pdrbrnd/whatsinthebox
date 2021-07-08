@@ -1,3 +1,5 @@
+import { usePlausible } from 'next-plausible'
+
 import { BigLogo, Coffee } from './Icons'
 import { Box, Text, CloseButton, Button, Stack } from './UI'
 
@@ -7,6 +9,8 @@ type Props = {
 }
 
 export const AboutModal = ({ isOpen, onClose }: Props) => {
+  const plausible = usePlausible()
+
   if (!isOpen) return null
 
   return (
@@ -82,6 +86,9 @@ export const AboutModal = ({ isOpen, onClose }: Props) => {
               target="_blank"
               rel="noopener noreferrer"
               size="lg"
+              onClick={() => {
+                plausible('buy me a coffee')
+              }}
               css={{
                 display: 'inline-flex',
                 backgroundColor: '$accent',

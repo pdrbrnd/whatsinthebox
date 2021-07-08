@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { usePlausible } from 'next-plausible'
 
 import { styled } from 'lib/style'
 
@@ -69,6 +70,8 @@ export const MovieThumb = ({
   onSelect,
   selectedMovie,
 }: Props) => {
+  const plausible = usePlausible()
+
   useEffect(() => {
     if (selectedMovie) {
       const target = document.getElementById(selectedMovie)
@@ -79,6 +82,15 @@ export const MovieThumb = ({
   const isActive = selectedMovie === imdbId
   const otherIsActive = selectedMovie && !isActive
 
+  const handleSelect = () => {
+    onSelect()
+    plausible('open details', {
+      props: {
+        imdbId: imdbId,
+      },
+    })
+  }
+
   return (
     <Holder
       id={imdbId} // scroll target
@@ -87,10 +99,10 @@ export const MovieThumb = ({
       onKeyPress={(e) => {
         if ([' ', 'Enter'].includes(e.key)) {
           e.preventDefault()
-          onSelect()
+          handleSelect()
         }
       }}
-      onClick={() => onSelect()}
+      onClick={() => handleSelect()}
       css={{
         backgroundColor: isActive ? '$muted' : undefined,
         opacity: otherIsActive ? '0.5' : undefined,
