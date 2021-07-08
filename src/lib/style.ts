@@ -113,6 +113,7 @@ const stitchesConfig = createCss({
       xs: toRem(1),
       sm: toRem(2),
       md: toRem(4),
+      pill: '99999px',
       full: '100%',
     },
     zIndices: {

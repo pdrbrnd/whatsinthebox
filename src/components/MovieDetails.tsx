@@ -17,6 +17,7 @@ import {
   Th,
   Td,
 } from 'components/UI'
+import { External } from 'components/Icons'
 import { Rating } from 'components/Rating'
 
 type Props = {
@@ -199,12 +200,12 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
                   {genre.split(',').map((gen, i) => (
                     <Text
                       key={i}
-                      variant="caps"
+                      variant="tiny"
                       css={{
                         display: 'inline-flex',
-                        p: '$2 $4',
-                        borderRadius: '$md',
-                        backgroundColor: '$muted',
+                        p: '$4 $8',
+                        borderRadius: '$pill',
+                        border: '1px solid $muted',
                       }}
                     >
                       {gen}
@@ -236,7 +237,12 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Open in IMDB
+              <Stack spacing="lg">
+                <span>Open in IMDB</span>
+                <Box css={{ color: '$secondary' }}>
+                  <External />
+                </Box>
+              </Stack>
             </Button>
             {mode === 'aaargh' && (
               <Button
