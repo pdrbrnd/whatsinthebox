@@ -5,6 +5,7 @@ import { usePlausible } from 'next-plausible'
 
 import { styled } from 'lib/style'
 import { useFilters } from 'lib/filters'
+import { useTranslations } from 'lib/i18n'
 
 import { Box, Button, Text } from './UI'
 import { MovieThumb } from './MovieThumb'
@@ -43,6 +44,7 @@ type Props = {
 }
 
 export const MovieList = ({ onSelect, selectedMovie }: Props) => {
+  const { t } = useTranslations()
   const plausible = usePlausible()
   const { state } = useFilters()
   const { premium, channels, genre, search, sort, year, nationalOnly } = state
@@ -63,7 +65,7 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
         channelsBlacklist:
           channelsBlacklist.length > 0 ? channelsBlacklist : null,
         minYear: year ? year : null,
-        maxYear: year ? (Number(year) + 10).toString() : null,
+        maxYear: year ? (Number(year) + 9).toString() : null,
         country: nationalOnly ? 'portugal' : null,
       }),
     })
@@ -111,10 +113,10 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
       >
         <Box css={{ mt: '10vh', textAlign: 'center' }}>
           <Text variant="big" css={{ fontWeight: '$medium' }}>
-            Nothing&apos;s here
+            {t('notFound.title')}
           </Text>
           <Text variant="small" css={{ mt: '$4', color: '$secondary' }}>
-            Try updating your filters
+            {t('notFound.text')}
           </Text>
         </Box>
         <img src="/travolta.gif" alt="no results found" />
@@ -165,7 +167,7 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
               plausible('load more')
             }}
           >
-            {isFetchingNextPage ? 'Loading...' : 'Load more'}
+            {isFetchingNextPage ? t('loadMore') : t('loading')}
           </Button>
         </Box>
       )}

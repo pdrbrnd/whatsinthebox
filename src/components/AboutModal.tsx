@@ -1,5 +1,7 @@
 import { usePlausible } from 'next-plausible'
 
+import { useTranslations } from 'lib/i18n'
+
 import { BigLogo, Coffee } from './Icons'
 import { Box, Text, CloseButton, Button, Stack } from './UI'
 
@@ -9,12 +11,14 @@ type Props = {
 }
 
 export const AboutModal = ({ isOpen, onClose }: Props) => {
+  const { t } = useTranslations()
   const plausible = usePlausible()
 
   if (!isOpen) return null
 
   return (
     <Box
+      onClick={() => onClose()}
       css={{
         position: 'absolute',
         zIndex: '$max',
@@ -28,6 +32,9 @@ export const AboutModal = ({ isOpen, onClose }: Props) => {
       }}
     >
       <Box
+        onClick={(e) => {
+          e.stopPropagation()
+        }}
         css={{
           background: '$panel',
           border: '1px solid $muted',
@@ -57,7 +64,7 @@ export const AboutModal = ({ isOpen, onClose }: Props) => {
             },
           }}
         >
-          <Text variant="caps">About</Text>
+          <Text variant="caps">{t('about')}</Text>
           <CloseButton onClick={onClose} />
         </Box>
         <Box
@@ -69,12 +76,9 @@ export const AboutModal = ({ isOpen, onClose }: Props) => {
             },
           }}
         >
-          <Text variant="huge">
-            Find good movies from the last se7en days of Portuguese television.
-          </Text>
+          <Text variant="huge">{t('about.title')}</Text>
           <Text variant="big" css={{ fontWeight: '$medium', mt: '$16' }}>
-            Sort by IMDb or Rotten Tomatoes rating, filter by genre, or go crazy
-            and search for movies, directors or actors.
+            {t('about.description')}
           </Text>
           <Box
             css={{
@@ -109,8 +113,7 @@ export const AboutModal = ({ isOpen, onClose }: Props) => {
           }}
         >
           <Text variant="small" css={{ fontWeight: '$medium' }}>
-            This app was made for fun, but every small donation is very much
-            appreciated and helps supporting ongoing costs.
+            {t('about.footer')}
           </Text>
           <Box css={{ mt: '$16', display: 'flex', justifyContent: 'center' }}>
             <Button

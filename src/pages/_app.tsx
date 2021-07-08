@@ -5,6 +5,7 @@ import PlausibleProvider from 'next-plausible'
 
 import { global, darkTheme, lightTheme } from 'lib/style'
 import { FiltersProvider } from 'lib/filters'
+import { TranslationsProvider } from 'lib/i18n'
 
 const globalStyles = global({
   html: {
@@ -50,7 +51,9 @@ const App = ({ Component, pageProps }: AppProps): JSX.Element => {
       >
         <QueryClientProvider client={queryClient}>
           <FiltersProvider>
-            <Component {...pageProps} />
+            <TranslationsProvider>
+              <Component {...pageProps} />
+            </TranslationsProvider>
           </FiltersProvider>
         </QueryClientProvider>
       </ThemeProvider>

@@ -5,6 +5,7 @@ import { usePlausible } from 'next-plausible'
 
 import { styled, CSS } from 'lib/style'
 import { useFilters } from 'lib/filters'
+import { useTranslations } from 'lib/i18n'
 
 import { Box, Text, Button, RadioFilter, Select, CheckboxFilter } from './UI'
 
@@ -86,12 +87,13 @@ export const Sidebar = ({ isVisibleMobile, onMobileClose }: Props) => {
  */
 
 const MobileSort = () => {
+  const { t } = useTranslations()
   const plausible = usePlausible()
   const { state, dispatch } = useFilters()
 
   return (
     <FilterSection
-      title="Sort"
+      title={t('sort')}
       css={{
         '@md': { display: 'none' },
       }}
@@ -123,34 +125,35 @@ const MobileSort = () => {
  * Genres
  */
 
-const genres = [
-  { label: 'Action', value: 'Action' },
-  { label: 'Adventure', value: 'Adventure' },
-  { label: 'Comedy', value: 'Comedy' },
-  { label: 'Crime', value: 'Crime' },
-  { label: 'Documentary', value: 'Documentary' },
-  { label: 'Drama', value: 'Drama' },
-  { label: 'History', value: 'History' },
-  { label: 'Horror', value: 'Horror' },
-  { label: 'Musical', value: 'Musical' },
-  { label: 'Romance', value: 'Romance' },
-  { label: 'Sci-Fi', value: 'Sci-Fi' },
-  { label: 'Sport', value: 'Sport' },
-  { label: 'Thriller', value: 'Thriller' },
-  { label: 'War', value: 'War' },
-  { label: 'Western', value: 'Western' },
-]
-
 const Genre = () => {
+  const { t } = useTranslations()
+  const genres = [
+    { label: t('genre.action'), value: 'Action' },
+    { label: t('genre.adventure'), value: 'Adventure' },
+    { label: t('genre.comedy'), value: 'Comedy' },
+    { label: t('genre.crime'), value: 'Crime' },
+    { label: t('genre.documentary'), value: 'Documentary' },
+    { label: t('genre.drama'), value: 'Drama' },
+    { label: t('genre.history'), value: 'History' },
+    { label: t('genre.horror'), value: 'Horror' },
+    { label: t('genre.musical'), value: 'Musical' },
+    { label: t('genre.romance'), value: 'Romance' },
+    { label: t('genre.scifi'), value: 'Sci-Fi' },
+    { label: t('genre.sport'), value: 'Sport' },
+    { label: t('genre.thriller'), value: 'Thriller' },
+    { label: t('genre.war'), value: 'War' },
+    { label: t('genre.western'), value: 'Western' },
+  ]
+
   const plausible = usePlausible()
   const { dispatch, state } = useFilters()
 
   return (
-    <FilterSection title="Genre">
+    <FilterSection title={t('genre')}>
       <RadioFilter
         name="genre"
         value="any"
-        label="Any genre"
+        label={t('genre.any')}
         checked={!state.genre}
         onChange={() => {
           plausible('genre', { props: { genre: null } })
@@ -178,11 +181,12 @@ const Genre = () => {
  * National
  */
 const National = () => {
+  const { t } = useTranslations()
   const plausible = usePlausible()
   const { dispatch, state } = useFilters()
 
   return (
-    <FilterSection title="Country">
+    <FilterSection title={t('country')}>
       <CheckboxFilter
         checked={state.nationalOnly}
         onChange={(e) => {
@@ -191,7 +195,7 @@ const National = () => {
           })
           dispatch({ type: 'TOGGLE_NATIONAL' })
         }}
-        label="Portuguese movies"
+        label={t('portugueseMovies')}
       />
     </FilterSection>
   )
@@ -214,11 +218,12 @@ const years = [
 ]
 
 const Year = () => {
+  const { t } = useTranslations()
   const plausible = usePlausible()
   const { dispatch, state } = useFilters()
 
   return (
-    <FilterSection title="Year">
+    <FilterSection title={t('year')}>
       <Select
         value={!state.year ? 'any' : state.year}
         onChange={(e) => {
@@ -226,7 +231,7 @@ const Year = () => {
           dispatch({ type: 'SET_YEAR', payload: e.currentTarget.value })
         }}
       >
-        <option value="any">Any year</option>
+        <option value="any">{t('year.any')}</option>
         {years.map((year) => (
           <option key={year.value} value={year.value}>
             {year.label}
@@ -241,6 +246,7 @@ const Year = () => {
  * Channels
  */
 const Channels = () => {
+  const { t } = useTranslations()
   const plausible = usePlausible()
   const { state, dispatch } = useFilters()
   const { data, isLoading } = useQuery<{
@@ -266,7 +272,7 @@ const Channels = () => {
 
   if (isLoading) {
     return (
-      <FilterSection title="Channels">
+      <FilterSection title={t('channels')}>
         <ContentLoader
           uniqueKey="channelsLoader"
           width={200}
@@ -286,9 +292,12 @@ const Channels = () => {
     <>
       {premium.length > 0 && (
         <FilterSection
-          title="Premium Channels"
+          title={t('channels.premium')}
           button={{
-            label: state.premium.length < premium.length ? 'None' : 'All',
+            label:
+              state.premium.length < premium.length
+                ? t('channels.none')
+                : t('channels.all'),
             onClick: () => {
               plausible('all premium', {
                 props: {
@@ -326,9 +335,12 @@ const Channels = () => {
       )}
       {channels.length > 0 && (
         <FilterSection
-          title="Channels"
+          title={t('channels')}
           button={{
-            label: state.channels.length < channels.length ? 'None' : 'All',
+            label:
+              state.channels.length < channels.length
+                ? t('channels.none')
+                : t('channels.all'),
             onClick: () => {
               plausible('all channels', {
                 props: {

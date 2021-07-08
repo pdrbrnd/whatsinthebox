@@ -20,6 +20,7 @@ import {
 } from 'components/UI'
 import { External } from 'components/Icons'
 import { Rating } from 'components/Rating'
+import { useTranslations } from 'lib/i18n'
 
 type Props = {
   imdbId: string
@@ -65,6 +66,7 @@ const Block = styled('div', {
 })
 
 export const MovieDetails = ({ imdbId, onClose }: Props) => {
+  const { t } = useTranslations()
   const plausible = usePlausible()
   const {
     query: { mode },
@@ -178,7 +180,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
         </Block>
         {/* Mobile cards */}
         <Block css={{ '@md': { display: 'none' } }}>
-          <Detail label="Schedules">
+          <Detail label={t('schedules')}>
             {schedules.map((schedule) => (
               <Box
                 key={schedule.start_time}
@@ -219,10 +221,10 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
         >
           <Thead>
             <Tr>
-              <Th css={{ width: '60%' }}>Title</Th>
-              <Th css={{ width: '20%' }}>Channel</Th>
-              <Th css={{ width: '10%' }}>Date</Th>
-              <Th css={{ width: '10%' }}>Time</Th>
+              <Th css={{ width: '60%' }}>{t('schedules.title')}</Th>
+              <Th css={{ width: '20%' }}>{t('schedules.channel')}</Th>
+              <Th css={{ width: '10%' }}>{t('schedules.date')}</Th>
+              <Th css={{ width: '10%' }}>{t('schedules.time')}</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -243,7 +245,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
             css={{ alignItems: 'flex-start' }}
           >
             {genre && (
-              <Detail label="Genre">
+              <Detail label={t('genre')}>
                 <Stack css={{ mt: '$8' }} spacing="sm">
                   {genre.split(',').map((gen, i) => (
                     <Text
@@ -263,12 +265,12 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
               </Detail>
             )}
             {[
-              { label: 'Runtime', data: runtime },
-              { label: 'Director', data: director },
-              { label: 'Actors', data: actors },
-              { label: 'Writer', data: writer },
-              { label: 'Country', data: country },
-              { label: 'Language', data: language },
+              { label: t('runtime'), data: runtime },
+              { label: t('director'), data: director },
+              { label: t('actors'), data: actors },
+              { label: t('writer'), data: writer },
+              { label: t('country'), data: country },
+              { label: t('language'), data: language },
             ].map((item, i) =>
               item.data ? (
                 <Detail label={item.label} key={i}>
@@ -294,7 +296,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
               }}
             >
               <Stack spacing="lg">
-                <span>Open in IMDB</span>
+                <span>{t('openImdb')}</span>
                 <Box css={{ color: '$secondary' }}>
                   <External />
                 </Box>

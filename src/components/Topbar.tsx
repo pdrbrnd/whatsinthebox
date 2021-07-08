@@ -5,6 +5,7 @@ import { usePlausible } from 'next-plausible'
 import { styled } from 'lib/style'
 import { useFilters } from 'lib/filters'
 import useDebounce from 'common/hooks/useDebounce'
+import { useTranslations } from 'lib/i18n'
 
 import { Sort, Search, Info, Logo, Sun, Moon, Filter } from './Icons'
 import {
@@ -71,6 +72,7 @@ const Left = ({
   sidebarMobile,
   setSidebarMobile,
 }: TopbarProps) => {
+  const { t } = useTranslations()
   const plausible = usePlausible()
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -90,7 +92,7 @@ const Left = ({
             onAboutOpen()
           }}
         >
-          About
+          {t('about')}
         </IconButton>
       </Stack>
       <Stack>
@@ -145,6 +147,7 @@ const MainHolder = styled('div', {
 })
 
 const Main = () => {
+  const { t } = useTranslations()
   const plausible = usePlausible()
   const { state, dispatch } = useFilters()
   const [search, setSearch] = useState(state.search)
@@ -164,7 +167,7 @@ const Main = () => {
           <Stack>
             <Search />
             <VanillaInput
-              placeholder="Search title, director, actors, writer..."
+              placeholder={t('search.placeholder')}
               value={search}
               onChange={(e) => {
                 setSearch(e.currentTarget.value)
@@ -174,7 +177,7 @@ const Main = () => {
         </Box>
       </Box>
       <Stack css={{ color: '$secondary', ml: '$8' }}>
-        <Text variant="caps">Sort</Text>
+        <Text variant="caps">{t('sort')}</Text>
         <Sort />
         <Select
           variant="small"
