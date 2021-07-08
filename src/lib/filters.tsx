@@ -1,4 +1,13 @@
-import { createContext, Dispatch, useContext, useMemo, useReducer } from 'react'
+import {
+  createContext,
+  Dispatch,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+} from 'react'
+
+const FILTERS_STORAGE_KEY = '__witb_filters__'
 
 type Filters = {
   genre: null | string
@@ -9,6 +18,7 @@ type Filters = {
   premium: number[]
 }
 
+type Hydrate = { type: 'HYDRATE'; payload: Filters }
 type SetGenre = { type: 'SET_GENRE'; payload: Filters['genre'] }
 type SetYear = { type: 'SET_YEAR'; payload: Filters['year'] }
 type SetSearch = { type: 'SET_SEARCH'; payload: Filters['search'] }
@@ -27,6 +37,7 @@ type Actions =
   | ToggleChannel
   | SetPremium
   | TogglePremium
+  | Hydrate
 
 type FiltersContextType = {
   state: Filters
@@ -44,6 +55,8 @@ const initialState: Filters = {
 
 const reducer = (state: Filters, action: Actions) => {
   switch (action.type) {
+    case 'HYDRATE':
+      return { ...action.payload, search: '' }
     case 'SET_GENRE':
       return { ...state, genre: action.payload }
     case 'SET_YEAR':
@@ -84,6 +97,21 @@ const FiltersContext = createContext<FiltersContextType>({
 
 export const FiltersProvider: React.FC = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
+
+  useEffect(function hydrate() {
+    const prevFilters = localStorage.getItem(FILTERS_STORAGE_KEY)
+
+    if (prevFilters) {
+      dispatch({ type: 'HYDRATE', payload: JSON.parse(prevFilters) })
+    }
+  }, [])
+
+  useEffect(
+    function sync() {
+      localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(state))
+    },
+    [state]
+  )
 
   const contextValue = useMemo(() => {
     return { state, dispatch }
