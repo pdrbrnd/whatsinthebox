@@ -73,7 +73,11 @@ const Left = ({ onClick }: { onClick: () => void }) => {
       </Stack>
       {resolvedTheme && mounted && (
         <Button
-          onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+          onClick={() => {
+            const targetTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
+            plausible('theme', { props: { theme: targetTheme } })
+            setTheme(targetTheme)
+          }}
         >
           <Box
             css={{
