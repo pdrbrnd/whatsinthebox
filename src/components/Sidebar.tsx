@@ -156,11 +156,11 @@ const MobileSearch = () => {
         '@md': { display: 'none' },
       }}
     >
-      <Box css={{ position: 'relative', px: '$4' }}>
+      <Box css={{ position: 'relative' }}>
         <Box
           css={{
             position: 'absolute',
-            left: '$12',
+            left: '$8',
             top: '50%',
             transform: 'translateY(-45%)',
             color: '$secondary',
