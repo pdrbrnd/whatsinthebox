@@ -8,6 +8,12 @@ export default class Document extends NextDocument {
     return (
       <Html lang="en">
         <Head>
+          <meta property="og:title" content="What's in the box" />
+          <meta
+            property="og:description"
+            content="Find good movies from the last 7 days of Portuguese television. "
+          />
+          <meta property="og:image" content="https://whatsinthebox.tv/og.png" />
           <style
             id="stitches"
             dangerouslySetInnerHTML={{ __html: getCssString() }}

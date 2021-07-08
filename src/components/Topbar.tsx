@@ -26,10 +26,10 @@ const Wrapper = styled('header', {
   height: '$topbar',
 })
 
-export const Topbar = () => {
+export const Topbar = ({ onAboutOpen }: { onAboutOpen: () => void }) => {
   return (
     <Wrapper>
-      <Left />
+      <Left onClick={onAboutOpen} />
       <Main />
     </Wrapper>
   )
@@ -47,7 +47,7 @@ const LeftHolder = styled('div', {
   justifyContent: 'space-between',
 })
 
-const Left = () => {
+const Left = ({ onClick }: { onClick: () => void }) => {
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -59,12 +59,7 @@ const Left = () => {
     <LeftHolder>
       <Stack>
         <Logo />
-        <IconButton
-          icon={<Info />}
-          onClick={() => {
-            // noop
-          }}
-        >
+        <IconButton icon={<Info />} onClick={onClick}>
           About
         </IconButton>
       </Stack>
