@@ -4,8 +4,16 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { fetchGraphql } from 'lib/graphql'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { offset, genre, minYear, maxYear, channelsBlacklist, search, sort } =
-    req.body
+  const {
+    offset,
+    genre,
+    minYear,
+    maxYear,
+    channelsBlacklist,
+    search,
+    sort,
+    country,
+  } = req.body
 
   let order_by: Record<string, string> = {
     rating_imdb: 'desc_nulls_last',
@@ -50,6 +58,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         { writer: { _ilike: `%${search}%` } },
       ],
     })
+  }
+  if (country && typeof country === 'string') {
+    filters.push({ country: { _ilike: `%${country}%` } })
   }
 
   try {

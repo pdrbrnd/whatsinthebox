@@ -16,6 +16,7 @@ type Filters = {
   sort: 'imdb' | 'rotten'
   channels: number[]
   premium: number[]
+  nationalOnly: boolean
 }
 
 type Hydrate = { type: 'HYDRATE'; payload: Filters }
@@ -27,6 +28,7 @@ type SetChannels = { type: 'SET_CHANNELS'; payload: number[] }
 type ToggleChannel = { type: 'TOGGLE_CHANNEL'; payload: number }
 type SetPremium = { type: 'SET_PREMIUM'; payload: number[] }
 type TogglePremium = { type: 'TOGGLE_PREMIUM'; payload: number }
+type ToggleNationalOnly = { type: 'TOGGLE_NATIONAL' }
 
 type Actions =
   | SetGenre
@@ -38,6 +40,7 @@ type Actions =
   | SetPremium
   | TogglePremium
   | Hydrate
+  | ToggleNationalOnly
 
 type FiltersContextType = {
   state: Filters
@@ -51,9 +54,10 @@ const initialState: Filters = {
   sort: 'imdb',
   channels: [],
   premium: [],
+  nationalOnly: false,
 }
 
-const reducer = (state: Filters, action: Actions) => {
+const reducer = (state: Filters, action: Actions): Filters => {
   switch (action.type) {
     case 'HYDRATE':
       return { ...action.payload, search: '' }
@@ -83,6 +87,8 @@ const reducer = (state: Filters, action: Actions) => {
           : [...state[key], action.payload],
       }
     }
+    case 'TOGGLE_NATIONAL':
+      return { ...state, nationalOnly: !state.nationalOnly }
     default:
       return state
   }

@@ -34,6 +34,7 @@ export const Sidebar = () => {
     <Holder>
       <Inner>
         <Genre />
+        <National />
         <Year />
         <Channels />
       </Inner>
@@ -89,6 +90,24 @@ const Genre = () => {
   )
 }
 
+/**
+ * National
+ */
+const National = () => {
+  const { dispatch, state } = useFilters()
+
+  return (
+    <FilterSection title="Country">
+      <CheckboxFilter
+        checked={state.nationalOnly}
+        onChange={() => {
+          dispatch({ type: 'TOGGLE_NATIONAL' })
+        }}
+        label="Portuguese movies"
+      />
+    </FilterSection>
+  )
+}
 /**
  * Years
  */

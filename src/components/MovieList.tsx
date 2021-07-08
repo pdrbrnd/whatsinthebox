@@ -24,7 +24,7 @@ type Props = {
 
 export const MovieList = ({ onSelect, selectedMovie }: Props) => {
   const { state } = useFilters()
-  const { premium, channels, genre, search, sort, year } = state
+  const { premium, channels, genre, search, sort, year, nationalOnly } = state
 
   const channelsBlacklist = [...premium, ...channels]
 
@@ -43,6 +43,7 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
           channelsBlacklist.length > 0 ? channelsBlacklist : null,
         minYear: year ? year : null,
         maxYear: year ? (Number(year) + 10).toString() : null,
+        country: nationalOnly ? 'portugal' : null,
       }),
     })
 
