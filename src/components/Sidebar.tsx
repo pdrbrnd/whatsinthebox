@@ -236,6 +236,7 @@ const Channels = () => {
                 plausible('premium channel', {
                   props: {
                     channel: channel.id,
+                    channelName: channel.name,
                     checked: e.currentTarget.checked,
                   },
                 })
@@ -277,6 +278,7 @@ const Channels = () => {
                 plausible('channel', {
                   props: {
                     channel: channel.id,
+                    channelName: channel.name,
                     checked: e.currentTarget.checked,
                   },
                 })

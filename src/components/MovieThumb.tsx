@@ -87,6 +87,7 @@ export const MovieThumb = ({
     plausible('open details', {
       props: {
         imdbId: imdbId,
+        title,
       },
     })
   }

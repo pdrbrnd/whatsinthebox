@@ -241,6 +241,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
               onClick={() => {
                 plausible('open imdb', {
                   props: {
+                    title: title,
                     imdbId: imdb_id,
                   },
                 })
