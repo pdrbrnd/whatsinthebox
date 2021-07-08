@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import { useQuery } from 'react-query'
 import { useRouter } from 'next/dist/client/router'
+import ContentLoader from 'react-content-loader'
 
 import { styled } from 'lib/style'
 import {
@@ -62,7 +63,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
     query: { mode },
   } = useRouter()
 
-  const { data } = useQuery<{
+  const { data, isLoading } = useQuery<{
     details: {
       id: string
       imdb_id: string
@@ -95,7 +96,39 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
     return res.json()
   })
 
-  if (!data) return <Wrapper />
+  if (isLoading || !data) {
+    return (
+      <Wrapper>
+        <Header>
+          <ContentLoader
+            width={100}
+            height={14}
+            backgroundColor="hsla(220, 10%, 50%, 0.1)"
+            foregroundColor="hsla(220, 10%, 50%, 0.05)"
+          >
+            <rect x="0" y="0" width="100" height="14" />
+          </ContentLoader>
+          <CloseButton onClick={() => onClose()} />
+        </Header>
+        <Inner>
+          <Top>
+            <ContentLoader
+              width={500}
+              height={170}
+              backgroundColor="hsla(220, 10%, 50%, 0.1)"
+              foregroundColor="hsla(220, 10%, 50%, 0.05)"
+            >
+              <rect x="0" y="0" width="50" height="15" />
+              <rect x="0" y="30" width="300" height="40" />
+              <rect x="0" y="90" width="500" height="20" />
+              <rect x="0" y="120" width="500" height="20" />
+              <rect x="0" y="150" width="300" height="20" />
+            </ContentLoader>
+          </Top>
+        </Inner>
+      </Wrapper>
+    )
+  }
 
   const {
     details: {

@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useQuery } from 'react-query'
+import ContentLoader from 'react-content-loader'
 
 import { styled } from 'lib/style'
 import { useFilters } from 'lib/filters'
@@ -132,7 +133,7 @@ const Year = () => {
  */
 const Channels = () => {
   const { state, dispatch } = useFilters()
-  const { data } = useQuery<{
+  const { data, isLoading } = useQuery<{
     channels: {
       id: number
       is_premium: boolean
@@ -152,6 +153,23 @@ const Channels = () => {
   const channels = useMemo(() => {
     return data?.channels.filter((c) => !c.is_premium) || []
   }, [data])
+
+  if (isLoading) {
+    return (
+      <FilterSection title="Channels">
+        <ContentLoader
+          width={200}
+          height={75}
+          backgroundColor="hsla(220, 10%, 50%, 0.1)"
+          foregroundColor="hsla(220, 10%, 50%, 0.05)"
+        >
+          <rect x="8" y="10" width="200" height="15" />
+          <rect x="8" y="35" width="170" height="15" />
+          <rect x="8" y="60" width="180" height="15" />
+        </ContentLoader>
+      </FilterSection>
+    )
+  }
 
   return (
     <>
