@@ -167,7 +167,7 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
               plausible('load more')
             }}
           >
-            {isFetchingNextPage ? t('loadMore') : t('loading')}
+            {isFetchingNextPage ? t('loading') : t('loadMore')}
           </Button>
         </Box>
       )}
