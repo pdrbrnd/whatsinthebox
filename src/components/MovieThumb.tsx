@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 import { styled } from 'lib/style'
 
 import { Box, Text } from './UI'
@@ -67,11 +69,19 @@ export const MovieThumb = ({
   onSelect,
   selectedMovie,
 }: Props) => {
+  useEffect(() => {
+    if (selectedMovie) {
+      const target = document.getElementById(selectedMovie)
+      if (target) target.scrollIntoView()
+    }
+  }, [selectedMovie])
+
   const isActive = selectedMovie === imdbId
   const otherIsActive = selectedMovie && !isActive
 
   return (
     <Holder
+      id={imdbId} // scroll target
       role="button"
       tabIndex={0}
       onKeyPress={(e) => {
