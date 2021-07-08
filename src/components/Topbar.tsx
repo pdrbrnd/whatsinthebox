@@ -1,9 +1,9 @@
 import { useTheme } from 'next-themes'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { usePlausible } from 'next-plausible'
 
 import { styled } from 'lib/style'
-import { useFilters } from 'lib/filters'
+import { useFilters, initialState } from 'lib/filters'
 import useDebounce from 'common/hooks/useDebounce'
 import { useTranslations } from 'lib/i18n'
 
@@ -76,6 +76,10 @@ const Left = ({
   const plausible = usePlausible()
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const { state } = useFilters()
+  const hasFilters = useMemo(() => {
+    return JSON.stringify(state) !== JSON.stringify(initialState)
+  }, [state])
 
   useEffect(() => {
     setMounted(true)
@@ -115,16 +119,32 @@ const Left = ({
             </Box>
           </Button>
         )}
-        <Button
-          onClick={() => setSidebarMobile(!sidebarMobile)}
-          css={{
-            backgroundColor: sidebarMobile ? '$accent' : '$muted',
-            color: sidebarMobile ? '$background' : '$foreground',
-            '@md': { display: 'none' },
-          }}
-        >
-          <Filter />
-        </Button>
+        <Box css={{ position: 'relative' }}>
+          {hasFilters && (
+            <Box
+              css={{
+                position: 'absolute',
+                top: 'calc($space$8 / 2 * -1)',
+                right: 'calc($space$8 / 2 * -1)',
+                backgroundColor: '#ff5050',
+                width: '$space$8',
+                height: '$space$8',
+                borderRadius: '$full',
+                zIndex: '$1',
+              }}
+            />
+          )}
+          <Button
+            onClick={() => setSidebarMobile(!sidebarMobile)}
+            css={{
+              backgroundColor: sidebarMobile ? '$accent' : '$muted',
+              color: sidebarMobile ? '$background' : '$foreground',
+              '@md': { display: 'none' },
+            }}
+          >
+            <Filter />
+          </Button>
+        </Box>
       </Stack>
     </LeftHolder>
   )

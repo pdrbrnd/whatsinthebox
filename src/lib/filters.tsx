@@ -47,7 +47,7 @@ type FiltersContextType = {
   dispatch: Dispatch<Actions>
 }
 
-const initialState: Filters = {
+export const initialState: Filters = {
   genre: null,
   year: null,
   search: '',
