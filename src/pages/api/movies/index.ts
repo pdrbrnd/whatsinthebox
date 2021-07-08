@@ -56,6 +56,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         { actors: { _ilike: `%${search}%` } },
         { director: { _ilike: `%${search}%` } },
         { writer: { _ilike: `%${search}%` } },
+        { schedules: { title: { _ilike: `%${search}%` } } },
       ],
     })
   }

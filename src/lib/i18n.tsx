@@ -12,7 +12,9 @@ const en = {
     'Sort by IMDb or Rotten Tomatoes rating, filter by genre, or go crazy and search for movies, directors or actors.',
   'about.footer':
     'This app was made for fun, but every small donation is very much appreciated and helps supporting ongoing costs.',
+  search: 'Search',
   'search.placeholder': 'Search title, director, actors, writer...',
+  'search.placeholder.short': 'Search movies',
   sort: 'Sort',
   genre: 'Genre',
   'genre.any': 'Any genre',
@@ -67,6 +69,8 @@ const pt: Translation = {
   'about.footer':
     'Esta aplicação foi feita por diversão, mas qualquer ajuda é muito apreciada e ajuda a suportar custos correntes.',
   'search.placeholder': 'Procurar título, realizador, actores, escritor...',
+  'search.placeholder.short': 'Pesquisar filmes',
+  search: 'Pesquisar',
   sort: 'Ordenar',
   genre: 'Categoria',
   'genre.any': 'Todas categorias',

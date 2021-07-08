@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from 'react-query'
 import ContentLoader from 'react-content-loader'
 import { usePlausible } from 'next-plausible'
@@ -6,8 +6,18 @@ import { usePlausible } from 'next-plausible'
 import { styled, CSS } from 'lib/style'
 import { useFilters } from 'lib/filters'
 import { useTranslations } from 'lib/i18n'
+import useDebounce from 'common/hooks/useDebounce'
 
-import { Box, Text, Button, RadioFilter, Select, CheckboxFilter } from './UI'
+import { Search } from './Icons'
+import {
+  Box,
+  Text,
+  Button,
+  RadioFilter,
+  Select,
+  CheckboxFilter,
+  Input,
+} from './UI'
 
 const Holder = styled('aside', {
   width: '$sidebar',
@@ -72,6 +82,7 @@ export const Sidebar = ({ isVisibleMobile, onMobileClose }: Props) => {
       >
         <Inner>
           <MobileSort />
+          <MobileSearch />
           <Genre />
           <National />
           <Year />
@@ -117,6 +128,55 @@ const MobileSort = () => {
         <option value="imdb">IMDB</option>
         <option value="rotten">Rotten Tomatoes</option>
       </Select>
+    </FilterSection>
+  )
+}
+
+/**
+ * Search (mobile only)
+ */
+
+const MobileSearch = () => {
+  const { t } = useTranslations()
+  const { state, dispatch } = useFilters()
+  const [search, setSearch] = useState(state.search)
+  const debouncedSearch = useDebounce(search)
+
+  useEffect(
+    function commitSearch() {
+      dispatch({ type: 'SET_SEARCH', payload: debouncedSearch })
+    },
+    [dispatch, debouncedSearch]
+  )
+
+  return (
+    <FilterSection
+      title={t('search')}
+      css={{
+        '@md': { display: 'none' },
+      }}
+    >
+      <Box css={{ position: 'relative', px: '$4' }}>
+        <Box
+          css={{
+            position: 'absolute',
+            left: '$12',
+            top: '50%',
+            transform: 'translateY(-45%)',
+            color: '$secondary',
+          }}
+        >
+          <Search />
+        </Box>
+        <Input
+          css={{ pl: '$28' }}
+          placeholder={t('search.placeholder.short')}
+          value={search}
+          onChange={(e) => {
+            setSearch(e.currentTarget.value)
+          }}
+        />
+      </Box>
     </FilterSection>
   )
 }
