@@ -72,7 +72,7 @@ export const MovieThumb = ({
   useEffect(() => {
     if (selectedMovie) {
       const target = document.getElementById(selectedMovie)
-      if (target) target.scrollIntoView()
+      if (target) target.scrollIntoView({ behavior: 'smooth' })
     }
   }, [selectedMovie])
 
