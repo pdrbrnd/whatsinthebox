@@ -7,6 +7,10 @@ import { Box, Stack } from './'
 export const Button = styled('button', {
   position: 'relative',
 
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+
   appearance: 'none',
   boxShadow: 'none',
   border: 0,

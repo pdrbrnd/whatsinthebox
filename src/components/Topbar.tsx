@@ -6,7 +6,7 @@ import { styled } from 'lib/style'
 import { useFilters } from 'lib/filters'
 import useDebounce from 'common/hooks/useDebounce'
 
-import { Sort, Search, Info, Logo, Sun, Moon } from './Icons'
+import { Sort, Search, Info, Logo, Sun, Moon, Filter } from './Icons'
 import {
   Box,
   Stack,
@@ -27,10 +27,24 @@ const Wrapper = styled('header', {
   height: '$topbar',
 })
 
-export const Topbar = ({ onAboutOpen }: { onAboutOpen: () => void }) => {
+type TopbarProps = {
+  onAboutOpen: () => void
+  sidebarMobile: boolean
+  setSidebarMobile: (status: boolean) => void
+}
+
+export const Topbar = ({
+  onAboutOpen,
+  sidebarMobile,
+  setSidebarMobile,
+}: TopbarProps) => {
   return (
     <Wrapper>
-      <Left onClick={onAboutOpen} />
+      <Left
+        onAboutOpen={onAboutOpen}
+        sidebarMobile={sidebarMobile}
+        setSidebarMobile={setSidebarMobile}
+      />
       <Main />
     </Wrapper>
   )
@@ -38,17 +52,25 @@ export const Topbar = ({ onAboutOpen }: { onAboutOpen: () => void }) => {
 
 const LeftHolder = styled('div', {
   height: '100%',
-  width: '$sidebar',
-  borderRight: '1px solid $muted',
 
   px: '$8',
 
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+
+  width: '100%',
+
+  '@md': {
+    width: '$sidebar',
+  },
 })
 
-const Left = ({ onClick }: { onClick: () => void }) => {
+const Left = ({
+  onAboutOpen,
+  sidebarMobile,
+  setSidebarMobile,
+}: TopbarProps) => {
   const plausible = usePlausible()
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -65,44 +87,61 @@ const Left = ({ onClick }: { onClick: () => void }) => {
           icon={<Info />}
           onClick={() => {
             plausible('about')
-            onClick()
+            onAboutOpen()
           }}
         >
           About
         </IconButton>
       </Stack>
-      {resolvedTheme && mounted && (
-        <Button
-          onClick={() => {
-            const targetTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
-            plausible('theme', { props: { theme: targetTheme } })
-            setTheme(targetTheme)
-          }}
-        >
-          <Box
-            css={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+      <Stack>
+        {resolvedTheme && mounted && (
+          <Button
+            onClick={() => {
+              const targetTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
+              plausible('theme', { props: { theme: targetTheme } })
+              setTheme(targetTheme)
             }}
           >
-            {resolvedTheme === 'dark' ? <Sun /> : <Moon />}
-          </Box>
+            <Box
+              css={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {resolvedTheme === 'dark' ? <Sun /> : <Moon />}
+            </Box>
+          </Button>
+        )}
+        <Button
+          onClick={() => setSidebarMobile(!sidebarMobile)}
+          css={{
+            backgroundColor: sidebarMobile ? '$accent' : '$muted',
+            color: sidebarMobile ? '$background' : '$foreground',
+            '@md': { display: 'none' },
+          }}
+        >
+          <Filter />
         </Button>
-      )}
+      </Stack>
     </LeftHolder>
   )
 }
 
 const MainHolder = styled('div', {
-  height: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
+  display: 'none',
 
-  px: '$8',
+  '@md': {
+    borderLeft: '1px solid $muted',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
 
-  flex: 1,
+    px: '$8',
+
+    flex: 1,
+  },
 })
 
 const Main = () => {

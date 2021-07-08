@@ -36,12 +36,16 @@ const Wrapper = styled('article', {
 const Header = styled('header', {
   borderBottom: '1px solid $muted',
   p: '$12',
-  pl: '$24',
   height: '50px',
 
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+
+  '@md': {
+    pr: '$12',
+    pl: '$24',
+  },
 })
 
 const Inner = styled('div', {
@@ -52,12 +56,12 @@ const Inner = styled('div', {
   pb: '$40',
 })
 
-const Top = styled('div', {
-  p: '$16 $24',
-})
+const Block = styled('div', {
+  p: '$16 $12',
 
-const Bottom = styled('div', {
-  p: '$16 $24',
+  '@md': {
+    p: '$16 $24',
+  },
 })
 
 export const MovieDetails = ({ imdbId, onClose }: Props) => {
@@ -104,6 +108,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
       <Wrapper>
         <Header>
           <ContentLoader
+            uniqueKey="detailTopLoader"
             width={100}
             height={14}
             backgroundColor="hsla(220, 10%, 50%, 0.1)"
@@ -114,8 +119,9 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
           <CloseButton onClick={() => onClose()} />
         </Header>
         <Inner>
-          <Top>
+          <Block>
             <ContentLoader
+              uniqueKey="detailContentLoader"
               width={500}
               height={170}
               backgroundColor="hsla(220, 10%, 50%, 0.1)"
@@ -127,7 +133,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
               <rect x="0" y="120" width="500" height="20" />
               <rect x="0" y="150" width="300" height="20" />
             </ContentLoader>
-          </Top>
+          </Block>
         </Inner>
       </Wrapper>
     )
@@ -161,7 +167,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
         <CloseButton onClick={() => onClose()} />
       </Header>
       <Inner>
-        <Top>
+        <Block>
           {year && <Text variant="tiny">{year}</Text>}
           {title && (
             <Text variant="title" css={{ mt: '$4', mb: '$8' }}>
@@ -169,8 +175,48 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
             </Text>
           )}
           {plot && <Text>{plot}</Text>}
-        </Top>
-        <Table css={{ mt: '$24', mb: '$40' }}>
+        </Block>
+        {/* Mobile cards */}
+        <Block css={{ '@md': { display: 'none' } }}>
+          <Detail label="Schedules">
+            {schedules.map((schedule) => (
+              <Box
+                key={schedule.start_time}
+                css={{
+                  mt: '$8',
+                  border: '1px solid $muted',
+                  borderRadius: '$md',
+                  '&:not(:last-child)': {
+                    mb: '$8',
+                  },
+                }}
+              >
+                <Stack
+                  css={{
+                    justifyContent: 'space-between',
+                    p: '$8',
+                    borderBottom: '1px solid $muted',
+                  }}
+                >
+                  <Text variant="caps">{schedule.channel.name}</Text>
+                  <Text variant="caps">
+                    {dayjs(schedule.start_time).format('DD/MM/YYYY HH:MM')}
+                  </Text>
+                </Stack>
+                <Box css={{ p: '$8' }}>
+                  <Text variant="small">{schedule.title}</Text>
+                </Box>
+              </Box>
+            ))}
+          </Detail>
+        </Block>
+        {/* Desktop table */}
+        <Table
+          css={{
+            display: 'none',
+            '@md': { display: 'table', mt: '$24', mb: '$40' },
+          }}
+        >
           <Thead>
             <Tr>
               <Th css={{ width: '60%' }}>Title</Th>
@@ -190,7 +236,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
             ))}
           </Tbody>
         </Table>
-        <Bottom>
+        <Block>
           <Stack
             direction="vertical"
             spacing="xl"
@@ -274,7 +320,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
               </Button>
             )}
           </Stack>
-        </Bottom>
+        </Block>
       </Inner>
     </Wrapper>
   )
@@ -283,7 +329,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
 const Detail: React.FC<{ label: string }> = ({ label, children }) => {
   return (
     <Box>
-      <Text variant="caps" css={{ mb: '$4' }}>
+      <Text variant="caps" css={{ mb: '$4', color: '$secondary' }}>
         {label}
       </Text>
       {children}

@@ -10,8 +10,8 @@ import { useAboutModal } from 'common/hooks/useAboutModal'
 
 export const App = () => {
   const { isOpen, onOpen, onClose } = useAboutModal()
-
   const [selectedMovie, selectMovie] = useState<null | string>(null) // uses imdb ID
+  const [sidebarMobile, setSidebarMobile] = useState(false)
 
   return (
     <>
@@ -23,9 +23,16 @@ export const App = () => {
           overflow: 'hidden',
         }}
       >
-        <Topbar onAboutOpen={onOpen} />
+        <Topbar
+          onAboutOpen={onOpen}
+          sidebarMobile={sidebarMobile}
+          setSidebarMobile={setSidebarMobile}
+        />
         <Box css={{ position: 'relative', display: 'flex' }}>
-          <Sidebar />
+          <Sidebar
+            isVisibleMobile={sidebarMobile}
+            onMobileClose={() => setSidebarMobile(false)}
+          />
           <Box
             css={{
               width: '100%',
@@ -41,8 +48,13 @@ export const App = () => {
               right: 0,
               bottom: 0,
               transition: 'transform $motion',
-              width: '$details',
               transform: `translateX(${selectedMovie ? '0' : '100%'})`,
+
+              width: '100%',
+
+              '@md': {
+                width: '$details',
+              },
             }}
           >
             {selectedMovie && (

@@ -26,17 +26,17 @@ export const Text = styled('p', {
       big: {
         fontSize: '$lg',
         lineHeight: '$normal',
-        fontWeight: '$medium',
+        fontWeight: '$bold',
       },
       title: {
         fontSize: '$xl',
         lineHeight: '$small',
-        fontWeight: '$medium',
+        fontWeight: '$bold',
       },
       huge: {
         fontSize: '$xxl',
         lineHeight: '$tight',
-        fontWeight: '$medium',
+        fontWeight: '$bold',
       },
     },
   },

@@ -230,3 +230,22 @@ export const Coffee = () => {
     </svg>
   )
 }
+
+export const Filter = () => {
+  return (
+    <svg
+      width={14}
+      height={14}
+      viewBox="0 0 14 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M9 8l5-4V0H0v4l5 4v6h4V8zm-1 5V7.52l5-4V1H1v2.52l5 4V13h2z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}

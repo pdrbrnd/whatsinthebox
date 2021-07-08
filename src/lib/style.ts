@@ -86,9 +86,9 @@ const stitchesConfig = createCss({
       xs: toRem(12),
       sm: toRem(14),
       md: toRem(16),
-      lg: toRem(20),
-      xl: toRem(32),
-      xxl: toRem(36),
+      lg: `clamp(${toRem(16)}, 2vw, ${toRem(20)})`,
+      xl: `clamp(${toRem(24)}, 2vw, ${toRem(32)})`,
+      xxl: `clamp(${toRem(28)}, 2vw, ${toRem(36)})`,
     },
     lineHeights: {
       none: 1,

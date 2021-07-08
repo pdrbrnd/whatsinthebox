@@ -3,14 +3,12 @@ import { useQuery } from 'react-query'
 import ContentLoader from 'react-content-loader'
 import { usePlausible } from 'next-plausible'
 
-import { styled } from 'lib/style'
+import { styled, CSS } from 'lib/style'
 import { useFilters } from 'lib/filters'
 
 import { Box, Text, Button, RadioFilter, Select, CheckboxFilter } from './UI'
 
 const Holder = styled('aside', {
-  position: 'relative',
-
   width: '$sidebar',
   height: '$scroll',
 
@@ -18,6 +16,15 @@ const Holder = styled('aside', {
 
   backgroundColor: '$panel',
   borderRight: '1px solid $muted',
+
+  position: 'absolute',
+  zIndex: '$3',
+
+  transition: 'transform $motion',
+
+  '@md': {
+    position: 'relative',
+  },
 })
 
 const Inner = styled('div', {
@@ -30,16 +37,85 @@ const Inner = styled('div', {
   scrollbarWidth: 'thin',
 })
 
-export const Sidebar = () => {
+type Props = {
+  isVisibleMobile: boolean
+  onMobileClose: () => void
+}
+export const Sidebar = ({ isVisibleMobile, onMobileClose }: Props) => {
   return (
-    <Holder>
-      <Inner>
-        <Genre />
-        <National />
-        <Year />
-        <Channels />
-      </Inner>
-    </Holder>
+    <>
+      {isVisibleMobile && (
+        <Box
+          onClick={() => onMobileClose()}
+          css={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'transparent',
+
+            zIndex: '$2',
+            '@md': {
+              display: 'none',
+            },
+          }}
+        />
+      )}
+      <Holder
+        css={{
+          transform: `translateX(${isVisibleMobile ? '0' : '-100%'})`,
+
+          '@md': {
+            transform: 'none',
+          },
+        }}
+      >
+        <Inner>
+          <MobileSort />
+          <Genre />
+          <National />
+          <Year />
+          <Channels />
+        </Inner>
+      </Holder>
+    </>
+  )
+}
+
+/**
+ * Sort (Mobile Only)
+ */
+
+const MobileSort = () => {
+  const plausible = usePlausible()
+  const { state, dispatch } = useFilters()
+
+  return (
+    <FilterSection
+      title="Sort"
+      css={{
+        '@md': { display: 'none' },
+      }}
+    >
+      <Select
+        variant="small"
+        css={{ color: '$foreground' }}
+        value={state.sort}
+        onChange={(e) => {
+          plausible('sort', {
+            props: {
+              value: e.currentTarget.value,
+            },
+          })
+          dispatch({
+            type: 'SET_SORT',
+            payload: e.currentTarget.value as 'imdb' | 'rotten',
+          })
+        }}
+      >
+        <option value="imdb">IMDB</option>
+        <option value="rotten">Rotten Tomatoes</option>
+      </Select>
+    </FilterSection>
   )
 }
 
@@ -192,6 +268,7 @@ const Channels = () => {
     return (
       <FilterSection title="Channels">
         <ContentLoader
+          uniqueKey="channelsLoader"
           width={200}
           height={75}
           backgroundColor="hsla(220, 10%, 50%, 0.1)"
@@ -298,14 +375,22 @@ type FilterSectionProps = {
     label: string
     onClick: () => void
   }
+  css?: CSS
 }
+
+const FilterSectionHolder = styled('div', {
+  pt: '$16',
+  pb: '$8',
+  px: '$8',
+})
 const FilterSection: React.FC<FilterSectionProps> = ({
   title,
   button,
   children,
+  css,
 }) => {
   return (
-    <Box css={{ pt: '$16', pb: '$8', px: '$8' }}>
+    <FilterSectionHolder css={css}>
       <Box
         css={{
           display: 'flex',
@@ -326,6 +411,6 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         )}
       </Box>
       {children}
-    </Box>
+    </FilterSectionHolder>
   )
 }
