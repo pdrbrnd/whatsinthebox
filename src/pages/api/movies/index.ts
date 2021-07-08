@@ -24,7 +24,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     filters.push({ year: { _gte: minYear } })
   }
   if (maxYear && typeof maxYear === 'string') {
-    filters.push({ year: { _gte: minYear } })
+    filters.push({ year: { _lte: maxYear } })
   }
   if (
     channelsBlacklist &&

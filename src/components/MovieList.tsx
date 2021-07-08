@@ -41,7 +41,7 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
         channelsBlacklist:
           channelsBlacklist.length > 0 ? channelsBlacklist : null,
         minYear: year ? year : null,
-        maxYear: year ? year + 10 : null,
+        maxYear: year ? (Number(year) + 10).toString() : null,
       }),
     })
 
