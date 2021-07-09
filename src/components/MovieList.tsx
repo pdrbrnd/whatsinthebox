@@ -4,8 +4,9 @@ import React from 'react'
 import { usePlausible } from 'next-plausible'
 
 import { styled } from 'lib/style'
-import { useFilters } from 'lib/filters'
+import { useFilters } from 'lib/store'
 import { useTranslations } from 'lib/i18n'
+import useDebounce from 'common/hooks/useDebounce'
 
 import { Box, Button, Text } from './UI'
 import { MovieThumb } from './MovieThumb'
@@ -46,8 +47,12 @@ type Props = {
 export const MovieList = ({ onSelect, selectedMovie }: Props) => {
   const { t } = useTranslations()
   const plausible = usePlausible()
-  const { state } = useFilters()
-  const { premium, channels, genre, search, sort, year, nationalOnly } = state
+
+  const filters = useFilters()
+  const debouncedFilters = useDebounce(filters)
+
+  const { premium, channels, genre, search, sort, year, nationalOnly } =
+    debouncedFilters
 
   const channelsBlacklist = [...premium, ...channels]
 
@@ -87,7 +92,7 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
         rating_rotten_tomatoes: string | null
       }[]
       count: number
-    }>(`movies-${JSON.stringify(state)}`, fetchMovies, {
+    }>(`movies-${JSON.stringify(debouncedFilters)}`, fetchMovies, {
       getNextPageParam: (lastPage, pages) => {
         const soFar = pages.reduce((acc, p) => (acc += p.movies.length), 0)
 

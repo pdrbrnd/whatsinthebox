@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 
-import { Box } from 'components/UI'
-import { Topbar } from 'components/Topbar'
-import { Sidebar } from 'components/Sidebar'
-import { MovieList } from 'components/MovieList'
-import { MovieDetails } from 'components/MovieDetails'
-import { AboutModal } from 'components/AboutModal'
 import { useAboutModal } from 'common/hooks/useAboutModal'
+
+import { Box } from './UI'
+import { Topbar } from './Topbar'
+import { Sidebar } from './Sidebar'
+import { MovieDetails } from './MovieDetails'
+import { AboutModal } from './AboutModal'
+import { MovieList } from './MovieList'
 
 export const App = () => {
   const { isOpen, onOpen, onClose } = useAboutModal()

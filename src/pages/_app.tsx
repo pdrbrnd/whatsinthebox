@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import PlausibleProvider from 'next-plausible'
 
 import { global, darkTheme, lightTheme } from 'lib/style'
-import { FiltersProvider } from 'lib/filters'
 import { TranslationsProvider } from 'lib/i18n'
 
 const globalStyles = global({
@@ -50,11 +49,9 @@ const App = ({ Component, pageProps }: AppProps): JSX.Element => {
         disableTransitionOnChange
       >
         <QueryClientProvider client={queryClient}>
-          <FiltersProvider>
-            <TranslationsProvider>
-              <Component {...pageProps} />
-            </TranslationsProvider>
-          </FiltersProvider>
+          <TranslationsProvider>
+            <Component {...pageProps} />
+          </TranslationsProvider>
         </QueryClientProvider>
       </ThemeProvider>
     </PlausibleProvider>

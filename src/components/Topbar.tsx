@@ -3,9 +3,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { usePlausible } from 'next-plausible'
 
 import { styled } from 'lib/style'
-import { useFilters, initialState } from 'lib/filters'
-import useDebounce from 'common/hooks/useDebounce'
 import { useTranslations } from 'lib/i18n'
+import { useStore, useFilters, initialState } from 'lib/store'
 
 import { Sort, Search, Info, Logo, Sun, Moon, Filter } from './Icons'
 import {
@@ -75,10 +74,11 @@ const Left = ({
   const { t } = useTranslations()
   const plausible = usePlausible()
 
-  const { state } = useFilters()
+  const filters = useFilters()
+
   const hasFilters = useMemo(() => {
-    return JSON.stringify(state) !== JSON.stringify(initialState)
-  }, [state])
+    return JSON.stringify(filters) !== JSON.stringify(initialState)
+  }, [filters])
 
   return (
     <LeftHolder>
@@ -181,16 +181,10 @@ const MainHolder = styled('div', {
 const Main = () => {
   const { t } = useTranslations()
   const plausible = usePlausible()
-  const { state, dispatch } = useFilters()
-  const [search, setSearch] = useState(state.search)
-  const debouncedSearch = useDebounce(search)
 
-  useEffect(
-    function commitSearch() {
-      dispatch({ type: 'SET_SEARCH', payload: debouncedSearch })
-    },
-    [dispatch, debouncedSearch]
-  )
+  const set = useStore((state) => state.set)
+  const search = useStore((state) => state.search)
+  const sort = useStore((state) => state.sort)
 
   return (
     <MainHolder>
@@ -202,7 +196,7 @@ const Main = () => {
               placeholder={t('search.placeholder')}
               value={search}
               onChange={(e) => {
-                setSearch(e.currentTarget.value)
+                set('search', e.currentTarget.value)
               }}
             />
           </Stack>
@@ -214,17 +208,14 @@ const Main = () => {
         <Select
           variant="small"
           css={{ color: '$foreground' }}
-          value={state.sort}
+          value={sort}
           onChange={(e) => {
             plausible('sort', {
               props: {
                 value: e.currentTarget.value,
               },
             })
-            dispatch({
-              type: 'SET_SORT',
-              payload: e.currentTarget.value as 'imdb' | 'rotten',
-            })
+            set('sort', e.currentTarget.value as 'imdb' | 'rotten')
           }}
         >
           <option value="imdb">IMDB</option>

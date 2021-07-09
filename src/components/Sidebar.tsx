@@ -1,12 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useQuery } from 'react-query'
 import ContentLoader from 'react-content-loader'
 import { usePlausible } from 'next-plausible'
 
 import { styled, CSS } from 'lib/style'
-import { useFilters } from 'lib/filters'
 import { useTranslations } from 'lib/i18n'
-import useDebounce from 'common/hooks/useDebounce'
+import { useStore } from 'lib/store'
 
 import { Search } from './Icons'
 import {
@@ -101,7 +100,8 @@ export const Sidebar = ({ isVisibleMobile, onMobileClose }: Props) => {
 const MobileSort = () => {
   const { t } = useTranslations()
   const plausible = usePlausible()
-  const { state, dispatch } = useFilters()
+  const sort = useStore((state) => state.sort)
+  const set = useStore((state) => state.set)
 
   return (
     <FilterSection
@@ -112,17 +112,14 @@ const MobileSort = () => {
     >
       <Select
         css={{ color: '$foreground' }}
-        value={state.sort}
+        value={sort}
         onChange={(e) => {
           plausible('sort', {
             props: {
               value: e.currentTarget.value,
             },
           })
-          dispatch({
-            type: 'SET_SORT',
-            payload: e.currentTarget.value as 'imdb' | 'rotten',
-          })
+          set('sort', e.currentTarget.value as 'imdb' | 'rotten')
         }}
       >
         <option value="imdb">IMDB</option>
@@ -138,16 +135,8 @@ const MobileSort = () => {
 
 const MobileSearch = () => {
   const { t } = useTranslations()
-  const { state, dispatch } = useFilters()
-  const [search, setSearch] = useState(state.search)
-  const debouncedSearch = useDebounce(search)
-
-  useEffect(
-    function commitSearch() {
-      dispatch({ type: 'SET_SEARCH', payload: debouncedSearch })
-    },
-    [dispatch, debouncedSearch]
-  )
+  const search = useStore((state) => state.search)
+  const set = useStore((state) => state.set)
 
   return (
     <FilterSection
@@ -173,7 +162,7 @@ const MobileSearch = () => {
           placeholder={t('search.placeholder.short')}
           value={search}
           onChange={(e) => {
-            setSearch(e.currentTarget.value)
+            set('search', e.currentTarget.value)
           }}
         />
       </Box>
@@ -187,6 +176,8 @@ const MobileSearch = () => {
 
 const Genre = () => {
   const { t } = useTranslations()
+  const plausible = usePlausible()
+
   const genres = [
     { label: t('genre.action'), value: 'Action' },
     { label: t('genre.adventure'), value: 'Adventure' },
@@ -207,8 +198,8 @@ const Genre = () => {
     { label: t('genre.western'), value: 'Western' },
   ]
 
-  const plausible = usePlausible()
-  const { dispatch, state } = useFilters()
+  const genre = useStore((state) => state.genre)
+  const set = useStore((state) => state.set)
 
   return (
     <FilterSection title={t('genre')}>
@@ -216,22 +207,22 @@ const Genre = () => {
         name="genre"
         value="any"
         label={t('genre.any')}
-        checked={!state.genre}
+        checked={!genre}
         onChange={() => {
           plausible('genre', { props: { genre: null } })
-          dispatch({ type: 'SET_GENRE', payload: null })
+          set('genre', null)
         }}
       />
-      {genres.map((genre) => (
+      {genres.map((g) => (
         <RadioFilter
-          key={genre.value}
+          key={g.value}
           name="genre"
-          value={genre.value}
-          label={genre.label}
-          checked={state.genre === genre.value}
+          value={g.value}
+          label={g.label}
+          checked={genre === g.value}
           onChange={() => {
-            plausible('genre', { props: { genre: genre.value } })
-            dispatch({ type: 'SET_GENRE', payload: genre.value })
+            plausible('genre', { props: { genre: g.value } })
+            set('genre', g.value)
           }}
         />
       ))}
@@ -245,17 +236,18 @@ const Genre = () => {
 const National = () => {
   const { t } = useTranslations()
   const plausible = usePlausible()
-  const { dispatch, state } = useFilters()
+  const nationalOnly = useStore((state) => state.nationalOnly)
+  const set = useStore((state) => state.set)
 
   return (
     <FilterSection title={t('country')}>
       <CheckboxFilter
-        checked={state.nationalOnly}
+        checked={nationalOnly}
         onChange={(e) => {
           plausible('national', {
             props: { onlyNational: e.currentTarget.checked },
           })
-          dispatch({ type: 'TOGGLE_NATIONAL' })
+          set('nationalOnly', e.currentTarget.checked)
         }}
         label={t('portugueseMovies')}
       />
@@ -282,15 +274,17 @@ const years = [
 const Year = () => {
   const { t } = useTranslations()
   const plausible = usePlausible()
-  const { dispatch, state } = useFilters()
+
+  const year = useStore((state) => state.year)
+  const set = useStore((state) => state.set)
 
   return (
     <FilterSection title={t('year')}>
       <Select
-        value={!state.year ? 'any' : state.year}
+        value={!year ? 'any' : year}
         onChange={(e) => {
           plausible('year', { props: { year: e.currentTarget.value } })
-          dispatch({ type: 'SET_YEAR', payload: e.currentTarget.value })
+          set('year', e.currentTarget.value)
         }}
       >
         <option value="any">{t('year.any')}</option>
@@ -310,7 +304,12 @@ const Year = () => {
 const Channels = () => {
   const { t } = useTranslations()
   const plausible = usePlausible()
-  const { state, dispatch } = useFilters()
+
+  const storeChannels = useStore((state) => state.channels)
+  const storePremium = useStore((state) => state.premium)
+  const set = useStore((state) => state.set)
+  const toggleChannel = useStore((state) => state.toggleChannel)
+
   const { data, isLoading } = useQuery<{
     channels: {
       id: number
@@ -357,22 +356,21 @@ const Channels = () => {
           title={t('channels.premium')}
           button={{
             label:
-              state.premium.length < premium.length
+              storePremium.length < premium.length
                 ? t('channels.none')
                 : t('channels.all'),
             onClick: () => {
               plausible('all premium', {
                 props: {
-                  value: state.premium.length < premium.length ? 'None' : 'All',
+                  value: storePremium.length < premium.length ? 'None' : 'All',
                 },
               })
-              dispatch({
-                type: 'SET_PREMIUM',
-                payload:
-                  state.premium.length < premium.length
-                    ? premium.map((c) => c.id)
-                    : [],
-              })
+              set(
+                'premium',
+                storePremium.length < premium.length
+                  ? premium.map((c) => c.id)
+                  : []
+              )
             },
           }}
         >
@@ -381,7 +379,7 @@ const Channels = () => {
             .map((channel) => (
               <CheckboxFilter
                 key={channel.id}
-                checked={!state.premium.includes(channel.id)}
+                checked={!storePremium.includes(channel.id)}
                 onChange={(e) => {
                   plausible('premium channel', {
                     props: {
@@ -390,7 +388,7 @@ const Channels = () => {
                       checked: e.currentTarget.checked,
                     },
                   })
-                  dispatch({ type: 'TOGGLE_PREMIUM', payload: channel.id })
+                  toggleChannel('premium', channel.id)
                 }}
                 label={channel.name}
               />
@@ -402,23 +400,22 @@ const Channels = () => {
           title={t('channels')}
           button={{
             label:
-              state.channels.length < channels.length
+              storeChannels.length < channels.length
                 ? t('channels.none')
                 : t('channels.all'),
             onClick: () => {
               plausible('all channels', {
                 props: {
                   value:
-                    state.channels.length < channels.length ? 'None' : 'All',
+                    storeChannels.length < channels.length ? 'None' : 'All',
                 },
               })
-              dispatch({
-                type: 'SET_CHANNELS',
-                payload:
-                  state.channels.length < channels.length
-                    ? channels.map((c) => c.id)
-                    : [],
-              })
+              set(
+                'channels',
+                storeChannels.length < channels.length
+                  ? channels.map((c) => c.id)
+                  : []
+              )
             },
           }}
         >
@@ -428,7 +425,7 @@ const Channels = () => {
               <CheckboxFilter
                 key={channel.id}
                 label={channel.name}
-                checked={!state.channels.includes(channel.id)}
+                checked={!storeChannels.includes(channel.id)}
                 onChange={(e) => {
                   plausible('channel', {
                     props: {
@@ -437,7 +434,7 @@ const Channels = () => {
                       checked: e.currentTarget.checked,
                     },
                   })
-                  dispatch({ type: 'TOGGLE_CHANNEL', payload: channel.id })
+                  toggleChannel('normal', channel.id)
                 }}
               />
             ))}
