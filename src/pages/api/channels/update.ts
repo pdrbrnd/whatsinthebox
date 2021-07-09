@@ -38,7 +38,8 @@ async function getChannels(): Promise<Channel[]> {
       .filter(
         (channel) =>
           CHANNEL_TARGET_CATEGORIES.includes(channel.category) ||
-          CHANNEL_ID_WHITELIST.includes(channel.id)
+          CHANNEL_ID_WHITELIST.includes(channel.id) ||
+          channel.name !== 'TV Series'
       )
       // Filter HD channels: the programming is the same
       .filter((channel) => !/HD$/g.test(channel.id))
