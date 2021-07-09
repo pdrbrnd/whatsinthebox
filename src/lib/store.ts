@@ -1,5 +1,6 @@
 import create from 'zustand'
 import shallow from 'zustand/shallow'
+import { persist } from 'zustand/middleware'
 
 export const initialState: StoreState = {
   sort: 'imdb',
@@ -29,22 +30,30 @@ type StoreFunctions = {
   toggleChannel: (type: 'premium' | 'normal', id: number) => void
 }
 
-export const useStore = create<StoreState & StoreFunctions>((set) => ({
-  ...initialState,
-  set: (key, value) => set((state) => ({ ...state, [key]: value })),
-  toggleChannel: (type, id) =>
-    set((state) => {
-      const key = type === 'normal' ? 'channels' : 'premium'
-      const inList = state[key].includes(id)
+export const useStore = create<StoreState & StoreFunctions>(
+  persist(
+    (set) => ({
+      ...initialState,
+      set: (key, value) => set((state) => ({ ...state, [key]: value })),
+      toggleChannel: (type, id) =>
+        set((state) => {
+          const key = type === 'normal' ? 'channels' : 'premium'
+          const inList = state[key].includes(id)
 
-      return {
-        ...state,
-        [key]: inList
-          ? state[key].filter((channel) => channel !== id)
-          : [...state[key], id],
-      }
+          return {
+            ...state,
+            [key]: inList
+              ? state[key].filter((channel) => channel !== id)
+              : [...state[key], id],
+          }
+        }),
     }),
-}))
+    {
+      name: '___witb_persisted_store___',
+      blacklist: ['search', 'set', 'toggleChannel'],
+    }
+  )
+)
 
 export const useFilters = (): StoreState => {
   const state = useStore(

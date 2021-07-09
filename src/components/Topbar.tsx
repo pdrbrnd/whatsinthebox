@@ -47,12 +47,17 @@ const Left = ({
 }: TopbarProps) => {
   const { t } = useTranslations()
   const plausible = usePlausible()
-
   const filters = useFilters()
 
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const hasFilters = useMemo(() => {
-    return JSON.stringify(filters) !== JSON.stringify(initialState)
-  }, [filters])
+    return mounted && JSON.stringify(filters) !== JSON.stringify(initialState)
+  }, [mounted, filters])
 
   return (
     <LeftHolder>
