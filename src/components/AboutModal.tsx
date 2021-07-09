@@ -2,6 +2,7 @@ import { usePlausible } from 'next-plausible'
 
 import { useTranslations } from 'lib/i18n'
 import { styled } from 'lib/style'
+import { PlausibleEvents } from 'common/constants'
 
 import { BigLogo, Coffee } from './Icons'
 import { Box, Text, CloseButton, Button, Stack } from './UI'
@@ -52,7 +53,7 @@ export const AboutModal = ({ isOpen, onClose }: Props) => {
               rel="noopener noreferrer"
               size="lg"
               onClick={() => {
-                plausible('buy me a coffee')
+                plausible(PlausibleEvents.BuyMeACoffee)
               }}
             >
               <Stack>

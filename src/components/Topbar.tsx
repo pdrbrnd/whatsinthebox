@@ -5,6 +5,8 @@ import { usePlausible } from 'next-plausible'
 import { styled } from 'lib/style'
 import { useTranslations } from 'lib/i18n'
 import { useStore, useFilters, initialState } from 'lib/store'
+import useDebounce from 'common/hooks/useDebounce'
+import { PlausibleEvents } from 'common/constants'
 
 import { Sort, Search, Info, Logo, Sun, Moon, Filter } from './Icons'
 import {
@@ -66,7 +68,7 @@ const Left = ({
         <IconButton
           icon={<Info />}
           onClick={() => {
-            plausible('about')
+            plausible(PlausibleEvents.OpenAbout)
             onAboutOpen()
           }}
         >
@@ -101,6 +103,10 @@ const ThemeButton = () => {
 
   useEffect(() => {
     setMounted(true)
+
+    plausible(PlausibleEvents.InitialTheme, { props: { theme: resolvedTheme } })
+    // I know it will become stale, but I just want the initial value
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (!resolvedTheme || !mounted) return null
@@ -109,7 +115,10 @@ const ThemeButton = () => {
     <Button
       onClick={() => {
         const targetTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
-        plausible('theme', { props: { theme: targetTheme } })
+
+        plausible(PlausibleEvents.ChangeTheme, {
+          props: { theme: targetTheme },
+        })
         setTheme(targetTheme)
       }}
     >
@@ -133,6 +142,13 @@ const Main = () => {
   const set = useStore((state) => state.set)
   const search = useStore((state) => state.search)
   const sort = useStore((state) => state.sort)
+
+  const debouncedSearch = useDebounce(search)
+  useEffect(() => {
+    if (debouncedSearch) {
+      plausible(PlausibleEvents.Search, { props: { search: debouncedSearch } })
+    }
+  }, [debouncedSearch, plausible])
 
   return (
     <MainHolder>
@@ -158,7 +174,7 @@ const Main = () => {
           css={{ color: '$foreground' }}
           value={sort}
           onChange={(e) => {
-            plausible('sort', {
+            plausible(PlausibleEvents.Sort, {
               props: {
                 value: e.currentTarget.value,
               },

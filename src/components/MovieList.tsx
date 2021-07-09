@@ -6,6 +6,7 @@ import { styled } from 'lib/style'
 import { useFilters } from 'lib/store'
 import { useTranslations } from 'lib/i18n'
 import useDebounce from 'common/hooks/useDebounce'
+import { PlausibleEvents } from 'common/constants'
 
 import { Button } from './UI'
 import { MovieThumb } from './MovieThumb'
@@ -117,7 +118,7 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
             size="lg"
             onClick={() => {
               fetchNextPage()
-              plausible('load more')
+              plausible(PlausibleEvents.LoadMore)
             }}
           >
             {isFetchingNextPage ? t('loading') : t('loadMore')}

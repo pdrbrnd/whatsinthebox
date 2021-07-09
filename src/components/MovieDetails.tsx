@@ -22,6 +22,7 @@ import {
 import { External } from 'components/Icons'
 import { Rating } from 'components/Rating'
 import { useTranslations } from 'lib/i18n'
+import { PlausibleEvents } from 'common/constants'
 
 type Props = {
   imdbId: string
@@ -158,10 +159,10 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => {
-                plausible('open imdb', {
+                plausible(PlausibleEvents.OpenImdb, {
                   props: {
                     title: title,
-                    imdbId: imdb_id,
+                    href: `https://imdb.com/title/${imdb_id}`,
                   },
                 })
               }}

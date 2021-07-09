@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { usePlausible } from 'next-plausible'
 
 import { styled } from 'lib/style'
+import { PlausibleEvents } from 'common/constants'
 
 import { Box, Text } from './UI'
 import { Rating } from './Rating'
@@ -41,10 +42,10 @@ export const MovieThumb = ({
 
   const handleSelect = () => {
     onSelect()
-    plausible('open details', {
+    plausible(PlausibleEvents.OpenDetails, {
       props: {
-        imdbId: imdbId,
         title,
+        imdbId,
       },
     })
   }

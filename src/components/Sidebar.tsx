@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useQuery } from 'react-query'
 import ContentLoader from 'react-content-loader'
 import { usePlausible } from 'next-plausible'
@@ -6,6 +6,8 @@ import { usePlausible } from 'next-plausible'
 import { styled, CSS } from 'lib/style'
 import { useTranslations } from 'lib/i18n'
 import { useStore } from 'lib/store'
+import useDebounce from 'common/hooks/useDebounce'
+import { PlausibleEvents } from 'common/constants'
 
 import { Search } from './Icons'
 import {
@@ -26,20 +28,7 @@ export const Sidebar = ({ isVisibleMobile, onMobileClose }: Props) => {
   return (
     <>
       {isVisibleMobile && (
-        <Box
-          onClick={() => onMobileClose()}
-          css={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'transparent',
-
-            zIndex: '$2',
-            '@md': {
-              display: 'none',
-            },
-          }}
-        />
+        <MobileCloseClickArea onClick={() => onMobileClose()} />
       )}
       <Holder
         css={{
@@ -84,7 +73,7 @@ const MobileSort = () => {
         css={{ color: '$foreground' }}
         value={sort}
         onChange={(e) => {
-          plausible('sort', {
+          plausible(PlausibleEvents.Sort, {
             props: {
               value: e.currentTarget.value,
             },
@@ -105,8 +94,17 @@ const MobileSort = () => {
 
 const MobileSearch = () => {
   const { t } = useTranslations()
+
   const search = useStore((state) => state.search)
   const set = useStore((state) => state.set)
+
+  const plausible = usePlausible()
+  const debouncedSearch = useDebounce(search)
+  useEffect(() => {
+    if (debouncedSearch) {
+      plausible(PlausibleEvents.Search, { props: { search: debouncedSearch } })
+    }
+  }, [debouncedSearch, plausible])
 
   return (
     <FilterSection
@@ -179,7 +177,7 @@ const Genre = () => {
         label={t('genre.any')}
         checked={!genre}
         onChange={() => {
-          plausible('genre', { props: { genre: null } })
+          plausible(PlausibleEvents.SetGenre, { props: { genre: 'Any genre' } })
           set('genre', null)
         }}
       />
@@ -191,7 +189,7 @@ const Genre = () => {
           label={g.label}
           checked={genre === g.value}
           onChange={() => {
-            plausible('genre', { props: { genre: g.value } })
+            plausible(PlausibleEvents.SetGenre, { props: { genre: g.value } })
             set('genre', g.value)
           }}
         />
@@ -214,9 +212,11 @@ const National = () => {
       <CheckboxFilter
         checked={nationalOnly}
         onChange={(e) => {
-          plausible('national', {
-            props: { onlyNational: e.currentTarget.checked },
-          })
+          plausible(
+            e.currentTarget.checked
+              ? PlausibleEvents.OnlyNationalOn
+              : PlausibleEvents.OnlyNationalOff
+          )
           set('nationalOnly', e.currentTarget.checked)
         }}
         label={t('portugueseMovies')}
@@ -253,7 +253,9 @@ const Year = () => {
       <Select
         value={!year ? 'any' : year}
         onChange={(e) => {
-          plausible('year', { props: { year: e.currentTarget.value } })
+          plausible(PlausibleEvents.SetYear, {
+            props: { year: e.currentTarget.value },
+          })
           set('year', e.currentTarget.value)
         }}
       >
@@ -319,27 +321,27 @@ const Channels = () => {
     )
   }
 
+  const allPremiumBlacklisted = storePremium.length === premium.length
+  const allChannelsBlacklisted = storeChannels.length === channels.length
+
   return (
     <>
       {premium.length > 0 && (
         <FilterSection
           title={t('channels.premium')}
           button={{
-            label:
-              storePremium.length < premium.length
-                ? t('channels.none')
-                : t('channels.all'),
+            label: allPremiumBlacklisted
+              ? t('channels.all')
+              : t('channels.none'),
             onClick: () => {
-              plausible('all premium', {
-                props: {
-                  value: storePremium.length < premium.length ? 'None' : 'All',
-                },
-              })
+              plausible(
+                allPremiumBlacklisted
+                  ? PlausibleEvents.AllPremiumOn
+                  : PlausibleEvents.AllPremiumOff
+              )
               set(
                 'premium',
-                storePremium.length < premium.length
-                  ? premium.map((c) => c.id)
-                  : []
+                allPremiumBlacklisted ? [] : premium.map((c) => c.id)
               )
             },
           }}
@@ -351,13 +353,17 @@ const Channels = () => {
                 key={channel.id}
                 checked={!storePremium.includes(channel.id)}
                 onChange={(e) => {
-                  plausible('premium channel', {
-                    props: {
-                      channel: channel.id,
-                      channelName: channel.name,
-                      checked: e.currentTarget.checked,
-                    },
-                  })
+                  plausible(
+                    e.currentTarget.checked
+                      ? PlausibleEvents.ChannelOn
+                      : PlausibleEvents.ChannelOff,
+                    {
+                      props: {
+                        channel: channel.id,
+                        channelName: channel.name,
+                      },
+                    }
+                  )
                   toggleChannel('premium', channel.id)
                 }}
                 label={channel.name}
@@ -369,22 +375,18 @@ const Channels = () => {
         <FilterSection
           title={t('channels')}
           button={{
-            label:
-              storeChannels.length < channels.length
-                ? t('channels.none')
-                : t('channels.all'),
+            label: allChannelsBlacklisted
+              ? t('channels.all')
+              : t('channels.none'),
             onClick: () => {
-              plausible('all channels', {
-                props: {
-                  value:
-                    storeChannels.length < channels.length ? 'None' : 'All',
-                },
-              })
+              plausible(
+                allChannelsBlacklisted
+                  ? PlausibleEvents.AllNormalChannelsOn
+                  : PlausibleEvents.AllNormalChannelsOff
+              )
               set(
                 'channels',
-                storeChannels.length < channels.length
-                  ? channels.map((c) => c.id)
-                  : []
+                allChannelsBlacklisted ? [] : channels.map((c) => c.id)
               )
             },
           }}
@@ -397,13 +399,17 @@ const Channels = () => {
                 label={channel.name}
                 checked={!storeChannels.includes(channel.id)}
                 onChange={(e) => {
-                  plausible('channel', {
-                    props: {
-                      channel: channel.id,
-                      channelName: channel.name,
-                      checked: e.currentTarget.checked,
-                    },
-                  })
+                  plausible(
+                    e.currentTarget.checked
+                      ? PlausibleEvents.ChannelOn
+                      : PlausibleEvents.ChannelOff,
+                    {
+                      props: {
+                        channel: channel.id,
+                        channelName: channel.name,
+                      },
+                    }
+                  )
                   toggleChannel('normal', channel.id)
                 }}
               />
@@ -488,4 +494,16 @@ const Inner = styled('div', {
 
   overflowY: 'auto',
   scrollbarWidth: 'thin',
+})
+
+const MobileCloseClickArea = styled('div', {
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+  backgroundColor: 'transparent',
+
+  zIndex: '$2',
+  '@md': {
+    display: 'none',
+  },
 })
