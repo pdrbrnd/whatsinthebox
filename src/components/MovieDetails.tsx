@@ -3,6 +3,7 @@ import { useQuery } from 'react-query'
 import { useRouter } from 'next/dist/client/router'
 import ContentLoader from 'react-content-loader'
 import { usePlausible } from 'next-plausible'
+import { useEffect } from 'react'
 
 import { styled } from 'lib/style'
 import {
@@ -25,7 +26,7 @@ import { useTranslations } from 'lib/i18n'
 import { PlausibleEvents } from 'common/constants'
 
 type DetailsData = {
-  details: {
+  details: null | {
     id: string
     imdb_id: string
     year: string
@@ -59,7 +60,7 @@ export const MovieDetails = () => {
     push,
   } = useRouter()
 
-  const { data, isLoading } = useQuery<DetailsData>(
+  const { data, isLoading, isError } = useQuery<DetailsData>(
     `movie-${id}`,
     async () => {
       const res = await fetch(`/api/movies/${id}`)
@@ -73,9 +74,15 @@ export const MovieDetails = () => {
     }
   )
 
+  useEffect(() => {
+    if (!isLoading && (isError || !data?.details)) push({ query: rest })
+  }, [isError, push, rest, isLoading, data?.details])
+
   if (isLoading || !data) {
     return <LoadingDetails onClose={() => push({ query: rest })} />
   }
+
+  if (!data.details) return null
 
   const {
     details: {
@@ -249,7 +256,7 @@ const Detail: React.FC<{ label: string }> = ({ label, children }) => {
 const DetailsSchedules = ({
   schedules,
 }: {
-  schedules: DetailsData['details']['schedules']
+  schedules: NonNullable<DetailsData['details']>['schedules']
 }) => {
   const { t } = useTranslations()
 

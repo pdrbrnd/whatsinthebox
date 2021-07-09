@@ -56,7 +56,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    res.status(200).json({ details: data ? data.movies_by_pk : [] })
+    res.status(200).json({ details: data ? data.movies_by_pk : null })
   } catch (error) {
     res.status(401).json({ error })
   }
