@@ -189,10 +189,12 @@ const Genre = () => {
   const genres = [
     { label: t('genre.action'), value: 'Action' },
     { label: t('genre.adventure'), value: 'Adventure' },
+    { label: t('genre.animation'), value: 'Animation' },
     { label: t('genre.comedy'), value: 'Comedy' },
     { label: t('genre.crime'), value: 'Crime' },
     { label: t('genre.documentary'), value: 'Documentary' },
     { label: t('genre.drama'), value: 'Drama' },
+    { label: t('genre.family'), value: 'Family' },
     { label: t('genre.history'), value: 'History' },
     { label: t('genre.horror'), value: 'Horror' },
     { label: t('genre.musical'), value: 'Musical' },
@@ -373,23 +375,25 @@ const Channels = () => {
             },
           }}
         >
-          {premium.map((channel) => (
-            <CheckboxFilter
-              key={channel.id}
-              checked={!state.premium.includes(channel.id)}
-              onChange={(e) => {
-                plausible('premium channel', {
-                  props: {
-                    channel: channel.id,
-                    channelName: channel.name,
-                    checked: e.currentTarget.checked,
-                  },
-                })
-                dispatch({ type: 'TOGGLE_PREMIUM', payload: channel.id })
-              }}
-              label={channel.name}
-            />
-          ))}
+          {premium
+            .sort((a, b) => a.name.localeCompare(b.name) || 0)
+            .map((channel) => (
+              <CheckboxFilter
+                key={channel.id}
+                checked={!state.premium.includes(channel.id)}
+                onChange={(e) => {
+                  plausible('premium channel', {
+                    props: {
+                      channel: channel.id,
+                      channelName: channel.name,
+                      checked: e.currentTarget.checked,
+                    },
+                  })
+                  dispatch({ type: 'TOGGLE_PREMIUM', payload: channel.id })
+                }}
+                label={channel.name}
+              />
+            ))}
         </FilterSection>
       )}
       {channels.length > 0 && (
@@ -417,23 +421,25 @@ const Channels = () => {
             },
           }}
         >
-          {channels.map((channel) => (
-            <CheckboxFilter
-              key={channel.id}
-              label={channel.name}
-              checked={!state.channels.includes(channel.id)}
-              onChange={(e) => {
-                plausible('channel', {
-                  props: {
-                    channel: channel.id,
-                    channelName: channel.name,
-                    checked: e.currentTarget.checked,
-                  },
-                })
-                dispatch({ type: 'TOGGLE_CHANNEL', payload: channel.id })
-              }}
-            />
-          ))}
+          {channels
+            .sort((a, b) => a.name.localeCompare(b.name) || 0)
+            .map((channel) => (
+              <CheckboxFilter
+                key={channel.id}
+                label={channel.name}
+                checked={!state.channels.includes(channel.id)}
+                onChange={(e) => {
+                  plausible('channel', {
+                    props: {
+                      channel: channel.id,
+                      channelName: channel.name,
+                      checked: e.currentTarget.checked,
+                    },
+                  })
+                  dispatch({ type: 'TOGGLE_CHANNEL', payload: channel.id })
+                }}
+              />
+            ))}
         </FilterSection>
       )}
     </>
