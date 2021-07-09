@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 
 import { useAboutModal } from 'common/hooks/useAboutModal'
+import { styled } from 'lib/style'
 
-import { Box } from './UI'
 import { Topbar } from './Topbar'
 import { Sidebar } from './Sidebar'
 import { MovieDetails } from './MovieDetails'
@@ -17,45 +17,28 @@ export const App = () => {
   return (
     <>
       <AboutModal isOpen={isOpen} onClose={onClose} />
-      <Box
-        css={{
-          height: '100vh',
-          width: '100%',
-          overflow: 'hidden',
-        }}
-      >
+      <Wrapper>
         <Topbar
           onAboutOpen={onOpen}
           sidebarMobile={sidebarMobile}
           setSidebarMobile={setSidebarMobile}
         />
-        <Box css={{ position: 'relative', display: 'flex' }}>
+
+        <Main>
           <Sidebar
             isVisibleMobile={sidebarMobile}
             onMobileClose={() => setSidebarMobile(false)}
           />
-          <Box
-            css={{
-              width: '100%',
-              paddingRight: selectedMovie ? '$sizes$details' : 0,
-            }}
+
+          <ListHolder
+            css={{ paddingRight: selectedMovie ? '$sizes$details' : 0 }}
           >
             <MovieList onSelect={selectMovie} selectedMovie={selectedMovie} />
-          </Box>
-          <Box
+          </ListHolder>
+
+          <DetailsHolder
             css={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              bottom: 0,
-              transition: 'transform $motion',
               transform: `translateX(${selectedMovie ? '0' : '100%'})`,
-
-              width: '100%',
-
-              '@md': {
-                width: '$details',
-              },
             }}
           >
             {selectedMovie && (
@@ -64,9 +47,38 @@ export const App = () => {
                 onClose={() => selectMovie(null)}
               />
             )}
-          </Box>
-        </Box>
-      </Box>
+          </DetailsHolder>
+        </Main>
+      </Wrapper>
     </>
   )
 }
+
+const Wrapper = styled('div', {
+  height: '100vh',
+  width: '100%',
+  overflow: 'hidden',
+})
+
+const Main = styled('main', {
+  position: 'relative',
+  display: 'flex',
+})
+
+const ListHolder = styled('div', {
+  width: '100%',
+})
+
+const DetailsHolder = styled('div', {
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  transition: 'transform $motion',
+
+  width: '100%',
+
+  '@md': {
+    width: '$details',
+  },
+})

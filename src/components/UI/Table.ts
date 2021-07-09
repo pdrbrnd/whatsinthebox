@@ -13,10 +13,6 @@ export const Tbody = styled('tbody', {})
 
 export const Tr = styled('tr', {
   borderBottom: '1px solid $muted',
-
-  '&:nth-child(even)': {
-    background: '$subtle',
-  },
 })
 
 export const Th = styled('th', {

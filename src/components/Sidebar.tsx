@@ -18,36 +18,6 @@ import {
   Input,
 } from './UI'
 
-const Holder = styled('aside', {
-  width: '$sidebar',
-  height: '$scroll',
-
-  flexShrink: 0,
-
-  backgroundColor: '$panel',
-  borderRight: '1px solid $muted',
-
-  position: 'absolute',
-  zIndex: '$3',
-
-  transition: 'transform $motion',
-
-  '@md': {
-    position: 'relative',
-    boxSizing: 'content-box',
-  },
-})
-
-const Inner = styled('div', {
-  position: 'absolute',
-
-  width: '100%',
-  height: '100%',
-
-  overflowY: 'auto',
-  scrollbarWidth: 'thin',
-})
-
 type Props = {
   isVisibleMobile: boolean
   onMobileClose: () => void
@@ -489,3 +459,33 @@ const FilterSection: React.FC<FilterSectionProps> = ({
     </FilterSectionHolder>
   )
 }
+
+const Holder = styled('aside', {
+  width: '$sidebar',
+  height: '$scroll',
+
+  flexShrink: 0,
+
+  backgroundColor: '$panel',
+  borderRight: '1px solid $muted',
+
+  position: 'absolute',
+  zIndex: '$3',
+
+  transition: 'transform $motion',
+
+  '@md': {
+    position: 'relative',
+    boxSizing: 'content-box',
+  },
+})
+
+const Inner = styled('div', {
+  position: 'absolute',
+
+  width: '100%',
+  height: '100%',
+
+  overflowY: 'auto',
+  scrollbarWidth: 'thin',
+})

@@ -17,16 +17,6 @@ import {
   Button,
 } from './UI'
 
-const Wrapper = styled('header', {
-  backgroundColor: '$panel',
-  borderBottom: '1px solid $muted',
-
-  display: 'flex',
-  alignItems: 'center',
-
-  height: '$topbar',
-})
-
 type TopbarProps = {
   onAboutOpen: () => void
   sidebarMobile: boolean
@@ -49,22 +39,6 @@ export const Topbar = ({
     </Wrapper>
   )
 }
-
-const LeftHolder = styled('div', {
-  height: '100%',
-
-  px: '$8',
-
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-
-  width: '100%',
-
-  '@md': {
-    width: '$sidebar',
-  },
-})
 
 const Left = ({
   onAboutOpen,
@@ -94,26 +68,11 @@ const Left = ({
           {t('about')}
         </IconButton>
       </Stack>
-      <Box css={{ display: 'none', '@md': { display: 'block' } }}>
+      <Box css={{ display: 'flex' }}>
         <ThemeButton />
-      </Box>
-      <Stack css={{ '@md': { display: 'none' } }}>
-        <ThemeButton />
-        <Box css={{ position: 'relative' }}>
-          {hasFilters && (
-            <Box
-              css={{
-                position: 'absolute',
-                top: 'calc($space$8 / 2 * -1)',
-                right: 'calc($space$8 / 2 * -1)',
-                backgroundColor: '#ff5050',
-                width: '$space$8',
-                height: '$space$8',
-                borderRadius: '$full',
-                zIndex: '$1',
-              }}
-            />
-          )}
+
+        <FilterButtonHolder>
+          {hasFilters && <ActiveFiltersCircle />}
           <Button
             onClick={() => setSidebarMobile(!sidebarMobile)}
             css={{
@@ -123,8 +82,8 @@ const Left = ({
           >
             <Filter />
           </Button>
-        </Box>
-      </Stack>
+        </FilterButtonHolder>
+      </Box>
     </LeftHolder>
   )
 }
@@ -161,22 +120,6 @@ const ThemeButton = () => {
     </Button>
   )
 }
-
-const MainHolder = styled('div', {
-  display: 'none',
-
-  '@md': {
-    borderLeft: '1px solid $muted',
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-
-    px: '$8',
-
-    flex: 1,
-  },
-})
 
 const Main = () => {
   const { t } = useTranslations()
@@ -225,3 +168,63 @@ const Main = () => {
     </MainHolder>
   )
 }
+
+const Wrapper = styled('header', {
+  backgroundColor: '$panel',
+  borderBottom: '1px solid $muted',
+
+  display: 'flex',
+  alignItems: 'center',
+
+  height: '$topbar',
+})
+
+const LeftHolder = styled('div', {
+  height: '100%',
+
+  px: '$8',
+
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+
+  width: '100%',
+
+  '@md': {
+    width: '$sidebar',
+  },
+})
+
+const MainHolder = styled('div', {
+  display: 'none',
+
+  '@md': {
+    borderLeft: '1px solid $muted',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+
+    px: '$8',
+
+    flex: 1,
+  },
+})
+
+const FilterButtonHolder = styled('div', {
+  position: 'relative',
+  ml: '$8',
+
+  '@md': { display: 'none' },
+})
+
+const ActiveFiltersCircle = styled('div', {
+  position: 'absolute',
+  top: 'calc($space$8 / 2 * -1)',
+  right: 'calc($space$8 / 2 * -1)',
+  backgroundColor: '#ff5050',
+  width: '$space$8',
+  height: '$space$8',
+  borderRadius: '$full',
+  zIndex: '$1',
+})
