@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from 'react-query'
 import React from 'react'
 import { usePlausible } from 'next-plausible'
+import { useRouter } from 'next/router'
 
 import { styled } from 'lib/style'
 import { useFilters } from 'lib/store'
@@ -13,21 +14,17 @@ import { MovieThumb } from './MovieThumb'
 import { MovieLoader } from './MovieLoader'
 import { NoMovies } from './NoMovies'
 
-type Props = {
-  selectedMovie: string | null
-  onSelect: (imdbId: string) => void
-}
-
-export const MovieList = ({ onSelect, selectedMovie }: Props) => {
+export const MovieList = () => {
   const { t } = useTranslations()
   const plausible = usePlausible()
+  const {
+    query: { id },
+  } = useRouter()
 
   const filters = useFilters()
   const debouncedFilters = useDebounce(filters)
-
   const { premium, channels, genre, search, sort, year, nationalOnly } =
     debouncedFilters
-
   const channelsBlacklist = [...premium, ...channels]
 
   const fetchMovies = async ({ pageParam = 0 }) => {
@@ -98,8 +95,8 @@ export const MovieList = ({ onSelect, selectedMovie }: Props) => {
                   year={movie.year}
                   imdbRating={movie.rating_imdb}
                   rottenRating={movie.rating_rotten_tomatoes}
-                  onSelect={() => onSelect(movie.imdb_id)}
-                  selectedMovie={selectedMovie}
+                  isActive={id === movie.imdb_id}
+                  isTonedDown={typeof id === 'string' && id !== movie.imdb_id}
                 />
               )
             })}

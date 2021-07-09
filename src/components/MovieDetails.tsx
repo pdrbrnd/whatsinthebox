@@ -24,11 +24,6 @@ import { Rating } from 'components/Rating'
 import { useTranslations } from 'lib/i18n'
 import { PlausibleEvents } from 'common/constants'
 
-type Props = {
-  imdbId: string
-  onClose: () => void
-}
-
 type DetailsData = {
   details: {
     id: string
@@ -56,26 +51,30 @@ type DetailsData = {
   }
 }
 
-export const MovieDetails = ({ imdbId, onClose }: Props) => {
+export const MovieDetails = () => {
   const { t } = useTranslations()
   const plausible = usePlausible()
   const {
-    query: { mode },
+    query: { id, ...rest },
+    push,
   } = useRouter()
 
   const { data, isLoading } = useQuery<DetailsData>(
-    `movie-${imdbId}`,
+    `movie-${id}`,
     async () => {
-      const res = await fetch(`/api/movies/${imdbId}`)
+      const res = await fetch(`/api/movies/${id}`)
 
       if (!res.ok) throw new Error('Could not fetch movie')
 
       return res.json()
+    },
+    {
+      enabled: typeof id === 'string',
     }
   )
 
   if (isLoading || !data) {
-    return <LoadingDetails onClose={onClose} />
+    return <LoadingDetails onClose={() => push({ query: rest })} />
   }
 
   const {
@@ -105,7 +104,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
         ) : (
           <div />
         )}
-        <CloseButton onClick={() => onClose()} />
+        <CloseButton onClick={() => push({ query: rest })} />
       </Header>
 
       <Inner>
@@ -174,7 +173,7 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
                 </Box>
               </Stack>
             </Button>
-            {mode === 'aaargh' && (
+            {rest.mode === 'aaargh' && (
               <Button
                 css={{
                   display: 'inline-flex',

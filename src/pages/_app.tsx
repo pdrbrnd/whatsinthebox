@@ -22,6 +22,10 @@ const globalStyles = global({
     maxWidth: '100%',
     height: 'auto',
   },
+  a: {
+    color: 'inherit',
+    textDecoration: 'none',
+  },
   'body, button, input': {
     fontFamily: '$sans',
   },

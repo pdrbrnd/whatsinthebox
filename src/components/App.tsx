@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useRouter } from 'next/router'
 
 import { useAboutModal } from 'common/hooks/useAboutModal'
 import { styled } from 'lib/style'
@@ -11,8 +12,12 @@ import { MovieList } from './MovieList'
 
 export const App = () => {
   const { isOpen, onOpen, onClose } = useAboutModal()
-  const [selectedMovie, selectMovie] = useState<null | string>(null) // uses imdb ID
   const [sidebarMobile, setSidebarMobile] = useState(false)
+  const {
+    query: { id },
+  } = useRouter()
+
+  const selectedMovie = typeof id === 'string'
 
   return (
     <>
@@ -33,7 +38,7 @@ export const App = () => {
           <ListHolder
             css={{ paddingRight: selectedMovie ? '$sizes$details' : 0 }}
           >
-            <MovieList onSelect={selectMovie} selectedMovie={selectedMovie} />
+            <MovieList />
           </ListHolder>
 
           <DetailsHolder
@@ -41,12 +46,7 @@ export const App = () => {
               transform: `translateX(${selectedMovie ? '0' : '100%'})`,
             }}
           >
-            {selectedMovie && (
-              <MovieDetails
-                imdbId={selectedMovie}
-                onClose={() => selectMovie(null)}
-              />
-            )}
+            {selectedMovie && <MovieDetails />}
           </DetailsHolder>
         </Main>
       </Wrapper>

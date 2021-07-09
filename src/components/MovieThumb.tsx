@@ -1,5 +1,7 @@
-import { useEffect } from 'react'
 import { usePlausible } from 'next-plausible'
+import NextLink from 'next/link'
+import { useLayoutEffect } from 'react'
+import { useRouter } from 'next/router'
 
 import { styled } from 'lib/style'
 import { PlausibleEvents } from 'common/constants'
@@ -14,8 +16,8 @@ type Props = {
   year: string
   imdbRating?: string | null
   rottenRating?: string | null
-  onSelect: () => void
-  selectedMovie?: string | null
+  isActive?: boolean
+  isTonedDown?: boolean
 }
 
 export const MovieThumb = ({
@@ -25,63 +27,55 @@ export const MovieThumb = ({
   year,
   imdbRating,
   rottenRating,
-  onSelect,
-  selectedMovie,
+  isActive,
+  isTonedDown,
 }: Props) => {
   const plausible = usePlausible()
+  const {
+    query: { id },
+  } = useRouter()
 
-  useEffect(() => {
-    if (selectedMovie) {
-      const target = document.getElementById(selectedMovie)
+  useLayoutEffect(() => {
+    if (id && typeof id === 'string') {
+      const target = document.getElementById(id)
       if (target) target.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [selectedMovie])
-
-  const isActive = selectedMovie === imdbId
-  const otherIsActive = selectedMovie && !isActive
-
-  const handleSelect = () => {
-    onSelect()
-    plausible(PlausibleEvents.OpenDetails, {
-      props: {
-        title,
-        imdbId,
-      },
-    })
-  }
+  }, [id])
 
   return (
-    <Holder
-      id={imdbId} // scroll target
-      role="button"
-      tabIndex={0}
-      onKeyPress={(e) => {
-        if ([' ', 'Enter'].includes(e.key)) {
-          e.preventDefault()
-          handleSelect()
-        }
-      }}
-      onClick={() => handleSelect()}
-      css={{
-        backgroundColor: isActive ? '$muted' : undefined,
-        opacity: otherIsActive ? '0.5' : undefined,
-      }}
-    >
-      <Poster style={{ backgroundImage: `url(${image})` }} />
-      <Box css={{ mt: '$8' }}>
-        <Text variant="tiny" css={{ mb: '$2' }}>
-          {year}
-        </Text>
-        <Title variant="small">{title}</Title>
-      </Box>
-      {(imdbRating || rottenRating) && (
-        <Rating css={{ mt: '$8' }} imdb={imdbRating} rotten={rottenRating} />
-      )}
-    </Holder>
+    <NextLink href={{ query: { id: imdbId } }} passHref>
+      <Holder
+        id={imdbId} // scroll target
+        onClick={() => {
+          plausible(PlausibleEvents.OpenDetails, {
+            props: {
+              title,
+              imdbId,
+            },
+          })
+        }}
+        css={{
+          backgroundColor: isActive ? '$muted' : undefined,
+          opacity: isTonedDown ? '0.5' : undefined,
+        }}
+      >
+        <Poster style={{ backgroundImage: `url(${image})` }} />
+        <Box css={{ mt: '$8' }}>
+          <Text variant="tiny" css={{ mb: '$2' }}>
+            {year}
+          </Text>
+          <Title variant="small">{title}</Title>
+        </Box>
+        {(imdbRating || rottenRating) && (
+          <Rating css={{ mt: '$8' }} imdb={imdbRating} rotten={rottenRating} />
+        )}
+      </Holder>
+    </NextLink>
   )
 }
 
-const Holder = styled('div', {
+const Holder = styled('a', {
+  display: 'block',
   p: '$8',
   borderRadius: '$md',
   transition: 'background-color $appearance, opacity $appearance',
