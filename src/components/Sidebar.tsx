@@ -110,7 +110,6 @@ const MobileSort = () => {
       }}
     >
       <Select
-        variant="small"
         css={{ color: '$foreground' }}
         value={state.sort}
         onChange={(e) => {

@@ -5,7 +5,7 @@ export const Input = styled('input', {
   boxShadow: 'none',
 
   border: '1px solid $muted',
-  p: '$4',
+  p: '$8',
   borderRadius: '$sm',
 
   width: '100%',
