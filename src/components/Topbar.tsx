@@ -74,16 +74,11 @@ const Left = ({
 }: TopbarProps) => {
   const { t } = useTranslations()
   const plausible = usePlausible()
-  const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
+
   const { state } = useFilters()
   const hasFilters = useMemo(() => {
     return JSON.stringify(state) !== JSON.stringify(initialState)
   }, [state])
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   return (
     <LeftHolder>
@@ -99,26 +94,11 @@ const Left = ({
           {t('about')}
         </IconButton>
       </Stack>
-      <Stack>
-        {resolvedTheme && mounted && (
-          <Button
-            onClick={() => {
-              const targetTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
-              plausible('theme', { props: { theme: targetTheme } })
-              setTheme(targetTheme)
-            }}
-          >
-            <Box
-              css={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              {resolvedTheme === 'dark' ? <Sun /> : <Moon />}
-            </Box>
-          </Button>
-        )}
+      <Box css={{ display: 'none', '@md': { display: 'block' } }}>
+        <ThemeButton />
+      </Box>
+      <Stack css={{ '@md': { display: 'none' } }}>
+        <ThemeButton />
         <Box css={{ position: 'relative' }}>
           {hasFilters && (
             <Box
@@ -139,7 +119,6 @@ const Left = ({
             css={{
               backgroundColor: sidebarMobile ? '$accent' : '$muted',
               color: sidebarMobile ? '$background' : '$foreground',
-              '@md': { display: 'none' },
             }}
           >
             <Filter />
@@ -147,6 +126,39 @@ const Left = ({
         </Box>
       </Stack>
     </LeftHolder>
+  )
+}
+
+const ThemeButton = () => {
+  const plausible = usePlausible()
+
+  const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!resolvedTheme || !mounted) return null
+
+  return (
+    <Button
+      onClick={() => {
+        const targetTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
+        plausible('theme', { props: { theme: targetTheme } })
+        setTheme(targetTheme)
+      }}
+    >
+      <Box
+        css={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {resolvedTheme === 'dark' ? <Sun /> : <Moon />}
+      </Box>
+    </Button>
   )
 }
 

@@ -163,8 +163,10 @@ export const MovieDetails = ({ imdbId, onClose }: Props) => {
   return (
     <Wrapper>
       <Header>
-        {(rating_imdb || rating_rotten_tomatoes) && (
+        {rating_imdb || rating_rotten_tomatoes ? (
           <Rating imdb={rating_imdb} rotten={rating_rotten_tomatoes} />
+        ) : (
+          <div />
         )}
         <CloseButton onClick={() => onClose()} />
       </Header>

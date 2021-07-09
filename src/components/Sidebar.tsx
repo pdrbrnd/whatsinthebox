@@ -35,6 +35,7 @@ const Holder = styled('aside', {
 
   '@md': {
     position: 'relative',
+    boxSizing: 'content-box',
   },
 })
 
