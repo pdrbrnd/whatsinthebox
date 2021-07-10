@@ -72,7 +72,8 @@ const Overlay = styled('div', {
   position: 'absolute',
   zIndex: '$max',
   width: '100vw',
-  height: '100vh',
+  height: '$vh',
+
   backgroundColor: 'rgba(0, 0, 0, 0.8)',
 
   display: 'flex',
@@ -87,7 +88,7 @@ const Modal = styled('div', {
   m: '$16',
   borderRadius: '$md',
 
-  maxHeight: 'calc(100vh - $space$16 * 2)',
+  maxHeight: 'calc($vh - $space$16 * 2)',
   scrollbarWidth: 'thin',
   overflowY: 'auto',
 

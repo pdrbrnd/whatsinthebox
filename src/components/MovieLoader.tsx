@@ -8,7 +8,7 @@ export const MovieLoader = () => (
       css={{
         alignItems: 'center',
         justifyContent: 'center',
-        height: 'calc(100vh - $topbar)',
+        height: '$scroll',
         width: '100%',
 
         display: 'none',
@@ -37,7 +37,7 @@ export const MovieLoader = () => (
       css={{
         alignItems: 'center',
         justifyContent: 'center',
-        height: 'calc(100vh - $topbar)',
+        height: '$scroll',
         width: '100%',
 
         display: 'flex',

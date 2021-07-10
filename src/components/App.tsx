@@ -55,7 +55,7 @@ export const App = () => {
 }
 
 const Wrapper = styled('div', {
-  height: '100vh',
+  height: '$vh',
   width: '100%',
   overflow: 'hidden',
 })

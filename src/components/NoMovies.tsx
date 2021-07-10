@@ -12,7 +12,7 @@ export const NoMovies = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: 'calc(100vh - $topbar)',
+        height: '$scroll',
         opacity: 1,
       }}
     >

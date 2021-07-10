@@ -1,6 +1,6 @@
 import { usePlausible } from 'next-plausible'
 import NextLink from 'next/link'
-import { useLayoutEffect } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 import { styled } from 'lib/style'
@@ -35,7 +35,7 @@ export const MovieThumb = ({
     query: { id },
   } = useRouter()
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (id && typeof id === 'string') {
       const target = document.getElementById(id)
       if (target) target.scrollIntoView({ behavior: 'smooth' })

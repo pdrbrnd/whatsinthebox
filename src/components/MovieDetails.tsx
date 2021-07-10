@@ -337,7 +337,7 @@ const Wrapper = styled('article', {
 const Header = styled('header', {
   borderBottom: '1px solid $muted',
   p: '$12',
-  height: '50px',
+  height: '$detailsTopbar',
 
   display: 'flex',
   alignItems: 'center',
@@ -352,7 +352,7 @@ const Header = styled('header', {
 const Inner = styled('div', {
   overflowY: 'auto',
   scrollbarWidth: 'thin',
-  height: 'calc(100vh - $topbar - 50px)',
+  height: 'calc($vh - $topbar - $detailsTopbar)',
 
   pb: '$40',
 })

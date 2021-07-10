@@ -2,6 +2,7 @@ import { ThemeProvider } from 'next-themes'
 import type { AppProps } from 'next/app'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import PlausibleProvider from 'next-plausible'
+import { useEffect } from 'react'
 
 import { global, darkTheme, lightTheme } from 'lib/style'
 import { TranslationsProvider } from 'lib/i18n'
@@ -43,6 +44,22 @@ const queryClient = new QueryClient()
 
 const App = ({ Component, pageProps }: AppProps): JSX.Element => {
   globalStyles()
+
+  useEffect(() => {
+    const setVh = () => {
+      const vh = window.innerHeight * 0.01
+      document.documentElement.style.setProperty('--vh', `${vh}px`)
+    }
+
+    setVh()
+    window.addEventListener('load', setVh)
+    window.addEventListener('resize', setVh)
+
+    return () => {
+      window.removeEventListener('load', setVh)
+      window.removeEventListener('resize', setVh)
+    }
+  }, [])
 
   return (
     <PlausibleProvider domain="whatsinthebox.tv">
