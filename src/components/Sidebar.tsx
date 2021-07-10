@@ -256,7 +256,10 @@ const Year = () => {
           plausible(PlausibleEvents.SetYear, {
             props: { year: e.currentTarget.value },
           })
-          set('year', e.currentTarget.value)
+          set(
+            'year',
+            e.currentTarget.value === 'any' ? null : e.currentTarget.value
+          )
         }}
       >
         <option value="any">{t('year.any')}</option>
