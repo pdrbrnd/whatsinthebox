@@ -48,7 +48,7 @@ export const AboutModal = ({ isOpen, onClose }: Props) => {
           <Box css={{ mt: '$16', display: 'flex', justifyContent: 'center' }}>
             <BuyMeACofee
               as="a"
-              href="https://buymeacoffee.com/pedrob"
+              href="https://ko-fi.com/pdrbrnd"
               target="_blank"
               rel="noopener noreferrer"
               size="lg"
