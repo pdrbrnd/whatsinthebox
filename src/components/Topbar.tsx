@@ -179,11 +179,12 @@ const Main = () => {
                 value: e.currentTarget.value,
               },
             })
-            set('sort', e.currentTarget.value as 'imdb' | 'rotten')
+            set('sort', e.currentTarget.value as 'imdb' | 'rotten' | 'yearDesc')
           }}
         >
           <option value="imdb">IMDB</option>
           <option value="rotten">Rotten Tomatoes</option>
+          <option value="yearDesc">{t('sort.year.desc')}</option>
         </Select>
       </Stack>
     </MainHolder>

@@ -15,14 +15,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     country,
   } = req.body
 
-  let order_by: Record<string, string> = {
-    rating_imdb: 'desc_nulls_last',
+  const sorts: Record<string, Record<string, string>> = {
+    imdb: { rating_imdb: 'desc_nulls_last' },
+    rotten: { rating_rotten_tomatoes: 'desc_nulls_last' },
+    yearDesc: { year: 'desc_nulls_last' },
   }
-  if (sort && sort === 'rotten') {
-    order_by = {
-      rating_rotten_tomatoes: 'desc_nulls_last',
-    }
-  }
+  const order_by = sorts[sort] || sorts.imdb
 
   const filters = []
   if (genre && typeof genre === 'string') {

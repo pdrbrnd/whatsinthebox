@@ -13,7 +13,7 @@ export const initialState: StoreState = {
 }
 
 type StoreState = {
-  sort: 'imdb' | 'rotten'
+  sort: 'imdb' | 'rotten' | 'yearDesc'
   search: string
   genre: null | string
   nationalOnly: boolean
