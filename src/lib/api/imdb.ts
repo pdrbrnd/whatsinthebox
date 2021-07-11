@@ -48,7 +48,8 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
       portugueseTitle &&
       portugueseTitle
         .querySelector('.aka-item__title')
-        .rawText.toLowerCase() === movieTitle.toLowerCase()
+        .rawText.toLowerCase() ===
+        movieTitle.toLowerCase().replace(' (v.o.)', '').replace(' (v.p)', '')
     ) {
       result = m.id
     }
