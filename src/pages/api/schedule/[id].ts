@@ -42,7 +42,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const movieId = imdbId ? await processImdbId(imdbId) : null
 
     if (!imdbId || !movieId) {
-      throw new Error(`Failed processing schedule ${id}`)
+      const deleteSchedule = await fetchGraphql({
+        query: `
+          mutation deleteSchedule($id: Int!) {
+            delete_schedules_by_pk(id: $id) { id }
+          }
+        `,
+        variables: {
+          id: Number(id),
+        },
+        includeAdminSecret: true,
+      })
+
+      if (!deleteSchedule.data || deleteSchedule.errors) {
+        throw new Error(`Failed deleting schedule ${id}`)
+      }
+
+      return res.status(200).json({ status: 'ok', data: `Deleted ${id}` })
     }
 
     const update = await fetchGraphql<
