@@ -60,7 +60,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       includeAdminSecret: true,
     })
 
-    res.status(200).json({ status: 'ok', data: update })
+    res
+      .status(200)
+      .json({ status: 'ok', data: { update, id, imdbId, movieId } })
   } catch (error) {
     res.status(422).json({ error })
   }

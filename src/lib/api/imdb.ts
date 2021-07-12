@@ -57,7 +57,7 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
       (node) => node.querySelector('.aka-item__name')?.rawText === 'Portugal'
     )
 
-    if (!ptTitle && m.l === title) result = m.id
+    if (!ptTitle && m.l.toLowerCase() === title) result = m.id
 
     if (
       !result && // first exact match is best
