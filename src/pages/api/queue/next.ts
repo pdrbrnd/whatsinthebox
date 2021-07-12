@@ -215,9 +215,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       data
         .filter((program) => !('series' in program))
         .map(async (movie) => {
-          // eslint-disable-next-line no-console
-          console.log('title', movie.title, movie)
-          const imdbId = await getImdbId(movie.title)
+          const imdbId = movie.title ? await getImdbId(movie.title) : null
           const movieId = imdbId ? await processImdbId(imdbId) : null
 
           return {
@@ -237,8 +235,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     res.status(200).json({ status: 'ok', data: inserted })
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(error)
     res.status(422).json({ error })
   }
 }
