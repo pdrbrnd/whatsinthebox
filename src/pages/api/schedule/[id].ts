@@ -41,29 +41,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const imdbId = await getImdbId(data.schedules_by_pk.title)
     const movieId = imdbId ? await processImdbId(imdbId) : null
 
-    if (!imdbId || !movieId) {
-      const deleteSchedule = await fetchGraphql({
-        query: `
-          mutation deleteSchedule($id: Int!) {
-            delete_schedules_by_pk(id: $id) { id }
-          }
-        `,
-        variables: {
-          id: Number(id),
-        },
-        includeAdminSecret: true,
-      })
-
-      if (!deleteSchedule.data || deleteSchedule.errors) {
-        throw new Error(`Failed deleting schedule ${id}`)
-      }
-
-      return res.status(200).json({ status: 'ok', data: `Deleted ${id}` })
-    }
-
     const update = await fetchGraphql<
       { update_schedules: { affected_rows: number } },
-      { id: number; imdbId: string; movieId: number }
+      { id: number; imdbId: string | null; movieId: number | null }
     >({
       query: `
         mutation updateScheduleDetails($id: Int!, $imdbId: String!, $movieId: Int!) {

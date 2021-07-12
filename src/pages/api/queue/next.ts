@@ -200,7 +200,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const grid = await fetch(getChannelGridEndpoint(externalId, dayOffset))
     const { data }: { data: Program[] } = await grid.json()
 
-    let scheduledMovies = await Promise.all(
+    const scheduledMovies = await Promise.all(
       data
         .filter((program) => !('series' in program))
         .map(async (movie) => {
@@ -217,13 +217,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             movieId,
           }
         })
-    )
-    /**
-     * Having movies with no imdbID doesn't make much sense.
-     * Filter out movies where we didn't find the imdbID.
-     * */
-    scheduledMovies = scheduledMovies.filter(
-      (movie) => !!movie.imdbId && !!movie.movieId
     )
 
     const inserted = await insertSchedules(scheduledMovies, channelId)
