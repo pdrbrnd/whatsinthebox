@@ -235,6 +235,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     res.status(200).json({ status: 'ok', data: inserted })
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log(error)
     res.status(422).json({ error })
   }
