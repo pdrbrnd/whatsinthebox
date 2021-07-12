@@ -34,7 +34,13 @@ async function queueChannels(ids: number[], offset?: number | null) {
         }[]
       }
     },
-    { channels: { channel_id: number; day_offset?: number }[] }
+    {
+      channels: {
+        channel_id: number
+        day_offset?: number
+        is_complete: boolean
+      }[]
+    }
   >({
     query: `
       mutation insertQueuedChannels($channels: [queued_channels_insert_input!]!) {
@@ -42,7 +48,7 @@ async function queueChannels(ids: number[], offset?: number | null) {
           objects: $channels, 
           on_conflict: {
             constraint: queued_channels_day_channel_id_day_offset_key
-            update_columns: [channel_id, day, day_offset]
+            update_columns: [channel_id, day, day_offset, is_complete]
           }
         ) {
           returning {
@@ -56,7 +62,9 @@ async function queueChannels(ids: number[], offset?: number | null) {
     `,
     variables: {
       channels: ids.map((channel_id) =>
-        offset ? { channel_id, day_offset: offset } : { channel_id }
+        offset
+          ? { channel_id, day_offset: offset, is_complete: false }
+          : { channel_id, is_complete: false }
       ),
     },
     includeAdminSecret: true,

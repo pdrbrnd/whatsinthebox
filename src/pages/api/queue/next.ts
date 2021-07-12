@@ -235,6 +235,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     res.status(200).json({ status: 'ok', data: inserted })
   } catch (error) {
-    res.status(422).json({ error })
+    res.status(422).json({ error: JSON.stringify(error) })
   }
 }
