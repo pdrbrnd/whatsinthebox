@@ -44,7 +44,8 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
     .replace(' (v.p.)', '')
 
   const possibleMovies = data.d.filter(
-    (item) => item.id.startsWith('tt') && item.q === 'feature'
+    (item) =>
+      item.id.startsWith('tt') && ['feature', 'TV movie'].includes(item.q)
   )
 
   let result: string | null = null
