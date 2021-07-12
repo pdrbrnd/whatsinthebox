@@ -40,7 +40,7 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
     const html = parse(data)
 
     const portugueseTitle = Array.from(html.querySelectorAll('.aka-item')).find(
-      (node) => node.querySelector('.aka-item__name').innerText === 'Portugal'
+      (node) => node.querySelector('.aka-item__name')?.rawText === 'Portugal'
     )
 
     if (
