@@ -41,7 +41,7 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
   const title = movieTitle
     .toLowerCase()
     .replace(' (v.o.)', '')
-    .replace(' (v.p)', '')
+    .replace(' (v.p.)', '')
 
   const possibleMovies = data.d.filter(
     (item) => item.id.startsWith('tt') && item.q === 'feature'
