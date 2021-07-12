@@ -13,19 +13,22 @@ async function asyncForEach<T extends unknown[]>(
   }
 }
 
+const removeExtraStuff = (text: string) => {
+  return text
+    .replace(' (v.o.)', '')
+    .replace(' (v.p.)', '')
+    .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+}
+
 const getEndpointForTitle = (title: string) => {
   return (
     `/${title.charAt(0).toLowerCase()}/` +
-    title
-      .toLowerCase()
+    removeExtraStuff(title.slice(0, 20).toLowerCase())
       .normalize('NFD')
-      .replace(' (v.o.)', '')
-      .replace(' (v.p.)', '')
       .replace(/\p{Diacritic}/gu, '')
-      .replace(/[.,/#!$%^&*;:{}=-_`~()]/g, '')
-      .replace(/s{2,}/g, ' ')
-      .replaceAll(' ', '_')
-      .slice(0, 20) +
+      .replaceAll(' ', '_') +
     '.json'
   )
 }
@@ -38,10 +41,7 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
 
   if (!data.d) return null
 
-  const title = movieTitle
-    .toLowerCase()
-    .replace(' (v.o.)', '')
-    .replace(' (v.p.)', '')
+  const title = removeExtraStuff(movieTitle.toLowerCase())
 
   const possibleMovies = data.d.filter(
     (item) =>
@@ -77,9 +77,9 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
       ?.querySelector('.aka-item__title')
       .rawText.toLowerCase()
 
-    const ptMatch = ptTitle === title
-    const originalMatch = originalTitle === title
-    const fallbackMatch = m.l.toLowerCase() === title
+    const ptMatch = removeExtraStuff(ptTitle || '') === title
+    const originalMatch = removeExtraStuff(originalTitle || '') === title
+    const fallbackMatch = removeExtraStuff(m.l.toLowerCase()) === title
 
     if (ptMatch || originalMatch || fallbackMatch) {
       result = m.id
