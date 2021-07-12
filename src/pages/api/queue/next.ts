@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import dayjs from 'dayjs'
 
 import { fetchGraphql } from 'lib/graphql'
 import { codeMiddleware, runMiddleware } from 'lib/middleware'
@@ -127,7 +128,12 @@ async function getChannelExternalId(id: number) {
 
 async function getNextQueuedChannel() {
   const { data, errors } = await fetchGraphql<{
-    queued_channels: { id: number; channel_id: number; day_offset: number }[]
+    queued_channels: {
+      id: number
+      channel_id: number
+      day: string
+      day_offset: number
+    }[]
   }>({
     query: `
       query getNextQueuedChannel {
@@ -139,6 +145,7 @@ async function getNextQueuedChannel() {
         ) {
           id
           channel_id
+          day
           day_offset
         }
       }
@@ -194,7 +201,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(200).json({ message: 'No incomplete items in queue' })
     }
 
-    const { channel_id: channelId, id: queueId, day_offset: dayOffset } = next
+    const { channel_id: channelId, id: queueId, day, day_offset } = next
+
+    const targetDate = dayjs(day).add(day_offset, 'days')
+    const diff = dayjs().diff(targetDate, 'days')
+    const dayOffset = dayjs().isAfter(targetDate) ? diff * -1 : diff
 
     const externalId = await getChannelExternalId(channelId)
     const grid = await fetch(getChannelGridEndpoint(externalId, dayOffset))
