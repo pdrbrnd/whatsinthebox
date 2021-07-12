@@ -49,21 +49,38 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
 
   let result: string | null = null
   await asyncForEach(possibleMovies, async (m) => {
+    if (result) return // we already have a result
+
     const res = await fetch(`https://www.imdb.com/title/${m.id}/releaseinfo`)
     const data = await res.text()
     const html = parse(data)
 
-    const ptTitle = Array.from(html.querySelectorAll('.aka-item')).find(
-      (node) => node.querySelector('.aka-item__name')?.rawText === 'Portugal'
-    )
+    const ptTitle = Array.from(html.querySelectorAll('.aka-item'))
+      .find(
+        (node) =>
+          node
+            .querySelector('.aka-item__name')
+            ?.rawText.trim()
+            .toLowerCase() === 'portugal'
+      )
+      ?.querySelector('.aka-item__title')
+      .rawText.toLowerCase()
+    const originalTitle = Array.from(html.querySelectorAll('.aka-item'))
+      .find(
+        (node) =>
+          node
+            .querySelector('.aka-item__name')
+            ?.rawText.trim()
+            .toLowerCase() === '(original title)'
+      )
+      ?.querySelector('.aka-item__title')
+      .rawText.toLowerCase()
 
-    if (!ptTitle && m.l.toLowerCase() === title) result = m.id
+    const ptMatch = ptTitle === title
+    const originalMatch = originalTitle === title
+    const fallbackMatch = m.l.toLowerCase() === title
 
-    if (
-      !result && // first exact match is best
-      ptTitle &&
-      ptTitle.querySelector('.aka-item__title').rawText.toLowerCase() === title
-    ) {
+    if (ptMatch || originalMatch || fallbackMatch) {
       result = m.id
     }
   })
