@@ -215,6 +215,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       data
         .filter((program) => !('series' in program))
         .map(async (movie) => {
+          // eslint-disable-next-line no-console
+          console.log('title', movie.title, movie)
           const imdbId = await getImdbId(movie.title)
           const movieId = imdbId ? await processImdbId(imdbId) : null
 
