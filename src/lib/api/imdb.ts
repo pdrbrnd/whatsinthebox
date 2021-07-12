@@ -13,21 +13,35 @@ async function asyncForEach<T extends unknown[]>(
   }
 }
 
-type IMDBSuggestion = { id: string; q: string }
-export async function getImdbId(movieTitle: string): Promise<string | null> {
-  const url =
-    IMDB_SUGGESTIONS_ENDPOINT +
-    `/${movieTitle.charAt(0).toLowerCase()}/` +
-    movieTitle
+const getEndpointForTitle = (title: string) => {
+  return (
+    `/${title.charAt(0).toLowerCase()}/` +
+    title
       .toLowerCase()
       .normalize('NFD')
+      .replace(' (v.o.)', '')
+      .replace(' (v.p.)', '')
       .replace(/\p{Diacritic}/gu, '')
-      .replace(' ', '_') +
+      .replace(/[.,/#!$%^&*;:{}=-_`~()]/g, '')
+      .replace(/s{2,}/g, ' ')
+      .replaceAll(' ', '_')
+      .slice(0, 20) +
     '.json'
+  )
+}
+
+type IMDBSuggestion = { id: string; q: string; l: string }
+export async function getImdbId(movieTitle: string): Promise<string | null> {
+  const url = IMDB_SUGGESTIONS_ENDPOINT + getEndpointForTitle(movieTitle)
   const res = await fetch(url)
   const data: { d?: IMDBSuggestion[] } = await res.json()
 
   if (!data.d) return null
+
+  const title = movieTitle
+    .toLowerCase()
+    .replace(' (v.o.)', '')
+    .replace(' (v.p)', '')
 
   const possibleMovies = data.d.filter(
     (item) => item.id.startsWith('tt') && item.q === 'feature'
@@ -39,17 +53,16 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
     const data = await res.text()
     const html = parse(data)
 
-    const portugueseTitle = Array.from(html.querySelectorAll('.aka-item')).find(
+    const ptTitle = Array.from(html.querySelectorAll('.aka-item')).find(
       (node) => node.querySelector('.aka-item__name')?.rawText === 'Portugal'
     )
 
+    if (!ptTitle && m.l === title) result = m.id
+
     if (
       !result && // first exact match is best
-      portugueseTitle &&
-      portugueseTitle
-        .querySelector('.aka-item__title')
-        .rawText.toLowerCase() ===
-        movieTitle.toLowerCase().replace(' (v.o.)', '').replace(' (v.p)', '')
+      ptTitle &&
+      ptTitle.querySelector('.aka-item__title').rawText.toLowerCase() === title
     ) {
       result = m.id
     }
