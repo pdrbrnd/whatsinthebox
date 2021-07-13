@@ -1,9 +1,10 @@
+import { withSentry, captureException } from '@sentry/nextjs'
 import dayjs from 'dayjs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { fetchGraphql } from 'lib/graphql'
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
   const {
     offset,
     genre,
@@ -127,6 +128,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       count: data ? data.movies_aggregate.aggregate.count : 0,
     })
   } catch (error) {
+    captureException(error)
     res.status(401).json({ error })
   }
-}
+})

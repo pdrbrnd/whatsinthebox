@@ -1,3 +1,4 @@
+import { withSentry, captureException } from '@sentry/nextjs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import dayjs from 'dayjs'
 
@@ -191,7 +192,7 @@ async function setQueuedChannelAsComplete(queueId: number) {
   })
 }
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
   await runMiddleware(req, res, codeMiddleware)
 
   try {
@@ -235,6 +236,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     res.status(200).json({ status: 'ok', data: inserted })
   } catch (error) {
+    captureException(error)
     res.status(422).json({ error })
   }
-}
+})

@@ -1,17 +1,19 @@
+import { withSentry, captureException } from '@sentry/nextjs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { fetchGraphql } from 'lib/graphql'
 
-export default async (_req: NextApiRequest, res: NextApiResponse) => {
-  try {
-    const { data } = await fetchGraphql<{
-      channels: {
-        id: number
-        is_premium: boolean
-        name: string
-      }[]
-    }>({
-      query: `
+export default withSentry(
+  async (_req: NextApiRequest, res: NextApiResponse) => {
+    try {
+      const { data } = await fetchGraphql<{
+        channels: {
+          id: number
+          is_premium: boolean
+          name: string
+        }[]
+      }>({
+        query: `
         query getChannels {
           channels {
             id
@@ -20,10 +22,12 @@ export default async (_req: NextApiRequest, res: NextApiResponse) => {
           }
         }
       `,
-    })
+      })
 
-    res.status(200).json({ channels: data ? data.channels : [] })
-  } catch (error) {
-    res.status(401).json({ error })
+      res.status(200).json({ channels: data ? data.channels : [] })
+    } catch (error) {
+      captureException(error)
+      res.status(401).json({ error })
+    }
   }
-}
+)

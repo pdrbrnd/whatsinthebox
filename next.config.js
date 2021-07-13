@@ -1,6 +1,7 @@
 const { withPlausibleProxy } = require('next-plausible')
+const { withSentryConfig } = require('@sentry/nextjs')
 
-module.exports = withPlausibleProxy()({
+const moduleExports = withPlausibleProxy()({
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
@@ -17,3 +18,5 @@ module.exports = withPlausibleProxy()({
     return config
   },
 })
+
+module.exports = withSentryConfig(moduleExports, {})

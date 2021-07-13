@@ -20,6 +20,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sentry/nextjs": "^6.9.0",
     "@stitches/react": "^0.2.2",
     "dayjs": "^1.10.6",
     "next": "^11.0.1",

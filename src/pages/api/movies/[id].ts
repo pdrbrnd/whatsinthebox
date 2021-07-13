@@ -1,8 +1,9 @@
+import { withSentry, captureException } from '@sentry/nextjs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { fetchGraphql } from 'lib/graphql'
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query
 
   if (!id || typeof id !== 'string') {
@@ -58,6 +59,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     res.status(200).json({ details: data ? data.movies_by_pk : null })
   } catch (error) {
+    captureException(error)
     res.status(401).json({ error })
   }
-}
+})

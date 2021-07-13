@@ -1,3 +1,4 @@
+import { withSentry, captureException } from '@sentry/nextjs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { codeMiddleware, runMiddleware } from 'lib/middleware'
@@ -5,7 +6,7 @@ import { fetchGraphql } from 'lib/graphql'
 import { getImdbId } from 'lib/api/imdb'
 import { processImdbId } from 'lib/api/details'
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
   await runMiddleware(req, res, codeMiddleware)
 
   const { id } = req.query
@@ -64,6 +65,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .status(200)
       .json({ status: 'ok', data: { update, id, imdbId, movieId } })
   } catch (error) {
+    captureException(error)
     res.status(422).json({ error })
   }
-}
+})
