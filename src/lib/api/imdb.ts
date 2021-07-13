@@ -23,15 +23,14 @@ const removeExtraStuff = (text: string) => {
 }
 
 const getEndpointForTitle = (title: string) => {
-  return (
-    `/${title.charAt(0).toLowerCase()}/` +
-    removeExtraStuff(title.toLowerCase())
-      .substring(0, 20)
-      .normalize('NFD')
-      .replace(/\p{Diacritic}/gu, '')
-      .replaceAll(' ', '_') +
-    '.json'
-  )
+  const base = `/${title.charAt(0).toLowerCase()}/`
+  let sanitizedTitle = removeExtraStuff(title.toLowerCase())
+  sanitizedTitle = sanitizedTitle.substring(0, 20)
+  sanitizedTitle = sanitizedTitle.normalize('NFD')
+  sanitizedTitle = sanitizedTitle.replace(/\p{Diacritic}/gu, '')
+  sanitizedTitle = sanitizedTitle.replaceAll(' ', '_')
+
+  return base + sanitizedTitle + '.json'
 }
 
 type IMDBSuggestion = { id: string; q: string; l: string }
