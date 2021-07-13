@@ -58,12 +58,12 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
     const html = parse(data)
 
     const ptTitle = Array.from(html.querySelectorAll('.aka-item'))
-      .find(
-        (node) =>
-          node
-            .querySelector('.aka-item__name')
-            ?.rawText.trim()
-            .toLowerCase() === 'portugal'
+      .find((node) =>
+        node
+          .querySelector('.aka-item__name')
+          ?.rawText.trim()
+          .toLowerCase()
+          .includes('portugal')
       )
       ?.querySelector('.aka-item__title')
       .rawText.toLowerCase()
