@@ -1,6 +1,5 @@
 export enum PlausibleEvents {
   BuyMeACoffee = 'Buy Me A Coffee',
-  InitialTheme = 'Initial Theme',
   ChangeTheme = 'Change Theme',
   OpenAbout = 'Open About',
   OpenImdb = 'Open IMDB',
