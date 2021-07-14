@@ -46,7 +46,11 @@ export async function getImdbId(
 
   const title = removeExtraStuff(movieTitle.toLowerCase())
 
-  const possibleMovies = data.d.filter((item) => item.id.startsWith('tt'))
+  const possibleMovies = data.d.filter(
+    (item) =>
+      item.id.startsWith('tt') &&
+      ['feature', 'tv movie', 'video'].includes(item.q.toLowerCase())
+  )
 
   // if only one match, we assume it's correct
   if (possibleMovies.length === 1) return possibleMovies[0].id
