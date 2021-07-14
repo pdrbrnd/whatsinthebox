@@ -25,7 +25,11 @@ const removeExtraStuff = (text: string) => {
 const getEndpointForTitle = (title: string) => {
   return (
     `/${title.charAt(0).toLowerCase()}/` +
-    removeExtraStuff(title.toLowerCase())
+    title
+      .toLowerCase()
+      .replace(' (v.o.)', '')
+      .replace(' (v.p.)', '')
+      .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '')
       .substring(0, 20)
       .normalize('NFD')
       .replace(/\p{Diacritic}/gu, '')
