@@ -15,8 +15,6 @@ async function asyncForEach<T extends unknown[]>(
 
 const removeExtraStuff = (text: string) => {
   return text
-    .replace(' (v.o.)', '')
-    .replace(' (v.p.)', '')
     .replace(/[.,/#!$%^*;:{}=\-_`~()]/g, '')
     .replace(/\s{2,}/g, ' ')
     .trim()
@@ -25,21 +23,21 @@ const removeExtraStuff = (text: string) => {
 const getEndpointForTitle = (title: string) => {
   return (
     `/${title.charAt(0).toLowerCase()}/` +
-    title
-      .toLowerCase()
-      .replace(' (v.o.)', '')
-      .replace(' (v.p.)', '')
-      .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, ' ')
-      .substring(0, 20)
-      .normalize('NFD')
-      .replace(/\p{Diacritic}/gu, '')
-      .replace(/\s/g, '_') +
+    encodeURIComponent(title.normalize('NFD').replace(/\p{Diacritic}/gu, '')) +
     '.json'
   )
 }
 
+// "l" is the movie title
 type IMDBSuggestion = { id: string; q: string; l: string }
-export async function getImdbId(movieTitle: string): Promise<string | null> {
+export async function getImdbId(
+  originalMovieTitle: string
+): Promise<string | null> {
+  const movieTitle = originalMovieTitle
+    .toLowerCase()
+    .replace(' (v.o.)', '')
+    .replace(' (v.p.)', '')
+
   const url = IMDB_SUGGESTIONS_ENDPOINT + getEndpointForTitle(movieTitle)
   const res = await fetch(url)
   const data: { d?: IMDBSuggestion[] } = await res.json()
@@ -48,10 +46,10 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
 
   const title = removeExtraStuff(movieTitle.toLowerCase())
 
-  const possibleMovies = data.d.filter(
-    (item) =>
-      item.id.startsWith('tt') && ['feature', 'TV movie'].includes(item.q)
-  )
+  const possibleMovies = data.d.filter((item) => item.id.startsWith('tt'))
+
+  // if only one match, we assume it's correct
+  if (possibleMovies.length === 1) return possibleMovies[0].id
 
   let result: string | null = null
   await asyncForEach(possibleMovies, async (m) => {
@@ -61,16 +59,19 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
     const data = await res.text()
     const html = parse(data)
 
-    const ptTitle = Array.from(html.querySelectorAll('.aka-item'))
-      .find((node) =>
-        node
+    const ptMatches = Array.from(html.querySelectorAll('.aka-item')).filter(
+      (node) => {
+        return node
           .querySelector('.aka-item__name')
           ?.text.trim()
           .toLowerCase()
           .includes('portugal')
-      )
-      ?.querySelector('.aka-item__title')
-      .text.toLowerCase()
+      }
+    )
+    const ptTitles = ptMatches.map((match) => {
+      return match.querySelector('.aka-item__title').text.toLowerCase()
+    })
+
     const originalTitle = Array.from(html.querySelectorAll('.aka-item'))
       .find(
         (node) =>
@@ -80,17 +81,24 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
       ?.querySelector('.aka-item__title')
       .text.toLowerCase()
 
-    const ptMatch =
-      removeExtraStuff(ptTitle || '').includes(title) ||
-      removeExtraStuff(ptTitle || '')
-        .replace(' & ', ' e ')
-        .includes(title)
+    const ptMatch = ptTitles.some((ptTitle) => {
+      return (
+        removeExtraStuff(ptTitle || '').includes(removeExtraStuff(title)) ||
+        removeExtraStuff(ptTitle || '')
+          .replace(' & ', ' e ')
+          .includes(removeExtraStuff(title))
+      )
+    })
+
     const originalMatch =
-      removeExtraStuff(originalTitle || '').includes(title) ||
+      removeExtraStuff(originalTitle || '').includes(removeExtraStuff(title)) ||
       removeExtraStuff(originalTitle || '')
         .replace(' & ', ' and ')
-        .includes(title)
-    const fallbackMatch = removeExtraStuff(m.l.toLowerCase()).includes(title)
+        .includes(removeExtraStuff(title))
+
+    const fallbackMatch = removeExtraStuff(m.l.toLowerCase()).includes(
+      removeExtraStuff(title)
+    )
 
     if (ptMatch || originalMatch || fallbackMatch) {
       result = m.id
