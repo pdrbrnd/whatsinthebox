@@ -82,9 +82,9 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
       ?.querySelector('.aka-item__title')
       .rawText.toLowerCase()
 
-    const ptMatch = removeExtraStuff(ptTitle || '') === title
-    const originalMatch = removeExtraStuff(originalTitle || '') === title
-    const fallbackMatch = removeExtraStuff(m.l.toLowerCase()) === title
+    const ptMatch = removeExtraStuff(ptTitle || '').includes(title)
+    const originalMatch = removeExtraStuff(originalTitle || '').includes(title)
+    const fallbackMatch = removeExtraStuff(m.l.toLowerCase()).includes(title)
 
     if (ptMatch || originalMatch || fallbackMatch) {
       result = m.id
