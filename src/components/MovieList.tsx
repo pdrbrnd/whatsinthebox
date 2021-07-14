@@ -67,8 +67,7 @@ export const MovieList = () => {
       getNextPageParam: (lastPage, pages) => {
         const soFar = pages.reduce((acc, p) => (acc += p.movies.length), 0)
 
-        // offset is not the exact length of current data, but the length PLUS one (to start in the next movie)
-        return soFar < lastPage.count ? soFar + 1 : undefined
+        return soFar < lastPage.count ? soFar : undefined
       },
     })
 

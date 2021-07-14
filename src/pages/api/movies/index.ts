@@ -104,7 +104,10 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
       `,
       variables: {
         offset: offset ? Number(offset) : 0,
-        order: order_by,
+        order: {
+          ...order_by,
+          id: 'desc',
+        },
         where: {
           _and: filters,
           schedules: {
