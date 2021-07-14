@@ -17,7 +17,7 @@ const removeExtraStuff = (text: string) => {
   return text
     .replace(' (v.o.)', '')
     .replace(' (v.p.)', '')
-    .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '')
+    .replace(/[.,/#!$%^*;:{}=\-_`~()]/g, '')
     .replace(/\s{2,}/g, ' ')
     .trim()
 }
@@ -29,7 +29,7 @@ const getEndpointForTitle = (title: string) => {
       .toLowerCase()
       .replace(' (v.o.)', '')
       .replace(' (v.p.)', '')
-      .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '')
+      .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, ' ')
       .substring(0, 20)
       .normalize('NFD')
       .replace(/\p{Diacritic}/gu, '')
@@ -65,25 +65,31 @@ export async function getImdbId(movieTitle: string): Promise<string | null> {
       .find((node) =>
         node
           .querySelector('.aka-item__name')
-          ?.rawText.trim()
+          ?.text.trim()
           .toLowerCase()
           .includes('portugal')
       )
       ?.querySelector('.aka-item__title')
-      .rawText.toLowerCase()
+      .text.toLowerCase()
     const originalTitle = Array.from(html.querySelectorAll('.aka-item'))
       .find(
         (node) =>
-          node
-            .querySelector('.aka-item__name')
-            ?.rawText.trim()
-            .toLowerCase() === '(original title)'
+          node.querySelector('.aka-item__name')?.text.trim().toLowerCase() ===
+          '(original title)'
       )
       ?.querySelector('.aka-item__title')
-      .rawText.toLowerCase()
+      .text.toLowerCase()
 
-    const ptMatch = removeExtraStuff(ptTitle || '').includes(title)
-    const originalMatch = removeExtraStuff(originalTitle || '').includes(title)
+    const ptMatch =
+      removeExtraStuff(ptTitle || '').includes(title) ||
+      removeExtraStuff(ptTitle || '')
+        .replace(' & ', ' e ')
+        .includes(title)
+    const originalMatch =
+      removeExtraStuff(originalTitle || '').includes(title) ||
+      removeExtraStuff(originalTitle || '')
+        .replace(' & ', ' and ')
+        .includes(title)
     const fallbackMatch = removeExtraStuff(m.l.toLowerCase()).includes(title)
 
     if (ptMatch || originalMatch || fallbackMatch) {
