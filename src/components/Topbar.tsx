@@ -103,10 +103,6 @@ const ThemeButton = () => {
 
   useEffect(() => {
     setMounted(true)
-
-    plausible(PlausibleEvents.InitialTheme, { props: { theme: resolvedTheme } })
-    // I know it will become stale, but I just want the initial value
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (!resolvedTheme || !mounted) return null
