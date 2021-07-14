@@ -36,7 +36,7 @@ export const MovieList = () => {
       body: JSON.stringify({
         offset: pageParam,
         sort,
-        search,
+        search: search.length > 2 ? search : undefined,
         genre,
         channelsBlacklist:
           channelsBlacklist.length > 0 ? channelsBlacklist : null,
