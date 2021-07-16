@@ -1,4 +1,4 @@
-const GRAPHQL_ENDPOINT = 'https://whatsinthebox.hasura.app/v1/graphql'
+const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || ''
 const HASURA_SECRET = process.env.HASURA_SECRET || ''
 
 export async function fetchGraphql<T = any, V = Record<string, any>>({
