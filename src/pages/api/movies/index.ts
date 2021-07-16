@@ -111,9 +111,14 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
         where: {
           _and: filters,
           schedules: {
-            start_time: {
-              _gte: dayjs().subtract(7, 'days').format('YYYY-MM-DD'),
-            },
+            _and: [
+              {
+                start_time: {
+                  _gte: dayjs().subtract(7, 'days').format('YYYY-MM-DD HH:mm'),
+                },
+              },
+              { start_time: { _lte: dayjs().format('YYYY-MM-DD HH:mm') } },
+            ],
           },
         },
       },

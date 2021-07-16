@@ -63,7 +63,7 @@ async function queueChannels(ids: number[], offset?: number | null) {
     `,
     variables: {
       channels: ids.map((channel_id) =>
-        offset
+        typeof offset === 'number'
           ? { channel_id, day_offset: offset, is_complete: false }
           : { channel_id, is_complete: false }
       ),
@@ -83,9 +83,10 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const ids = await getChannelIds()
-    const offset = req.body?.payload?.offset
-      ? Number(req.body?.payload?.offset)
-      : null
+    const offset =
+      typeof req.body?.payload?.offset === 'number'
+        ? req.body.payload.offset
+        : null
     const queued = await queueChannels(ids, offset)
 
     res.status(200).json({ status: 'ok', data: queued })
