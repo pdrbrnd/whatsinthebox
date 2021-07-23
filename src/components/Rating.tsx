@@ -13,15 +13,15 @@ export const Rating = ({ css, imdb, rotten }: Props): JSX.Element | null => {
   if (!imdb && !rotten) return null
 
   return (
-    <Stack spacing="md" css={css}>
+    <Stack spacing="8" css={css}>
       {imdb && (
-        <Stack spacing="sm">
+        <Stack spacing="4">
           <Imdb />
           <Text variant="tiny">{imdb}</Text>
         </Stack>
       )}
       {rotten && (
-        <Stack spacing="sm">
+        <Stack spacing="4">
           <RottenTomatoes />
           <Text variant="tiny">{rotten}</Text>
         </Stack>

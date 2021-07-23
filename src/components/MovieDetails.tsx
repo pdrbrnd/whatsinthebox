@@ -130,12 +130,12 @@ export const MovieDetails = () => {
         <Block>
           <Stack
             direction="vertical"
-            spacing="xl"
+            spacing="24"
             css={{ alignItems: 'flex-start' }}
           >
             {genre && (
               <Detail label={t('genre')}>
-                <Stack css={{ mt: '$8' }} spacing="sm">
+                <Stack css={{ mt: '$8' }} spacing="4">
                   {genre.split(',').map((gen, i) => (
                     <Tag key={i}>{gen}</Tag>
                   ))}
@@ -173,7 +173,7 @@ export const MovieDetails = () => {
                 })
               }}
             >
-              <Stack spacing="lg">
+              <Stack spacing="16">
                 <span>{t('openImdb')}</span>
                 <Box css={{ color: '$secondary' }}>
                   <External />

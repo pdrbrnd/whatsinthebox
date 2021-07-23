@@ -1,4 +1,4 @@
-import { styled, space } from 'lib/style'
+import { styled, space, CSS } from 'lib/style'
 
 type Direction = 'vertical' | 'horizontal'
 
@@ -20,14 +20,6 @@ const spaceChildren = (
   }
 }
 
-const spaces = {
-  xs: '$2',
-  sm: '$4',
-  md: '$8',
-  lg: '$16',
-  xl: '$24',
-} as const
-
 export const Stack = styled('div', {
   display: 'flex',
   alignItems: 'center',
@@ -43,25 +35,25 @@ export const Stack = styled('div', {
       },
     },
     spacing: Object.fromEntries(
-      Object.entries(spaces).map(([key]) => [key, {}])
-    ),
+      Object.entries(space).map(([key]) => [key, {}])
+    ) as Record<keyof typeof space, CSS>,
   },
 
   compoundVariants: [
-    ...Object.entries(spaces).map(([key, value]) => ({
+    ...Object.keys(space).map((key) => ({
       direction: 'horizontal' as const,
-      spacing: key as keyof typeof spaces,
-      css: spaceChildren('horizontal', value),
+      spacing: key as `${keyof typeof space}`,
+      css: spaceChildren('horizontal', `$${key}` as `$${keyof typeof space}`),
     })),
-    ...Object.entries(spaces).map(([key, value]) => ({
+    ...Object.keys(space).map((key) => ({
       direction: 'vertical' as const,
-      spacing: key as keyof typeof spaces,
-      css: spaceChildren('vertical', value),
+      spacing: key as `${keyof typeof space}`,
+      css: spaceChildren('vertical', `$${key}` as `$${keyof typeof space}`),
     })),
   ],
 
   defaultVariants: {
     direction: 'horizontal',
-    spacing: 'md',
+    spacing: '8',
   },
 })
