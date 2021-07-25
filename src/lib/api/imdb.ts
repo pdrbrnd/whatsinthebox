@@ -87,22 +87,19 @@ export async function getImdbId(
 
     const ptMatch = ptTitles.some((ptTitle) => {
       return (
-        removeExtraStuff(ptTitle || '').includes(removeExtraStuff(title)) ||
-        removeExtraStuff(ptTitle || '')
-          .replace(' & ', ' e ')
-          .includes(removeExtraStuff(title))
+        removeExtraStuff(ptTitle || '') === removeExtraStuff(title) ||
+        removeExtraStuff(ptTitle || '').replace(' & ', ' e ') ===
+          removeExtraStuff(title)
       )
     })
 
     const originalMatch =
-      removeExtraStuff(originalTitle || '').includes(removeExtraStuff(title)) ||
-      removeExtraStuff(originalTitle || '')
-        .replace(' & ', ' and ')
-        .includes(removeExtraStuff(title))
+      removeExtraStuff(originalTitle || '') === removeExtraStuff(title) ||
+      removeExtraStuff(originalTitle || '').replace(' & ', ' and ') ===
+        removeExtraStuff(title)
 
-    const fallbackMatch = removeExtraStuff(m.l.toLowerCase()).includes(
-      removeExtraStuff(title)
-    )
+    const fallbackMatch =
+      removeExtraStuff(m.l.toLowerCase()) === removeExtraStuff(title)
 
     if (ptMatch || originalMatch || fallbackMatch) {
       result = m.id
