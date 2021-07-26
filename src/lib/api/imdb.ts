@@ -21,9 +21,12 @@ const removeExtraStuff = (text: string) => {
 }
 
 const getEndpointForTitle = (title: string) => {
+  const titleWithNoDots = title.replace(/\./g, '')
   return (
-    `/${title.charAt(0).toLowerCase()}/` +
-    encodeURIComponent(title.normalize('NFD').replace(/\p{Diacritic}/gu, '')) +
+    `/${titleWithNoDots.charAt(0).toLowerCase()}/` +
+    encodeURIComponent(
+      titleWithNoDots.normalize('NFD').replace(/\p{Diacritic}/gu, '')
+    ) +
     '.json'
   )
 }
@@ -85,21 +88,19 @@ export async function getImdbId(
       ?.querySelector('.aka-item__title')
       .text.toLowerCase()
 
-    const ptMatch = ptTitles.some((ptTitle) => {
-      return (
-        removeExtraStuff(ptTitle || '') === removeExtraStuff(title) ||
-        removeExtraStuff(ptTitle || '').replace(' & ', ' e ') ===
-          removeExtraStuff(title)
-      )
-    })
-
-    const originalMatch =
-      removeExtraStuff(originalTitle || '') === removeExtraStuff(title) ||
-      removeExtraStuff(originalTitle || '').replace(' & ', ' and ') ===
-        removeExtraStuff(title)
-
-    const fallbackMatch =
-      removeExtraStuff(m.l.toLowerCase()) === removeExtraStuff(title)
+    const ptMatch = compareTitles(title, [
+      ...ptTitles,
+      // replacing " & " with " e "
+      ...ptTitles.map((title) => title.replace(/\s&\s/g, ' e ')),
+      // without the initial "O " or "A "
+      ...ptTitles.map((title) => title.replace(/^o\s|^a\s/gi, '')),
+    ])
+    const originalMatch = compareTitles(title, [
+      originalTitle,
+      // replacing " & " with " and "
+      originalTitle?.replace(/\s&\s/g, ' and '),
+    ])
+    const fallbackMatch = compareTitles(title, [m.l])
 
     if (ptMatch || originalMatch || fallbackMatch) {
       result = m.id
@@ -107,4 +108,16 @@ export async function getImdbId(
   })
 
   return result
+}
+
+const compareTitles = (
+  target: string,
+  titles: (string | undefined)[]
+): boolean => {
+  return titles.some((title) => {
+    return (
+      removeExtraStuff((title || '').toLowerCase()) ===
+      removeExtraStuff(target.toLowerCase())
+    )
+  })
 }
