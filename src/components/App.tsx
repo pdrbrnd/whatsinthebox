@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { usePlausible } from 'next-plausible'
 
 import { useReturningUser, UserType } from 'common/hooks/useReturningUser'
 import { styled } from 'lib/style'
+import { PlausibleEvents } from 'common/constants'
 
 import { Topbar } from './Topbar'
 import { Sidebar } from './Sidebar'
@@ -12,6 +14,7 @@ import { MovieList } from './MovieList'
 import { CostModal } from './CostModal'
 
 export const App = () => {
+  const plausible = usePlausible()
   const [modal, setModal] = useState<null | 'about' | 'cost'>(null)
   const userType = useReturningUser()
   const [sidebarMobile, setSidebarMobile] = useState(false)
@@ -22,14 +25,16 @@ export const App = () => {
   useEffect(
     function reactToUserType() {
       if (userType === UserType.FREQUENT_USER) {
+        plausible(PlausibleEvents.ShowCostModal)
         setModal('cost')
       }
 
       if (userType === UserType.FIRST_TIME_USER) {
+        plausible(PlausibleEvents.ShowAboutModal)
         setModal('about')
       }
     },
-    [userType]
+    [userType, plausible]
   )
 
   const selectedMovie = typeof id === 'string'

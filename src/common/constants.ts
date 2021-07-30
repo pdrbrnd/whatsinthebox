@@ -1,4 +1,6 @@
 export enum PlausibleEvents {
+  ShowAboutModal = 'Show About Modal',
+  ShowCostModal = 'Show Cost Modal',
   BuyMeACoffee = 'Buy Me A Coffee',
   ChangeTheme = 'Change Theme',
   OpenAbout = 'Open About',
