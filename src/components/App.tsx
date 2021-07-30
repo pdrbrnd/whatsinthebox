@@ -34,7 +34,9 @@ export const App = () => {
         setModal('about')
       }
     },
-    [userType, plausible]
+    // plausible is re-triggering the modal
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [userType]
   )
 
   const selectedMovie = typeof id === 'string'
