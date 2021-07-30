@@ -59,6 +59,17 @@ const en = {
   writer: 'Writer',
   language: 'Language',
   openImdb: 'Open in IMDb',
+  'cost.title': 'Support this project',
+  'cost.text': `If you're enjoying, please consider donating`,
+  'cost.price.title': 'This application currently costs:',
+  'cost.price.item': 'Item',
+  'cost.price.price': 'Price',
+  'cost.price.domain': 'Domain',
+  'cost.price.hosting': 'Hosting',
+  'cost.price.analytics': 'Analytics',
+  'cost.price.year': 'Year',
+  'cost.price.month': 'Month',
+  'cost.price.total': 'Total',
 } as const
 
 type Translation = Record<keyof typeof en, string>
@@ -118,6 +129,17 @@ const pt: Translation = {
   writer: 'Escritor',
   language: 'Língua',
   openImdb: 'Abrir no IMDb',
+  'cost.title': 'Apoia este projecto',
+  'cost.text': 'Se estás a gostar, considera doar',
+  'cost.price.title': 'Esta aplicação actualmente custa:',
+  'cost.price.item': 'Item',
+  'cost.price.price': 'Preço',
+  'cost.price.domain': 'Domínio',
+  'cost.price.hosting': 'Alojamento',
+  'cost.price.analytics': 'Análise de dados',
+  'cost.price.year': 'Ano',
+  'cost.price.month': 'Mês',
+  'cost.price.total': 'Total',
 }
 
 const messages: Record<Locales, Translation> = { en, pt }

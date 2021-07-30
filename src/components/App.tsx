@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { useAboutModal } from 'common/hooks/useAboutModal'
+import { useReturningUser, UserType } from 'common/hooks/useReturningUser'
 import { styled } from 'lib/style'
 
 import { Topbar } from './Topbar'
@@ -9,22 +9,50 @@ import { Sidebar } from './Sidebar'
 import { MovieDetails } from './MovieDetails'
 import { AboutModal } from './AboutModal'
 import { MovieList } from './MovieList'
+import { CostModal } from './CostModal'
 
 export const App = () => {
-  const { isOpen, onOpen, onClose } = useAboutModal()
+  const [modal, setModal] = useState<null | 'about' | 'cost'>(null)
+  const userType = useReturningUser()
   const [sidebarMobile, setSidebarMobile] = useState(false)
   const {
     query: { id },
   } = useRouter()
 
+  useEffect(
+    function reactToUserType() {
+      if (userType === UserType.FREQUENT_USER) {
+        setModal('cost')
+      }
+
+      if (userType === UserType.FIRST_TIME_USER) {
+        setModal('about')
+      }
+    },
+    [userType]
+  )
+
   const selectedMovie = typeof id === 'string'
 
   return (
     <>
-      <AboutModal isOpen={isOpen} onClose={onClose} />
+      <CostModal
+        isOpen={modal === 'cost'}
+        onClose={() => {
+          setModal(null)
+        }}
+      />
+      <AboutModal
+        isOpen={modal === 'about'}
+        onClose={() => {
+          setModal(null)
+        }}
+      />
       <Wrapper>
         <Topbar
-          onAboutOpen={onOpen}
+          onAboutOpen={() => {
+            setModal('about')
+          }}
           sidebarMobile={sidebarMobile}
           setSidebarMobile={setSidebarMobile}
         />
