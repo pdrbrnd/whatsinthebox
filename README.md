@@ -1,6 +1,6 @@
-# whatsinthebox
+![whatsinthebox](https://user-images.githubusercontent.com/5202712/127719298-f849f828-d8d7-4de8-855d-277a0b7627a1.png)
 
-Next project generated using [significa-start](https://github.com/Significa/significa-start)
+# whatsinthebox.tv
 
 ## Install dependencies
 
@@ -34,4 +34,4 @@ npm run validate
 
 ---
 
-<br /><a href="https://significa.co"><img src="https://user-images.githubusercontent.com/4838076/70076649-20d29b00-15f7-11ea-9379-e2fa1889a525.png" alt="logo" width="300px"></a>
+Next project generated with [significa-start](https://github.com/Significa/significa-start)
