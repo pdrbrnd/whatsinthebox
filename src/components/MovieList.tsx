@@ -13,6 +13,7 @@ import { Button } from './UI'
 import { MovieThumb } from './MovieThumb'
 import { MovieLoader } from './MovieLoader'
 import { NoMovies } from './NoMovies'
+import { ListFooter } from './ListFooter'
 
 export const MovieList = () => {
   const { t } = useTranslations()
@@ -121,6 +122,7 @@ export const MovieList = () => {
           </Button>
         </LoadMoreHolder>
       )}
+      <ListFooter />
     </Wrapper>
   )
 }

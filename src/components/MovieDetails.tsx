@@ -180,25 +180,6 @@ export const MovieDetails = () => {
                 </Box>
               </Stack>
             </Button>
-            {rest.mode === 'aaargh' && (
-              <Button
-                css={{
-                  display: 'inline-flex',
-                  backgroundColor: 'blueviolet',
-                  color: 'white',
-                  '&:hover': {
-                    opacity: 0.8,
-                    backgroundColor: 'blueviolet',
-                  },
-                }}
-                as="a"
-                href={`stremio://detail/movie/${imdb_id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Open in Stremio
-              </Button>
-            )}
           </Stack>
         </Block>
       </Inner>

@@ -70,6 +70,9 @@ const en = {
   'cost.price.year': 'Year',
   'cost.price.month': 'Month',
   'cost.price.total': 'Total',
+  'list.footer.builtBy': 'Built by',
+  'list.footer.support': 'Support this project by',
+  'list.footer.donate': 'donating with Ko-Fi',
 } as const
 
 type Translation = Record<keyof typeof en, string>
@@ -140,6 +143,9 @@ const pt: Translation = {
   'cost.price.year': 'Ano',
   'cost.price.month': 'Mês',
   'cost.price.total': 'Total',
+  'list.footer.builtBy': 'Construído por',
+  'list.footer.support': 'Suporta este projecto ao',
+  'list.footer.donate': 'doar com o Ko-Fi',
 }
 
 const messages: Record<Locales, Translation> = { en, pt }
