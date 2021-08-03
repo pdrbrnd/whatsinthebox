@@ -1,10 +1,10 @@
 import { withSentry, captureException } from '@sentry/nextjs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { codeMiddleware, runMiddleware } from 'lib/middleware'
-import { fetchGraphql } from 'lib/graphql'
-import { getImdbId } from 'lib/api/imdb'
 import { processImdbId } from 'lib/api/details'
+import { getImdbId } from 'lib/api/imdb'
+import { fetchGraphql } from 'lib/graphql'
+import { codeMiddleware, runMiddleware } from 'lib/middleware'
 
 export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
   await runMiddleware(req, res, codeMiddleware)
