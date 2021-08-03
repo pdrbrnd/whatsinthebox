@@ -1,9 +1,9 @@
 import { useTranslations } from 'lib/i18n'
 import { styled } from 'lib/style'
 
+import { BuyMeACoffee } from './BuyMeACoffee'
 import { BigLogo } from './Icons'
 import { Box, Text, Modal, ModalHeader, ModalBody, ModalFooter } from './UI'
-import { BuyMeACoffee } from './BuyMeACoffee'
 
 type Props = {
   isOpen: boolean

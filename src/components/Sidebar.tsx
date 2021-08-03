@@ -1,13 +1,13 @@
-import { useEffect, useMemo } from 'react'
-import { useQuery } from 'react-query'
-import ContentLoader from 'react-content-loader'
 import { usePlausible } from 'next-plausible'
+import { useEffect, useMemo } from 'react'
+import ContentLoader from 'react-content-loader'
+import { useQuery } from 'react-query'
 
-import { styled, CSS } from 'lib/style'
+import { PlausibleEvents } from 'common/constants'
+import useDebounce from 'common/hooks/useDebounce'
 import { useTranslations } from 'lib/i18n'
 import { useStore } from 'lib/store'
-import useDebounce from 'common/hooks/useDebounce'
-import { PlausibleEvents } from 'common/constants'
+import { styled, CSS } from 'lib/style'
 
 import { Search } from './Icons'
 import {

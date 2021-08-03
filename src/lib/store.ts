@@ -1,6 +1,6 @@
 import create from 'zustand'
-import shallow from 'zustand/shallow'
 import { persist } from 'zustand/middleware'
+import shallow from 'zustand/shallow'
 
 export const initialState: StoreState = {
   sort: 'imdb',

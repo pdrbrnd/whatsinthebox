@@ -36,9 +36,9 @@
   "devDependencies": {
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
-    "@significa/eslint-config": "^1.0.0",
-    "@significa/prettier-config": "^1.0.0",
-    "@significa/tsconfig-config": "^1.0.0",
+    "@significa/eslint-config": "^1.1.3",
+    "@significa/prettier-config": "^1.1.1",
+    "@significa/tsconfig-config": "^1.1.2",
     "@svgr/webpack": "^3.1.0",
     "@types/jest": "^26.0.23",
     "@types/node": "^16.0.0",

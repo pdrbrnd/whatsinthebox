@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes } from 'react'
 
-import { styled, CSS } from 'lib/style'
 import { Close } from 'components/Icons'
+import { styled, CSS } from 'lib/style'
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   css?: CSS

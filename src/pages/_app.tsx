@@ -1,11 +1,11 @@
+import PlausibleProvider from 'next-plausible'
 import { ThemeProvider } from 'next-themes'
 import type { AppProps } from 'next/app'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import PlausibleProvider from 'next-plausible'
 import { useEffect } from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
-import { global, darkTheme, lightTheme } from 'lib/style'
 import { TranslationsProvider } from 'lib/i18n'
+import { global, darkTheme, lightTheme } from 'lib/style'
 
 const globalStyles = global({
   html: {
