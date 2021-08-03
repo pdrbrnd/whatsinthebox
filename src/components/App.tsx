@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
 import { usePlausible } from 'next-plausible'
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
 
+import { PlausibleEvents } from 'common/constants'
 import { useReturningUser, UserType } from 'common/hooks/useReturningUser'
 import { styled } from 'lib/style'
-import { PlausibleEvents } from 'common/constants'
 
-import { Topbar } from './Topbar'
-import { Sidebar } from './Sidebar'
-import { MovieDetails } from './MovieDetails'
 import { AboutModal } from './AboutModal'
-import { MovieList } from './MovieList'
 import { CostModal } from './CostModal'
+import { MovieDetails } from './MovieDetails'
+import { MovieList } from './MovieList'
+import { Sidebar } from './Sidebar'
+import { Topbar } from './Topbar'
 
 export const App = () => {
   const plausible = usePlausible()
@@ -71,7 +71,11 @@ export const App = () => {
           />
 
           <ListHolder
-            css={{ paddingRight: selectedMovie ? '$sizes$details' : 0 }}
+            css={{
+              '@md': {
+                paddingRight: selectedMovie ? '$sizes$details' : 0,
+              },
+            }}
           >
             <MovieList />
           </ListHolder>

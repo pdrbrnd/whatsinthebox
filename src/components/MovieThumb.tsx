@@ -1,13 +1,11 @@
 import { usePlausible } from 'next-plausible'
 import NextLink from 'next/link'
-import { useEffect } from 'react'
-import { useRouter } from 'next/router'
 
-import { styled } from 'lib/style'
 import { PlausibleEvents } from 'common/constants'
+import { styled } from 'lib/style'
 
-import { Box, Text } from './UI'
 import { Rating } from './Rating'
+import { Box, Text } from './UI'
 
 type Props = {
   imdbId: string
@@ -31,16 +29,6 @@ export const MovieThumb = ({
   isTonedDown,
 }: Props) => {
   const plausible = usePlausible()
-  const {
-    query: { id },
-  } = useRouter()
-
-  useEffect(() => {
-    if (id && typeof id === 'string') {
-      const target = document.getElementById(id)
-      if (target) target.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [id])
 
   return (
     <NextLink href={{ query: { id: imdbId } }} passHref>
