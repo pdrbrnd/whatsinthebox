@@ -1,19 +1,19 @@
-import { useInfiniteQuery } from 'react-query'
-import React, { useEffect } from 'react'
 import { usePlausible } from 'next-plausible'
 import { useRouter } from 'next/router'
+import React, { useEffect } from 'react'
+import { useInfiniteQuery } from 'react-query'
 
-import { styled } from 'lib/style'
-import { useFilters } from 'lib/store'
-import { useTranslations } from 'lib/i18n'
-import useDebounce from 'common/hooks/useDebounce'
 import { PlausibleEvents } from 'common/constants'
+import useDebounce from 'common/hooks/useDebounce'
+import { useTranslations } from 'lib/i18n'
+import { useFilters } from 'lib/store'
+import { styled } from 'lib/style'
 
-import { Button } from './UI'
-import { MovieThumb } from './MovieThumb'
-import { MovieLoader } from './MovieLoader'
-import { NoMovies } from './NoMovies'
 import { ListFooter } from './ListFooter'
+import { MovieLoader } from './MovieLoader'
+import { MovieThumb } from './MovieThumb'
+import { NoMovies } from './NoMovies'
+import { Button } from './UI'
 
 export const MovieList = () => {
   const { t } = useTranslations()

@@ -1,11 +1,11 @@
 import { withSentry, captureException } from '@sentry/nextjs'
-import type { NextApiRequest, NextApiResponse } from 'next'
 import dayjs from 'dayjs'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
+import { processImdbId } from 'lib/api/details'
+import { getImdbId } from 'lib/api/imdb'
 import { fetchGraphql } from 'lib/graphql'
 import { codeMiddleware, runMiddleware } from 'lib/middleware'
-import { getImdbId } from 'lib/api/imdb'
-import { processImdbId } from 'lib/api/details'
 
 interface Program {
   title: string

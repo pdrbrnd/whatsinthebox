@@ -1,5 +1,5 @@
-import React from 'react'
 import Head from 'next/head'
+import React from 'react'
 
 import { App } from 'components/App'
 import { useTranslations } from 'lib/i18n'

@@ -1,12 +1,12 @@
+import { usePlausible } from 'next-plausible'
 import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useState } from 'react'
-import { usePlausible } from 'next-plausible'
 
-import { styled } from 'lib/style'
+import { PlausibleEvents } from 'common/constants'
+import useDebounce from 'common/hooks/useDebounce'
 import { useTranslations } from 'lib/i18n'
 import { useStore, useFilters, initialState } from 'lib/store'
-import useDebounce from 'common/hooks/useDebounce'
-import { PlausibleEvents } from 'common/constants'
+import { styled } from 'lib/style'
 
 import { Sort, Search, Info, Logo, Sun, Moon, Filter } from './Icons'
 import {

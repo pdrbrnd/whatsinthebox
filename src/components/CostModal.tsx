@@ -1,5 +1,6 @@
 import { useTranslations } from 'lib/i18n'
 
+import { BuyMeACoffee } from './BuyMeACoffee'
 import {
   Box,
   Text,
@@ -14,7 +15,6 @@ import {
   Tbody,
   Td,
 } from './UI'
-import { BuyMeACoffee } from './BuyMeACoffee'
 
 type Props = {
   isOpen: boolean

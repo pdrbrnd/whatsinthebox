@@ -1,11 +1,13 @@
 import dayjs from 'dayjs'
-import { useQuery } from 'react-query'
-import { useRouter } from 'next/dist/client/router'
-import ContentLoader from 'react-content-loader'
 import { usePlausible } from 'next-plausible'
+import { useRouter } from 'next/dist/client/router'
 import { useEffect } from 'react'
+import ContentLoader from 'react-content-loader'
+import { useQuery } from 'react-query'
 
-import { styled } from 'lib/style'
+import { PlausibleEvents } from 'common/constants'
+import { External } from 'components/Icons'
+import { Rating } from 'components/Rating'
 import {
   Box,
   Stack,
@@ -20,10 +22,8 @@ import {
   Td,
   Tag,
 } from 'components/UI'
-import { External } from 'components/Icons'
-import { Rating } from 'components/Rating'
 import { useTranslations } from 'lib/i18n'
-import { PlausibleEvents } from 'common/constants'
+import { styled } from 'lib/style'
 
 type DetailsData = {
   details: null | {

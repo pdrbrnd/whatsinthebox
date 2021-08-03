@@ -1,11 +1,11 @@
 import { usePlausible } from 'next-plausible'
 import NextLink from 'next/link'
 
-import { styled } from 'lib/style'
 import { PlausibleEvents } from 'common/constants'
+import { styled } from 'lib/style'
 
-import { Box, Text } from './UI'
 import { Rating } from './Rating'
+import { Box, Text } from './UI'
 
 type Props = {
   imdbId: string

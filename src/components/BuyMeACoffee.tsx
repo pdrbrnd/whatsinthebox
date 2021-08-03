@@ -3,8 +3,8 @@ import { usePlausible } from 'next-plausible'
 import { PlausibleEvents } from 'common/constants'
 import { styled } from 'lib/style'
 
-import { Button, Stack } from './UI'
 import { Coffee } from './Icons'
+import { Button, Stack } from './UI'
 
 export const BuyMeACoffee = () => {
   const plausible = usePlausible()
