@@ -71,7 +71,11 @@ export const App = () => {
           />
 
           <ListHolder
-            css={{ paddingRight: selectedMovie ? '$sizes$details' : 0 }}
+            css={{
+              '@md': {
+                paddingRight: selectedMovie ? '$sizes$details' : 0,
+              },
+            }}
           >
             <MovieList />
           </ListHolder>

@@ -79,7 +79,11 @@ export const MovieDetails = () => {
   }, [isError, push, rest, isLoading, data?.details])
 
   if (isLoading || !data) {
-    return <LoadingDetails onClose={() => push({ query: rest })} />
+    return (
+      <LoadingDetails
+        onClose={() => push({ query: rest }, undefined, { shallow: true })}
+      />
+    )
   }
 
   if (!data.details) return null

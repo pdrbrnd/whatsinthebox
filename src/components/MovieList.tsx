@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from 'react-query'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { usePlausible } from 'next-plausible'
 import { useRouter } from 'next/router'
 
@@ -52,25 +52,38 @@ export const MovieList = () => {
     return res.json()
   }
 
-  const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage } =
-    useInfiniteQuery<{
-      movies: {
-        id: number
-        imdb_id: string
-        poster: string
-        year: string
-        title: string
-        rating_imdb: string | null
-        rating_rotten_tomatoes: string | null
-      }[]
-      count: number
-    }>(`movies-${JSON.stringify(debouncedFilters)}`, fetchMovies, {
-      getNextPageParam: (lastPage, pages) => {
-        const soFar = pages.reduce((acc, p) => (acc += p.movies.length), 0)
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+    isFetchedAfterMount,
+  } = useInfiniteQuery<{
+    movies: {
+      id: number
+      imdb_id: string
+      poster: string
+      year: string
+      title: string
+      rating_imdb: string | null
+      rating_rotten_tomatoes: string | null
+    }[]
+    count: number
+  }>(`movies-${JSON.stringify(debouncedFilters)}`, fetchMovies, {
+    getNextPageParam: (lastPage, pages) => {
+      const soFar = pages.reduce((acc, p) => (acc += p.movies.length), 0)
 
-        return soFar < lastPage.count ? soFar : undefined
-      },
-    })
+      return soFar < lastPage.count ? soFar : undefined
+    },
+  })
+
+  useEffect(() => {
+    if (id && typeof id === 'string') {
+      const target = document.getElementById(id)
+      if (target) target.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [id, isFetchedAfterMount])
 
   if (isLoading || !data) {
     return <MovieLoader />
