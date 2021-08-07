@@ -21,11 +21,11 @@ const removeExtraStuff = (text: string) => {
 }
 
 const getEndpointForTitle = (title: string) => {
-  const titleWithNoDots = title.replace(/\./g, '')
+  const titleWithNoDotsNorDashes = title.replace(/\.|\//g, '')
   return (
-    `/${titleWithNoDots.charAt(0).toLowerCase()}/` +
+    `/${titleWithNoDotsNorDashes.charAt(0).toLowerCase()}/` +
     encodeURIComponent(
-      titleWithNoDots.normalize('NFD').replace(/\p{Diacritic}/gu, '')
+      titleWithNoDotsNorDashes.normalize('NFD').replace(/\p{Diacritic}/gu, '')
     ) +
     '.json'
   )
