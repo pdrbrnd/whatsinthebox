@@ -1,9 +1,8 @@
-import { usePlausible } from 'next-plausible'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import { PlausibleEvents } from 'common/constants'
 import { useReturningUser, UserType } from 'common/hooks/useReturningUser'
+import { usePlausible, PlausibleEvents } from 'lib/plausible'
 import { styled } from 'lib/style'
 
 import { AboutModal } from './AboutModal'

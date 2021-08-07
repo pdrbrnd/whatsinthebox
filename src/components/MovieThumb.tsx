@@ -1,7 +1,6 @@
-import { usePlausible } from 'next-plausible'
 import NextLink from 'next/link'
 
-import { PlausibleEvents } from 'common/constants'
+import { usePlausible, PlausibleEvents } from 'lib/plausible'
 import { styled } from 'lib/style'
 
 import { Rating } from './Rating'

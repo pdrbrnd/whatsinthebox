@@ -1,11 +1,10 @@
-import { usePlausible } from 'next-plausible'
 import { useEffect, useMemo } from 'react'
 import ContentLoader from 'react-content-loader'
 import { useQuery } from 'react-query'
 
-import { PlausibleEvents } from 'common/constants'
 import useDebounce from 'common/hooks/useDebounce'
 import { useTranslations } from 'lib/i18n'
+import { usePlausible, PlausibleEvents } from 'lib/plausible'
 import { useStore } from 'lib/store'
 import { styled, CSS } from 'lib/style'
 

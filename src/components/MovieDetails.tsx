@@ -1,11 +1,9 @@
 import dayjs from 'dayjs'
-import { usePlausible } from 'next-plausible'
 import { useRouter } from 'next/dist/client/router'
 import { useEffect } from 'react'
 import ContentLoader from 'react-content-loader'
 import { useQuery } from 'react-query'
 
-import { PlausibleEvents } from 'common/constants'
 import { External } from 'components/Icons'
 import { Rating } from 'components/Rating'
 import {
@@ -23,6 +21,7 @@ import {
   Tag,
 } from 'components/UI'
 import { useTranslations } from 'lib/i18n'
+import { usePlausible, PlausibleEvents } from 'lib/plausible'
 import { styled } from 'lib/style'
 
 type DetailsData = {

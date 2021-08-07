@@ -1,6 +1,4 @@
-import { usePlausible } from 'next-plausible'
-
-import { PlausibleEvents } from 'common/constants'
+import { usePlausible, PlausibleEvents } from 'lib/plausible'
 import { styled } from 'lib/style'
 
 import { Coffee } from './Icons'

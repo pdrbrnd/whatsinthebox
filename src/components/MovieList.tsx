@@ -1,11 +1,10 @@
-import { usePlausible } from 'next-plausible'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import { useInfiniteQuery } from 'react-query'
 
-import { PlausibleEvents } from 'common/constants'
 import useDebounce from 'common/hooks/useDebounce'
 import { useTranslations } from 'lib/i18n'
+import { usePlausible, PlausibleEvents } from 'lib/plausible'
 import { useFilters } from 'lib/store'
 import { styled } from 'lib/style'
 

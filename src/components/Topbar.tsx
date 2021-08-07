@@ -1,10 +1,9 @@
-import { usePlausible } from 'next-plausible'
 import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useState } from 'react'
 
-import { PlausibleEvents } from 'common/constants'
 import useDebounce from 'common/hooks/useDebounce'
 import { useTranslations } from 'lib/i18n'
+import { usePlausible, PlausibleEvents } from 'lib/plausible'
 import { useStore, useFilters, initialState } from 'lib/store'
 import { styled } from 'lib/style'
 
