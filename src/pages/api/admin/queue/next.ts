@@ -140,6 +140,9 @@ async function getNextQueuedChannel() {
       query getNextQueuedChannel {
         queued_channels(
           limit: 1
+          order_by: {
+            day: desc
+          }
           where: {
             is_complete: { _eq: false }
           }
