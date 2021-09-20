@@ -48,6 +48,19 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
       variables: {
         imdbId: id,
       },
+      where: {
+        _and: filters,
+        schedules: {
+          _and: [
+            {
+              start_time: {
+                _gte: dayjs().subtract(7, 'days').format('YYYY-MM-DD HH:mm'),
+              },
+            },
+            { start_time: { _lte: dayjs().format('YYYY-MM-DD HH:mm') } },
+          ],
+        },
+      },
     })
 
     if (!data || errors) {
