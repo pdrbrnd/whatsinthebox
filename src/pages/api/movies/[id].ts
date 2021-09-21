@@ -18,8 +18,11 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
       { imdbId: string }
     >({
       query: `
-      query getMovie($imdbId: String!) {
-        movies_by_pk(imdb_id: $imdbId) {
+      query getMovie($where: movies_bool_exp!, $imdbId: String!) {
+        movies_by_pk(
+          imdb_id: $imdbId, 
+          where: $where
+          ) {
           title
           actors
           country
@@ -47,18 +50,18 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
       `,
       variables: {
         imdbId: id,
-      },
-      where: {
-        _and: filters,
-        schedules: {
-          _and: [
-            {
-              start_time: {
-                _gte: dayjs().subtract(7, 'days').format('YYYY-MM-DD HH:mm'),
+        where: {
+          _and: filters,
+          schedules: {
+            _and: [
+              {
+                start_time: {
+                  _gte: dayjs().subtract(7, 'days').format('YYYY-MM-DD HH:mm'),
+                },
               },
-            },
-            { start_time: { _lte: dayjs().format('YYYY-MM-DD HH:mm') } },
-          ],
+              { start_time: { _lte: dayjs().format('YYYY-MM-DD HH:mm') } },
+            ],
+          },
         },
       },
     })
