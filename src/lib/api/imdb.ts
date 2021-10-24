@@ -38,6 +38,8 @@ export async function getImdbId(
 ): Promise<string | null> {
   const movieTitle = originalMovieTitle
     .toLowerCase()
+    // removes first characters if not number or letter
+    .replace(/^[^a-z0-9]+/gim, '')
     .replace(' (v.o.)', '')
     .replace(' (v.p.)', '')
 
