@@ -1,5 +1,10 @@
 name: Checks
-on: [push]
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
   lint:
@@ -7,54 +12,42 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: '.nvmrc'
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
-      - name: Lint
-        run: npm run lint
+      - run: npm run lint
 
   build:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: '.nvmrc'
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
-      - name: Lint
-        run: npm run validate:build
+      - run: npm run validate:build
 
   test:
     name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: '.nvmrc'
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
-      - name: Lint
-        run: npm run test
+      - run: npm run test
