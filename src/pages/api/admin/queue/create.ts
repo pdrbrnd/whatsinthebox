@@ -1,4 +1,4 @@
-import { withSentry, captureException } from '@sentry/nextjs'
+import { captureException } from '@sentry/nextjs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { fetchGraphql } from 'lib/graphql'
@@ -78,7 +78,7 @@ async function queueChannels(ids: number[], offset?: number | null) {
   return data.insert_queued_channels.returning
 }
 
-export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   await runMiddleware(req, res, codeMiddleware)
 
   try {
@@ -94,4 +94,4 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
     captureException(error)
     res.status(422).json({ error })
   }
-})
+}

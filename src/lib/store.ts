@@ -30,7 +30,7 @@ type StoreFunctions = {
   toggleChannel: (type: 'premium' | 'normal', id: number) => void
 }
 
-export const useStore = create<StoreState & StoreFunctions>(
+export const useStore = create<StoreState & StoreFunctions>()(
   persist(
     (set) => ({
       ...initialState,
@@ -50,7 +50,13 @@ export const useStore = create<StoreState & StoreFunctions>(
     }),
     {
       name: '___witb_persisted_store___',
-      blacklist: ['search', 'set', 'toggleChannel'],
+      partialize: (state) => {
+        return Object.fromEntries(
+          Object.entries(state).filter(
+            ([key]) => !['search', 'set', 'toggleChannel'].includes(key)
+          )
+        )
+      },
     }
   )
 )

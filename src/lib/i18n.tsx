@@ -191,7 +191,11 @@ const TranslationsContext = createContext<TranslationsContextType>({
   t: () => '',
 })
 
-export const TranslationsProvider: React.FC = ({ children }) => {
+export const TranslationsProvider = ({
+  children,
+}: {
+  children: React.ReactNode
+}) => {
   const [locale, setLocale] = useState<Locales>('en')
 
   useEffect(() => {

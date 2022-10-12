@@ -1,10 +1,10 @@
-import { withSentry, captureException } from '@sentry/nextjs'
+import { captureException } from '@sentry/nextjs'
 import dayjs from 'dayjs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { fetchGraphql } from 'lib/graphql'
 
-export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {
     offset,
     genre,
@@ -139,4 +139,4 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
     captureException(error)
     res.status(401).json({ error })
   }
-})
+}

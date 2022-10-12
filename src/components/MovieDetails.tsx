@@ -226,7 +226,13 @@ const LoadingDetails = ({ onClose }: { onClose: () => void }) => {
   )
 }
 
-const Detail: React.FC<{ label: string }> = ({ label, children }) => {
+const Detail = ({
+  label,
+  children,
+}: {
+  label: string
+  children: React.ReactNode
+}) => {
   return (
     <Box>
       <Text variant="caps" css={{ mb: '$4', color: '$secondary' }}>

@@ -1,4 +1,4 @@
-import { withSentry, captureException } from '@sentry/nextjs'
+import { captureException } from '@sentry/nextjs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { processImdbId } from 'lib/api/details'
@@ -6,7 +6,7 @@ import { getImdbId } from 'lib/api/imdb'
 import { fetchGraphql } from 'lib/graphql'
 import { codeMiddleware, runMiddleware } from 'lib/middleware'
 
-export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   await runMiddleware(req, res, codeMiddleware)
 
   const { id } = req.query
@@ -68,4 +68,4 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
     captureException(error)
     res.status(422).json({ error })
   }
-})
+}
