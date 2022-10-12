@@ -27,3 +27,5 @@ yarn-error.log*
 
 # Sentry
 .sentryclirc
+
+*.tsbuildinfo
