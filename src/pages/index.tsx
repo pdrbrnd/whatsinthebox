@@ -4,7 +4,7 @@ import React from 'react'
 import { App } from 'components/App'
 import { useTranslations } from 'lib/i18n'
 
-const IndexPage: React.FC = () => {
+const IndexPage = () => {
   const { t } = useTranslations()
 
   return (

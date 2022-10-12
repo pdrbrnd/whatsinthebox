@@ -5,9 +5,10 @@ import { CloseButton, Text } from './'
 type Props = {
   isOpen: boolean
   onClose: () => void
+  children?: React.ReactNode
 }
 
-export const Modal: React.FC<Props> = ({ isOpen, onClose, children }) => {
+export const Modal = ({ isOpen, onClose, children }: Props) => {
   if (!isOpen) return null
 
   return (

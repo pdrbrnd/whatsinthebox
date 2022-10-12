@@ -1,8 +1,5 @@
 {
-  "extends": "@significa/eslint-config",
-  "settings": {
-    "import/internal-regex": "^common|^lib/|^components/|^pages/"
-  },
+  "extends": ["@significa", "@significa/eslint-config/react"],
   "rules": {
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off"

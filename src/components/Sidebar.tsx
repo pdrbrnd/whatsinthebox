@@ -430,6 +430,7 @@ type FilterSectionProps = {
     onClick: () => void
   }
   css?: CSS
+  children?: React.ReactNode
 }
 
 const FilterSectionHolder = styled('div', {
@@ -437,12 +438,12 @@ const FilterSectionHolder = styled('div', {
   pb: '$8',
   px: '$8',
 })
-const FilterSection: React.FC<FilterSectionProps> = ({
+const FilterSection = ({
   title,
   button,
   children,
   css,
-}) => {
+}: FilterSectionProps) => {
   return (
     <FilterSectionHolder css={css}>
       <Box

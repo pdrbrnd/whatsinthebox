@@ -1,6 +1,7 @@
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || ''
 const HASURA_SECRET = process.env.HASURA_SECRET || ''
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function fetchGraphql<T = any, V = Record<string, any>>({
   query,
   variables,

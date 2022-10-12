@@ -123,7 +123,7 @@ const stitchesConfig = createCss({
       2: 200,
       3: 300,
       4: 400,
-      max: 999,
+      max: 9999,
     },
     transitions: {
       appearance: '0.2s ease',
