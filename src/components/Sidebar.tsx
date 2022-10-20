@@ -291,13 +291,21 @@ const Channels = () => {
       is_premium: boolean
       name: string
     }[]
-  }>('channels', async () => {
-    const res = await fetch('/api/channels')
+  }>(
+    'channels',
+    async () => {
+      const res = await fetch('/api/channels')
 
-    if (!res.ok) throw new Error('Could not fetch channels')
+      if (!res.ok) throw new Error('Could not fetch channels')
 
-    return res.json()
-  })
+      return res.json()
+    },
+    {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  )
 
   const premium = useMemo(() => {
     return data?.channels.filter((c) => c.is_premium) || []

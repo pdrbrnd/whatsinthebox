@@ -70,6 +70,7 @@ export const MovieList = () => {
     }[]
     count: number
   }>(`movies-${JSON.stringify(debouncedFilters)}`, fetchMovies, {
+    staleTime: 1000 * 60 * 15,
     getNextPageParam: (lastPage, pages) => {
       const soFar = pages.reduce((acc, p) => (acc += p.movies.length), 0)
 
