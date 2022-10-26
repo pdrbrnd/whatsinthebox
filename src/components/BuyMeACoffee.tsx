@@ -1,12 +1,11 @@
-import { usePlausible, PlausibleEvents } from 'lib/plausible'
+import splitbee from '@splitbee/web'
+
 import { styled } from 'lib/style'
 
 import { Coffee } from './Icons'
 import { Button, Stack } from './UI'
 
 export const BuyMeACoffee = () => {
-  const plausible = usePlausible()
-
   return (
     <Holder
       as="a"
@@ -15,7 +14,7 @@ export const BuyMeACoffee = () => {
       rel="noopener noreferrer"
       size="lg"
       onClick={() => {
-        plausible(PlausibleEvents.BuyMeACoffee)
+        splitbee.track('Buy me a coffee')
       }}
     >
       <Stack>

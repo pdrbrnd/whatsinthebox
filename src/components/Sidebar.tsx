@@ -1,10 +1,10 @@
+import splitbee from '@splitbee/web'
 import { useEffect, useMemo } from 'react'
 import ContentLoader from 'react-content-loader'
 import { useQuery } from 'react-query'
 
 import useDebounce from 'common/hooks/useDebounce'
 import { useTranslations } from 'lib/i18n'
-import { usePlausible, PlausibleEvents } from 'lib/plausible'
 import { useStore } from 'lib/store'
 import { styled, CSS } from 'lib/style'
 
@@ -57,7 +57,6 @@ export const Sidebar = ({ isVisibleMobile, onMobileClose }: Props) => {
 
 const MobileSort = () => {
   const { t } = useTranslations()
-  const plausible = usePlausible()
   const sort = useStore((state) => state.sort)
   const set = useStore((state) => state.set)
 
@@ -72,10 +71,8 @@ const MobileSort = () => {
         css={{ color: '$foreground' }}
         value={sort}
         onChange={(e) => {
-          plausible(PlausibleEvents.Sort, {
-            props: {
-              value: e.currentTarget.value,
-            },
+          splitbee.track('Sort', {
+            value: e.currentTarget.value,
           })
           set('sort', e.currentTarget.value as 'imdb' | 'rotten' | 'yearDesc')
         }}
@@ -98,13 +95,12 @@ const MobileSearch = () => {
   const search = useStore((state) => state.search)
   const set = useStore((state) => state.set)
 
-  const plausible = usePlausible()
   const debouncedSearch = useDebounce(search)
   useEffect(() => {
     if (debouncedSearch) {
-      plausible(PlausibleEvents.Search, { props: { search: debouncedSearch } })
+      splitbee.track('Search', { search: debouncedSearch })
     }
-  }, [debouncedSearch, plausible])
+  }, [debouncedSearch])
 
   return (
     <FilterSection
@@ -144,7 +140,6 @@ const MobileSearch = () => {
 
 const Genre = () => {
   const { t } = useTranslations()
-  const plausible = usePlausible()
 
   const genres = [
     { label: t('genre.action'), value: 'Action' },
@@ -177,7 +172,7 @@ const Genre = () => {
         label={t('genre.any')}
         checked={!genre}
         onChange={() => {
-          plausible(PlausibleEvents.SetGenre, { props: { genre: 'Any genre' } })
+          splitbee.track('Set genre', { genre: 'Any genre' })
           set('genre', null)
         }}
       />
@@ -189,7 +184,7 @@ const Genre = () => {
           label={g.label}
           checked={genre === g.value}
           onChange={() => {
-            plausible(PlausibleEvents.SetGenre, { props: { genre: g.value } })
+            splitbee.track('Set genre', { genre: g.value })
             set('genre', g.value)
           }}
         />
@@ -203,7 +198,6 @@ const Genre = () => {
  */
 const National = () => {
   const { t } = useTranslations()
-  const plausible = usePlausible()
   const nationalOnly = useStore((state) => state.nationalOnly)
   const set = useStore((state) => state.set)
 
@@ -212,11 +206,7 @@ const National = () => {
       <CheckboxFilter
         checked={nationalOnly}
         onChange={(e) => {
-          plausible(
-            e.currentTarget.checked
-              ? PlausibleEvents.OnlyNationalOn
-              : PlausibleEvents.OnlyNationalOff
-          )
+          splitbee.track('Only national', { value: e.currentTarget.checked })
           set('nationalOnly', e.currentTarget.checked)
         }}
         label={t('portugueseMovies')}
@@ -243,7 +233,6 @@ const years = [
 
 const Year = () => {
   const { t } = useTranslations()
-  const plausible = usePlausible()
 
   const year = useStore((state) => state.year)
   const set = useStore((state) => state.set)
@@ -253,8 +242,8 @@ const Year = () => {
       <Select
         value={!year ? 'any' : year}
         onChange={(e) => {
-          plausible(PlausibleEvents.SetYear, {
-            props: { year: e.currentTarget.value },
+          splitbee.track('Set year', {
+            year: e.currentTarget.value,
           })
           set(
             'year',
@@ -278,7 +267,6 @@ const Year = () => {
  */
 const Channels = () => {
   const { t } = useTranslations()
-  const plausible = usePlausible()
 
   const storeChannels = useStore((state) => state.channels)
   const storePremium = useStore((state) => state.premium)
@@ -345,11 +333,7 @@ const Channels = () => {
               ? t('channels.all')
               : t('channels.none'),
             onClick: () => {
-              plausible(
-                allPremiumBlacklisted
-                  ? PlausibleEvents.AllPremiumOn
-                  : PlausibleEvents.AllPremiumOff
-              )
+              splitbee.track('All premium', { value: allPremiumBlacklisted })
               set(
                 'premium',
                 allPremiumBlacklisted ? [] : premium.map((c) => c.id)
@@ -364,17 +348,11 @@ const Channels = () => {
                 key={channel.id}
                 checked={!storePremium.includes(channel.id)}
                 onChange={(e) => {
-                  plausible(
-                    e.currentTarget.checked
-                      ? PlausibleEvents.ChannelOn
-                      : PlausibleEvents.ChannelOff,
-                    {
-                      props: {
-                        channel: channel.id,
-                        channelName: channel.name,
-                      },
-                    }
-                  )
+                  splitbee.track('Toggle premium channel', {
+                    channel: channel.id,
+                    channelName: channel.name,
+                    value: e.currentTarget.checked,
+                  })
                   toggleChannel('premium', channel.id)
                 }}
                 label={channel.name}
@@ -390,11 +368,9 @@ const Channels = () => {
               ? t('channels.all')
               : t('channels.none'),
             onClick: () => {
-              plausible(
-                allChannelsBlacklisted
-                  ? PlausibleEvents.AllNormalChannelsOn
-                  : PlausibleEvents.AllNormalChannelsOff
-              )
+              splitbee.track('All normal channels', {
+                value: allChannelsBlacklisted,
+              })
               set(
                 'channels',
                 allChannelsBlacklisted ? [] : channels.map((c) => c.id)
@@ -410,17 +386,11 @@ const Channels = () => {
                 label={channel.name}
                 checked={!storeChannels.includes(channel.id)}
                 onChange={(e) => {
-                  plausible(
-                    e.currentTarget.checked
-                      ? PlausibleEvents.ChannelOn
-                      : PlausibleEvents.ChannelOff,
-                    {
-                      props: {
-                        channel: channel.id,
-                        channelName: channel.name,
-                      },
-                    }
-                  )
+                  splitbee.track('Toggle channel', {
+                    channel: channel.id,
+                    channelName: channel.name,
+                    value: e.currentTarget.checked,
+                  })
                   toggleChannel('normal', channel.id)
                 }}
               />

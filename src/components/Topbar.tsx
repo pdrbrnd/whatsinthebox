@@ -1,9 +1,9 @@
+import splitbee from '@splitbee/web'
 import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useState } from 'react'
 
 import useDebounce from 'common/hooks/useDebounce'
 import { useTranslations } from 'lib/i18n'
-import { usePlausible, PlausibleEvents } from 'lib/plausible'
 import { useStore, useFilters, initialState } from 'lib/store'
 import { styled } from 'lib/style'
 
@@ -47,7 +47,6 @@ const Left = ({
   setSidebarMobile,
 }: TopbarProps) => {
   const { t } = useTranslations()
-  const plausible = usePlausible()
   const filters = useFilters()
 
   const [mounted, setMounted] = useState(false)
@@ -67,7 +66,7 @@ const Left = ({
         <IconButton
           icon={<Info />}
           onClick={() => {
-            plausible(PlausibleEvents.OpenAbout)
+            splitbee.track('Open about')
             onAboutOpen()
           }}
         >
@@ -95,8 +94,6 @@ const Left = ({
 }
 
 const ThemeButton = () => {
-  const plausible = usePlausible()
-
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -111,8 +108,8 @@ const ThemeButton = () => {
       onClick={() => {
         const targetTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
 
-        plausible(PlausibleEvents.ChangeTheme, {
-          props: { theme: targetTheme },
+        splitbee.track('Change theme', {
+          theme: targetTheme,
         })
         setTheme(targetTheme)
       }}
@@ -132,7 +129,6 @@ const ThemeButton = () => {
 
 const Main = () => {
   const { t } = useTranslations()
-  const plausible = usePlausible()
 
   const set = useStore((state) => state.set)
   const search = useStore((state) => state.search)
@@ -141,9 +137,9 @@ const Main = () => {
   const debouncedSearch = useDebounce(search)
   useEffect(() => {
     if (debouncedSearch) {
-      plausible(PlausibleEvents.Search, { props: { search: debouncedSearch } })
+      splitbee.track('Search', { search: debouncedSearch })
     }
-  }, [debouncedSearch, plausible])
+  }, [debouncedSearch])
 
   return (
     <MainHolder>
@@ -169,10 +165,8 @@ const Main = () => {
           css={{ color: '$foreground' }}
           value={sort}
           onChange={(e) => {
-            plausible(PlausibleEvents.Sort, {
-              props: {
-                value: e.currentTarget.value,
-              },
+            splitbee.track('Sort', {
+              value: e.currentTarget.value,
             })
             set('sort', e.currentTarget.value as 'imdb' | 'rotten' | 'yearDesc')
           }}

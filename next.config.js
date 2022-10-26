@@ -1,9 +1,20 @@
 const { withSentryConfig } = require('@sentry/nextjs')
-const { withPlausibleProxy } = require('next-plausible')
 
-const moduleExports = withPlausibleProxy()({
+const moduleExports = {
   sentry: {
     hideSourceMaps: true,
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/script.js',
+        destination: 'https://cdn.splitbee.io/sb.js',
+      },
+      {
+        source: '/_witb/:slug',
+        destination: 'https://hive.splitbee.io/:slug',
+      },
+    ]
   },
   webpack(config) {
     config.module.rules.push({
@@ -20,7 +31,7 @@ const moduleExports = withPlausibleProxy()({
 
     return config
   },
-})
+}
 
 const sentryWebpackPluginOptions = {
   // Additional config options for the Sentry Webpack plugin. Keep in mind that

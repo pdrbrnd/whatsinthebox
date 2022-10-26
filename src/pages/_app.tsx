@@ -1,4 +1,3 @@
-import PlausibleProvider from 'next-plausible'
 import { ThemeProvider } from 'next-themes'
 import type { AppProps } from 'next/app'
 import { useEffect } from 'react'
@@ -62,20 +61,18 @@ const App = ({ Component, pageProps }: AppProps): JSX.Element => {
   }, [])
 
   return (
-    <PlausibleProvider domain="whatsinthebox.tv">
-      <ThemeProvider
-        storageKey="witb-theme"
-        value={{ light: lightTheme.toString(), dark: darkTheme.toString() }}
-        attribute="class"
-        disableTransitionOnChange
-      >
-        <QueryClientProvider client={queryClient}>
-          <TranslationsProvider>
-            <Component {...pageProps} />
-          </TranslationsProvider>
-        </QueryClientProvider>
-      </ThemeProvider>
-    </PlausibleProvider>
+    <ThemeProvider
+      storageKey="witb-theme"
+      value={{ light: lightTheme.toString(), dark: darkTheme.toString() }}
+      attribute="class"
+      disableTransitionOnChange
+    >
+      <QueryClientProvider client={queryClient}>
+        <TranslationsProvider>
+          <Component {...pageProps} />
+        </TranslationsProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   )
 }
 

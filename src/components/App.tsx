@@ -1,8 +1,8 @@
+import splitbee from '@splitbee/web'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import { useReturningUser, UserType } from 'common/hooks/useReturningUser'
-import { usePlausible, PlausibleEvents } from 'lib/plausible'
 import { styled } from 'lib/style'
 
 import { AboutModal } from './AboutModal'
@@ -13,7 +13,6 @@ import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
 
 export const App = () => {
-  const plausible = usePlausible()
   const [modal, setModal] = useState<null | 'about' | 'cost'>(null)
   const userType = useReturningUser()
   const [sidebarMobile, setSidebarMobile] = useState(false)
@@ -21,20 +20,26 @@ export const App = () => {
     query: { id },
   } = useRouter()
 
+  useEffect(function initAnalytics() {
+    splitbee.init({
+      disableCookie: true,
+      scriptUrl: '/script.js',
+      apiUrl: '/_witb',
+    })
+  }, [])
+
   useEffect(
     function reactToUserType() {
       if (userType === UserType.FREQUENT_USER) {
-        plausible(PlausibleEvents.ShowCostModal)
+        splitbee.track('Show cost modal')
         setModal('cost')
       }
 
       if (userType === UserType.FIRST_TIME_USER) {
-        plausible(PlausibleEvents.ShowAboutModal)
+        splitbee.track('Show about modal')
         setModal('about')
       }
     },
-    // plausible is re-triggering the modal
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [userType]
   )
 

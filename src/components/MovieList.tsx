@@ -1,10 +1,10 @@
+import splitbee from '@splitbee/web'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import { useInfiniteQuery } from 'react-query'
 
 import useDebounce from 'common/hooks/useDebounce'
 import { useTranslations } from 'lib/i18n'
-import { usePlausible, PlausibleEvents } from 'lib/plausible'
 import { useFilters } from 'lib/store'
 import { styled } from 'lib/style'
 
@@ -16,7 +16,6 @@ import { Button } from './UI'
 
 export const MovieList = () => {
   const { t } = useTranslations()
-  const plausible = usePlausible()
   const {
     query: { id },
   } = useRouter()
@@ -128,7 +127,7 @@ export const MovieList = () => {
             size="lg"
             onClick={() => {
               fetchNextPage()
-              plausible(PlausibleEvents.LoadMore)
+              splitbee.track('Load more')
             }}
           >
             {isFetchingNextPage ? t('loading') : t('loadMore')}

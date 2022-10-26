@@ -56,7 +56,7 @@ export const CostModal = ({ isOpen, onClose }: Props) => {
                 <Td>
                   <Text variant="small">{t('cost.price.hosting')}</Text>
                   <Text variant="small" css={{ color: '$secondary', mb: '$4' }}>
-                    Digital Ocean
+                    Fly.io
                   </Text>
                 </Td>
                 <Td>6€ / {t('cost.price.month')}</Td>
@@ -65,15 +65,15 @@ export const CostModal = ({ isOpen, onClose }: Props) => {
                 <Td>
                   <Text variant="small">{t('cost.price.analytics')}</Text>
                   <Text variant="small" css={{ color: '$secondary', mb: '$4' }}>
-                    Plausible (privacy-friendly)
+                    Splitbee (privacy-friendly)
                   </Text>
                 </Td>
-                <Td>6€ / {t('cost.price.month')}</Td>
+                <Td>11€ / {t('cost.price.month')}</Td>
               </Tr>
               <Tr css={{ borderBottom: 'none' }}>
                 <Td css={{ color: '$accent' }}>{t('cost.price.total')}</Td>
                 <Td css={{ color: '$accent' }}>
-                  184€ / {t('cost.price.year')}
+                  244€ / {t('cost.price.year')}
                 </Td>
               </Tr>
             </Tbody>

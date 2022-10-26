@@ -1,3 +1,4 @@
+import splitbee from '@splitbee/web'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/dist/client/router'
 import { useEffect } from 'react'
@@ -21,7 +22,6 @@ import {
   Tag,
 } from 'components/UI'
 import { useTranslations } from 'lib/i18n'
-import { usePlausible, PlausibleEvents } from 'lib/plausible'
 import { styled } from 'lib/style'
 
 type DetailsData = {
@@ -53,7 +53,6 @@ type DetailsData = {
 
 export const MovieDetails = () => {
   const { t } = useTranslations()
-  const plausible = usePlausible()
   const {
     query: { id, ...rest },
     push,
@@ -168,11 +167,9 @@ export const MovieDetails = () => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => {
-                plausible(PlausibleEvents.OpenImdb, {
-                  props: {
-                    title: title,
-                    href: `https://imdb.com/title/${imdb_id}`,
-                  },
+                splitbee.track('Open IMDB', {
+                  title: title,
+                  href: `https://imdb.com/title/${imdb_id}`,
                 })
               }}
             >

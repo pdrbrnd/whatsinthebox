@@ -1,6 +1,6 @@
+import splitbee from '@splitbee/web'
 import NextLink from 'next/link'
 
-import { usePlausible, PlausibleEvents } from 'lib/plausible'
 import { styled } from 'lib/style'
 
 import { Rating } from './Rating'
@@ -27,18 +27,14 @@ export const MovieThumb = ({
   isActive,
   isTonedDown,
 }: Props) => {
-  const plausible = usePlausible()
-
   return (
     <NextLink href={{ query: { id: imdbId } }} passHref>
       <Holder
         id={imdbId} // scroll target
         onClick={() => {
-          plausible(PlausibleEvents.OpenDetails, {
-            props: {
-              title,
-              imdbId,
-            },
+          splitbee.track('Open details', {
+            title,
+            imdbId,
           })
         }}
         css={{
