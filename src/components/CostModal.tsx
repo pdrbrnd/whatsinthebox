@@ -59,7 +59,7 @@ export const CostModal = ({ isOpen, onClose }: Props) => {
                     Fly.io
                   </Text>
                 </Td>
-                <Td>6€ / {t('cost.price.month')}</Td>
+                <Td>Free tier</Td>
               </Tr>
               <Tr>
                 <Td>
@@ -68,13 +68,11 @@ export const CostModal = ({ isOpen, onClose }: Props) => {
                     Splitbee (privacy-friendly)
                   </Text>
                 </Td>
-                <Td>11€ / {t('cost.price.month')}</Td>
+                <Td>Free tier</Td>
               </Tr>
               <Tr css={{ borderBottom: 'none' }}>
                 <Td css={{ color: '$accent' }}>{t('cost.price.total')}</Td>
-                <Td css={{ color: '$accent' }}>
-                  244€ / {t('cost.price.year')}
-                </Td>
+                <Td css={{ color: '$accent' }}>40€ / {t('cost.price.year')}</Td>
               </Tr>
             </Tbody>
           </Table>
